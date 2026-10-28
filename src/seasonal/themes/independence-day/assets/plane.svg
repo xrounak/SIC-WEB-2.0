@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40">
+  <!-- Placeholder: aerobatic jet in side view, nose pointing right. Replace with your own SVG. -->
+  <path d="M6 22 L20 20 L60 18 L92 18 C104 18 114 20 118 22 C114 24 104 26 92 26 L60 26 L20 24 Z" fill="#E8ECF2"/>
+  <path d="M92 18 C99 18 105 19.5 108 21 L96 21 Z" fill="#1B3C73"/>
+  <path d="M50 22 L74 22 L58 36 L48 36 Z" fill="#C9D1DC"/>
+  <path d="M52 20 L70 20 L58 9 L50 9 Z" fill="#D7DEE7"/>
+  <path d="M8 21 L20 20 L16 6 L10 6 Z" fill="#C9D1DC"/>
+  <path d="M8 23 L22 23 L16 30 L10 30 Z" fill="#B7C0CC"/>
+  <circle cx="34" cy="22" r="3" fill="#FF9933"/>
+  <circle cx="34" cy="22" r="2" fill="#FFFFFF"/>
+  <circle cx="34" cy="22" r="1" fill="#138808"/>
+  <path d="M60 23.5 L92 23.5" stroke="#FF9933" stroke-width="1"/>
+</svg>

@@ -1,0 +1,123 @@
+{
+  "schemaVersion": "1.0.0",
+  "product": {
+    "name": "SIC Website",
+    "fullName": "Science and Innovation Club",
+    "designPrinciple": "A permanent, minimal, accessible base UI with interchangeable seasonal visual themes.",
+    "themeSwitching": {
+      "defaultTheme": "diwali",
+      "oneClickSwitching": true,
+      "settingKey": "activeTheme",
+      "supportedThemes": [
+        "diwali",
+        "christmas",
+        "independenceDay",
+        "regular"
+      ],
+      "behavior": [
+        "Switching themes changes only design tokens and decorative effects; it must not alter layout, content, navigation, or functionality.",
+        "Apply the selected theme globally from one centralized configuration.",
+        "Persist the selected theme in local storage or the user's profile.",
+        "Support switching without a page reload where possible.",
+        "Provide a neutral 'regular' theme that removes seasonal decorations."
+      ]
+    }
+  },
+  "baseUI": {
+    "purpose": "Permanent design system shared by every theme.",
+    "layout": {
+      "style": "minimal, modern, professional, modular",
+      "contentWidth": "1200px",
+      "spacingScalePx": [
+        4,
+        8,
+        12,
+        16,
+        24,
+        32,
+        48,
+        64,
+        96
+      ],
+      "borderRadiusPx": {
+        "small": 8,
+        "medium": 12,
+        "large": 18,
+        "pill": 999
+      },
+      "breakpointsPx": {
+        "mobile": 480,
+        "tablet": 768,
+        "desktop": 1024,
+        "wide": 1280
+      }
+    },
+    "typography": {
+      "defaultFont": "Manrope",
+      "fallback": "system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+      "headingWeight": 650,
+      "bodyWeight": 400,
+      "bodyLineHeight": 1.6,
+      "headingLineHeight": 1.15,
+      "displayFont": "Cinzel",
+      "labelFont": "Rajdhani"
+    },
+    "components": {
+      "navigation": "Consistent, compact navigation with clear active states.",
+      "cards": "Clean cards with restrained borders, spacing, and subtle elevation.",
+      "buttons": "High-contrast primary action, quiet secondary action, clear hover and focus states.",
+      "forms": "Visible labels, helpful validation, generous touch targets, clear error and success states.",
+      "content": "Preserve readable contrast and whitespace; avoid decorative clutter behind text."
+    },
+    "rules": [
+      "Do not hard-code seasonal colors into shared components.",
+      "Use semantic design tokens such as color.background, color.text, color.primary, and color.accent.",
+      "Keep decorations in a separate theme/decorative layer.",
+      "Decorations must use pointer-events:none and must not cover controls or important text.",
+      "Decorative assets should be lightweight SVGs or CSS effects where practical.",
+      "Do not use emoji as a substitute for polished decorative artwork in production.",
+      "Respect prefers-reduced-motion and provide a static alternative.",
+      "Maintain WCAG AA contrast for normal text and clear keyboard focus indicators."
+    ]
+  },
+  "implementation": {
+    "recommendedThemeAttribute": "data-theme",
+    "exampleMarkup": "<html data-theme=\"diwali\">",
+    "cssTokenMapping": {
+      "--color-bg": "colors.background",
+      "--color-surface": "colors.surface",
+      "--color-surface-elevated": "colors.surfaceElevated",
+      "--color-text": "colors.text",
+      "--color-text-muted": "colors.textMuted",
+      "--color-primary": "colors.primary",
+      "--color-primary-hover": "colors.primaryHover",
+      "--color-accent": "colors.accent",
+      "--color-border": "colors.border",
+      "--color-focus-ring": "colors.focusRing",
+      "--color-ambient-glow": "colors.ambientGlow"
+    },
+    "switchingContract": {
+      "input": "A theme key such as 'diwali', 'christmas', 'independenceDay', or 'regular'.",
+      "effect": "Update the root data-theme attribute and load the matching design tokens and decorative layer.",
+      "mustNotChange": [
+        "DOM structure of core pages",
+        "Routes",
+        "Content",
+        "Business logic",
+        "Form behavior",
+        "Navigation structure"
+      ],
+      "persistence": "Store the chosen key in localStorage under 'sic-active-theme'.",
+      "fallback": "If the stored key is invalid, use 'regular'."
+    },
+    "accessibilityAndPerformance": [
+      "Decorative layers should be aria-hidden=true and pointer-events:none.",
+      "Do not convey important information through color alone.",
+      "Ensure text and controls remain readable against every theme.",
+      "Use CSS transforms and opacity for animation where possible.",
+      "Lazy-load decorative SVGs and avoid heavy animation libraries for simple effects.",
+      "Pause or simplify animations when the page is not visible.",
+      "Honor the user's prefers-reduced-motion setting."
+    ]
+  }
+}

@@ -1,0 +1,524 @@
+/*
+ * Layer 2: decoration styles. Colours come from the theme tokens generated from
+ * sic-seasonal-themes.json; timings come from its motion.durationMs values
+ * (--motion-*). Nothing here changes layout.
+ */
+
+/* ---- Containers ---------------------------------------------------------- */
+
+.season-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Scrolls with the page, just under the 64px header. */
+.season-top {
+  position: absolute;
+  top: 4rem;
+  left: 0;
+  right: 0;
+  height: 60px;
+  z-index: 5;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* The hero region (first screen under the header). */
+.season-hero {
+  position: absolute;
+  top: 4rem;
+  left: 0;
+  right: 0;
+  height: 35rem;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/*
+ * Ornaments that must stay clear of text and controls only render when the
+ * page gutters are wide enough to hold them (content is 75rem wide).
+ */
+.edge-only {
+  display: none;
+}
+@media (min-width: 1360px) {
+  .edge-only {
+    display: block;
+  }
+}
+
+/* Pause everything while the tab is hidden. */
+[data-page-hidden="true"] .season-layer *,
+[data-page-hidden="true"] .season-top *,
+[data-page-hidden="true"] .season-hero * {
+  animation-play-state: paused !important;
+}
+
+.season-glow {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(8px);
+}
+
+.season-breathe {
+  animation: season-breathe 10s ease-in-out infinite;
+}
+
+@keyframes season-breathe {
+  0%, 100% { opacity: 0.65; }
+  50% { opacity: 1; }
+}
+
+/* ---- String lights ------------------------------------------------------- */
+
+.season-lights {
+  position: relative;
+  height: 100%;
+}
+
+.season-lights-wire {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 48px;
+  color: color-mix(in oklab, var(--color-text) 20%, transparent);
+}
+
+.season-bulb {
+  position: absolute;
+  width: 6px;
+  height: 9px;
+  margin-left: -3px;
+  border-radius: 45% 45% 50% 50% / 40% 40% 60% 60%;
+  background: var(--bulb);
+  box-shadow: 0 0 5px 1px var(--bulb), 0 0 14px 2px color-mix(in oklab, var(--bulb) 40%, transparent);
+  animation: bulb-twinkle var(--motion-light-twinkle, 3200ms) ease-in-out infinite;
+}
+
+.season-bulb::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 1px;
+  width: 4px;
+  height: 3px;
+  border-radius: 1px;
+  background: color-mix(in oklab, var(--color-text) 30%, transparent);
+}
+
+/* Gentle: never fully off, no flashing. */
+@keyframes bulb-twinkle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+/* ---- Diwali ---------------------------------------------------------------- */
+
+.diya {
+  position: absolute;
+  overflow: visible;
+  filter: drop-shadow(0 0 8px rgb(255 174 66 / 0.3));
+}
+
+.diya-flame {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: diya-flicker var(--motion-flame-flicker, 1800ms) ease-in-out infinite alternate;
+}
+
+.diya-halo {
+  animation: diya-halo calc(var(--motion-flame-flicker, 1800ms) * 1.5) ease-in-out infinite alternate;
+}
+
+@keyframes diya-flicker {
+  0% { transform: scale(1, 1) skewX(0deg); }
+  35% { transform: scale(0.95, 1.05) skewX(1.5deg); }
+  70% { transform: scale(1.02, 0.96) skewX(-1.5deg); }
+  100% { transform: scale(0.98, 1.03) skewX(0.5deg); }
+}
+
+@keyframes diya-halo {
+  from { opacity: 0.7; }
+  to { opacity: 1; }
+}
+
+.lantern {
+  position: absolute;
+  opacity: 0.7;
+  filter: drop-shadow(0 0 12px rgb(255 174 66 / 0.4));
+  animation: lantern-drift var(--motion-lantern-drift, 14000ms) ease-in-out infinite;
+}
+
+/* Slow vertical drift with a tiny horizontal sway. */
+@keyframes lantern-drift {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(-1.5deg); }
+  25% { transform: translate3d(3px, -10px, 0) rotate(0deg); }
+  50% { transform: translate3d(0, -20px, 0) rotate(1.5deg); }
+  75% { transform: translate3d(-3px, -10px, 0) rotate(0deg); }
+}
+
+/* ---- Christmas --------------------------------------------------------- */
+
+.snowflake {
+  position: absolute;
+  top: -24px;
+  color: #f5f7f2;
+  animation: snow-fall calc(var(--motion-snowfall, 18000ms) * var(--fall-scale, 1)) linear infinite;
+}
+
+@keyframes snow-fall {
+  from { transform: translate3d(0, -24px, 0) rotate(0deg); }
+  to { transform: translate3d(12px, 105vh, 0) rotate(180deg); }
+}
+
+.candy-cane {
+  position: absolute;
+  transform-origin: 50% 100%;
+  animation: candy-sway var(--motion-candy-sway, 6000ms) ease-in-out infinite;
+}
+
+@keyframes candy-sway {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+
+.sprig {
+  position: absolute;
+  opacity: 0.9;
+}
+
+/* ---- Independence Day ------------------------------------------------- */
+
+.tricolor {
+  display: block;
+  height: 3px;
+  background: linear-gradient(90deg, #ff9933 0 33.33%, #ffffff 33.33% 66.66%, #138808 66.66% 100%);
+  opacity: 0.85;
+}
+
+.chakra {
+  position: absolute;
+  opacity: 0.14;
+}
+
+.confetti {
+  position: absolute;
+  inset: 0;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -12px;
+  width: 6px;
+  height: 10px;
+  border-radius: 1px;
+  opacity: 0;
+  animation: confetti-fall var(--motion-confetti-burst, 1800ms) ease-out 1 forwards;
+}
+
+@keyframes confetti-fall {
+  0% { opacity: 0; transform: translate3d(0, 0, 0) rotate(0deg); }
+  10% { opacity: 0.9; }
+  80% { opacity: 0.7; }
+  100% { opacity: 0; transform: translate3d(var(--drift), 320px, 0) rotate(var(--spin)); }
+}
+
+/* ---- Artifacts (themes/shared/artifacts.tsx) ------------------------- */
+
+.artifact {
+  position: absolute;
+  will-change: transform;
+}
+.artifact img {
+  display: block;
+  height: auto;
+  max-width: none;
+  user-select: none;
+}
+
+/* across: straight flight, left to right (or right to left) */
+.artifact-across,
+.artifact-arc {
+  left: 0;
+  animation: artifact-across var(--dur) linear forwards;
+}
+.artifact-across.is-rtl,
+.artifact-arc.is-rtl {
+  animation-name: artifact-across-rtl;
+}
+@keyframes artifact-across {
+  from { transform: translate3d(-30vw, 0, 0); }
+  to { transform: translate3d(115vw, 0, 0); }
+}
+@keyframes artifact-across-rtl {
+  from { transform: translate3d(115vw, 0, 0); }
+  to { transform: translate3d(-30vw, 0, 0); }
+}
+
+.artifact-craft {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.artifact-bob {
+  position: relative;
+  display: block;
+  animation: artifact-bob 3.2s ease-in-out infinite;
+}
+@keyframes artifact-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* arc: dip and rise while crossing (sleigh) */
+.artifact-arc .artifact-bob {
+  animation: artifact-arc var(--dur) ease-in-out forwards;
+}
+@keyframes artifact-arc {
+  0% { transform: translateY(8vh) rotate(-4deg); }
+  50% { transform: translateY(-2vh) rotate(0deg); }
+  100% { transform: translateY(6vh) rotate(4deg); }
+}
+
+/* rise: launch from below the fold and climb */
+.artifact-rise {
+  bottom: -12vh;
+  animation: artifact-rise var(--dur) cubic-bezier(0.2, 0.6, 0.35, 1) forwards;
+}
+@keyframes artifact-rise {
+  0% { transform: translate3d(0, 0, 0); opacity: 0; }
+  10% { opacity: 1; }
+  92% { opacity: 1; }
+  100% { transform: translate3d(1.5vw, calc(-1 * (var(--alt) + 12vh)), 0); opacity: 0; }
+}
+
+/* Trails */
+.trail-smoke {
+  position: absolute;
+  top: 50%;
+  right: 85%;
+  width: 34vw;
+  height: 4px;
+  margin-top: -2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, var(--smoke) 85%);
+  opacity: 0.7;
+  filter: blur(1.5px);
+}
+
+.trail-stardust {
+  position: absolute;
+  top: 70%;
+  right: 80%;
+  width: 18vw;
+  height: 10px;
+  background-image: radial-gradient(circle, rgb(255 244 200 / 0.9) 0 1px, transparent 1.5px);
+  background-size: 14px 10px;
+  mask-image: linear-gradient(90deg, transparent, #000);
+  animation: stardust 0.6s linear infinite;
+}
+@keyframes stardust {
+  to { background-position: 14px 0; }
+}
+
+.trail-sparkle {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 4px;
+  height: 70px;
+  margin-left: -2px;
+  background: linear-gradient(180deg, rgb(255 209 102 / 0.95), transparent);
+  border-radius: 999px;
+  filter: blur(0.6px);
+}
+.trail-sparkle i {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 999px;
+  background: #fff4c2;
+  box-shadow: 0 0 6px 2px rgb(255 190 80 / 0.8);
+  animation: spark 0.5s ease-in-out infinite alternate;
+}
+@keyframes spark {
+  from { opacity: 0.2; transform: scale(0.6); }
+  to { opacity: 1; transform: scale(1.2); }
+}
+
+/* Firework burst at the top of a rise */
+.artifact-burst {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+/* Core flash */
+.burst-flash {
+  position: absolute;
+  left: calc(var(--flash) / -2);
+  top: calc(var(--flash) / -2);
+  width: var(--flash);
+  height: var(--flash);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(255 244 214 / 0.9), color-mix(in oklab, var(--color-primary) 45%, transparent) 40%, transparent);
+  opacity: 0;
+  transform: scale(0.2);
+  animation: burst-flash 700ms ease-out forwards;
+}
+@keyframes burst-flash {
+  0% { opacity: 0; transform: scale(0.2); }
+  15% { opacity: 1; transform: scale(0.7); }
+  100% { opacity: 0; transform: scale(1.15); }
+}
+
+/* Sparks: radial streaks that fly out, droop, crackle and fade */
+.artifact-burst i {
+  position: absolute;
+  left: -7px;
+  top: -1.5px;
+  width: 14px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, var(--spark));
+  box-shadow: 0 0 8px 1px color-mix(in oklab, var(--spark) 70%, transparent);
+  opacity: 0;
+  animation: burst var(--burst-dur, 1900ms) cubic-bezier(0.15, 0.7, 0.3, 1) forwards;
+}
+@keyframes burst {
+  0% { opacity: 0; transform: rotate(var(--angle)) translateX(0) scaleX(0.4); }
+  8% { opacity: 1; transform: rotate(var(--angle)) translateX(calc(var(--dist) * 0.25)) scaleX(1.6); }
+  55% { opacity: 1; transform: rotate(var(--angle)) translateX(calc(var(--dist) * 0.9)) translateY(6px) scaleX(1); }
+  70% { opacity: 0.35; }
+  80% { opacity: 0.9; }
+  90% { opacity: 0.25; }
+  100% { opacity: 0; transform: rotate(var(--angle)) translateX(var(--dist)) translateY(28px) scaleX(0.6); }
+}
+
+
+
+/* ---- Regular: robot arms + car (themes/regular) ----------------------- */
+
+.robot-arm {
+  position: absolute;
+  width: 11rem;
+  height: auto;
+  opacity: 0.5;
+  filter: drop-shadow(0 0 0.5rem rgb(120 169 255 / 0.25));
+}
+.robot-arm.is-mirrored {
+  transform: scaleX(-1);
+}
+.robot-arm g {
+  transform-box: view-box;
+  animation-duration: 7s;
+  animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+  animation-iteration-count: infinite;
+}
+.robot-arm.is-mirrored g,
+.robot-arm.is-mirrored .arm-jaw-l,
+.robot-arm.is-mirrored .arm-jaw-r {
+  animation-delay: -3.5s;
+}
+.arm-shoulder {
+  transform-origin: 70px 178px;
+  animation-name: arm-shoulder;
+}
+.arm-elbow {
+  transform-origin: 70px 90px;
+  animation-name: arm-elbow;
+}
+/* The wrist cancels the other joints so the gripper always hangs straight down. */
+.arm-wrist {
+  transform-origin: 158px 90px;
+  animation-name: arm-wrist;
+}
+.arm-jaw-l,
+.arm-jaw-r {
+  transform-box: view-box;
+  animation: arm-jaw-l 7s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+.arm-jaw-r {
+  animation-name: arm-jaw-r;
+}
+.arm-led {
+  animation: arm-led 1.4s ease-in-out infinite;
+}
+@keyframes arm-shoulder {
+  0%, 100% { transform: rotate(-8deg); }
+  30%, 45% { transform: rotate(18deg); }
+  70% { transform: rotate(-22deg); }
+}
+@keyframes arm-elbow {
+  0%, 100% { transform: rotate(-10deg); }
+  30%, 45% { transform: rotate(28deg); }
+  70% { transform: rotate(-14deg); }
+}
+@keyframes arm-wrist {
+  0%, 100% { transform: rotate(18deg); }
+  30%, 45% { transform: rotate(-46deg); }
+  70% { transform: rotate(36deg); }
+}
+@keyframes arm-jaw-l {
+  0%, 30%, 75%, 100% { transform: translateX(-3px); }
+  36%, 68% { transform: translateX(1px); }
+}
+@keyframes arm-jaw-r {
+  0%, 30%, 75%, 100% { transform: translateX(3px); }
+  36%, 68% { transform: translateX(-1px); }
+}
+@keyframes arm-led {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+
+/* The car drives on the ground: a small engine rumble instead of the flying bob. */
+[data-theme="regular"] .artifact-bob {
+  animation: car-rumble 0.45s ease-in-out infinite;
+}
+@keyframes car-rumble {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-1px); }
+}
+
+/* ---- Cursor trail (themes/shared/cursor-trail.tsx) -------------------- */
+
+.cursor-trail {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 60;
+  pointer-events: none;
+}
+
+/* ---- Small screens: keep decorations light -------------------------- */
+
+@media (max-width: 767px) {
+  .season-bulb:nth-child(even) {
+    display: none;
+  }
+  .snowflake:nth-child(3n) {
+    display: none;
+  }
+}
+
+/* ---- Reduced motion: static alternative ---------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .season-layer *,
+  .season-top *,
+  .season-hero * {
+    animation: none !important;
+  }
+  /* Falling things have no meaningful still frame. */
+  .snowflake,
+  .confetti,
+  .artifact-layer {
+    display: none !important;
+  }
+}

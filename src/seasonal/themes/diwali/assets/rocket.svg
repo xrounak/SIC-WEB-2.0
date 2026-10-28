@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 72">
+  <!-- Placeholder: firework rocket pointing up. Replace with your own SVG. -->
+  <path d="M12 2 L18 14 L6 14 Z" fill="#FF7A32"/>
+  <rect x="6" y="14" width="12" height="20" rx="1.5" fill="#F5B942"/>
+  <path d="M6 20 H18 M6 27 H18" stroke="#FF7A32" stroke-width="1.5"/>
+  <path d="M6 30 L1 38 L6 36 Z M18 30 L23 38 L18 36 Z" fill="#9B5DE5"/>
+  <rect x="11" y="34" width="2" height="36" rx="1" fill="#C8A26A"/>
+</svg>

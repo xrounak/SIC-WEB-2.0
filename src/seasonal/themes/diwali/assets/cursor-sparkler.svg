@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <!-- Sparkler: lit tip at top-left (the hotspot), wire handle toward bottom-right. -->
+  <defs>
+    <radialGradient id="g" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#FFFBEA"/>
+      <stop offset="0.35" stop-color="#FFD166"/>
+      <stop offset="1" stop-color="#FF7A32" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <path d="M8 8 L29 29" stroke="#3A2F2A" stroke-width="3.2" stroke-linecap="round"/>
+  <path d="M8 8 L29 29" stroke="#B9BECA" stroke-width="1.6" stroke-linecap="round"/>
+  <path d="M8 8 L16 16" stroke="#6B4B3A" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="5" cy="5" r="5" fill="url(#g)"/>
+  <path d="M5 0.5 L5.8 4.2 L9.5 5 L5.8 5.8 L5 9.5 L4.2 5.8 L0.5 5 L4.2 4.2 Z" fill="#FFFBEA"/>
+</svg>

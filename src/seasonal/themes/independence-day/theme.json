@@ -1,0 +1,77 @@
+{
+  "key": "independenceDay",
+  "label": "Independence Day",
+  "description": "A respectful, modern Indian tricolor-inspired theme with saffron, white, green, and navy accents.",
+  "colors": {
+    "background": "#0A1018",
+    "surface": "#131C27",
+    "surfaceElevated": "#1A2735",
+    "text": "#F7F8FA",
+    "textMuted": "#BBC5D0",
+    "primary": "#FF9933",
+    "primaryHover": "#FFB45E",
+    "accent": "#138808",
+    "accentSecondary": "#FFFFFF",
+    "navy": "#1B3C73",
+    "border": "#334354",
+    "focusRing": "#FFB45E",
+    "ambientGlow": "rgba(255, 153, 51, 0.12)"
+  },
+  "fonts": {
+    "heading": "Cinzel",
+    "body": "Manrope",
+    "fallback": "system-ui, sans-serif",
+    "character": "Purposeful, optimistic, dignified"
+  },
+  "style": {
+    "visualDirection": "Professional dark interface with measured tricolor accents and subtle navy details.",
+    "gradients": [
+      "linear-gradient(90deg, rgba(255,153,51,0.10), rgba(255,255,255,0.03), rgba(19,136,8,0.10))",
+      "linear-gradient(135deg, #131C27 0%, #0A1018 100%)"
+    ],
+    "shadows": "Neutral shadows; avoid strong colored glow.",
+    "borders": "Neutral borders with restrained saffron or green accents for selected states."
+  },
+  "art": {
+    "decorations": [
+      {
+        "type": "tricolorRibbon",
+        "placement": "A thin decorative ribbon near the hero edge or footer; never behind body text.",
+        "animation": "Optional slow wave or static SVG.",
+        "density": "Very low"
+      },
+      {
+        "type": "abstractTricolorGradient",
+        "placement": "Soft background glow in empty hero or banner areas.",
+        "animation": "Static gradient preferred.",
+        "density": "Low"
+      },
+      {
+        "type": "ashokaChakraMotif",
+        "placement": "Small, tasteful watermark in an open background area when appropriate.",
+        "animation": "Static; no spinning by default.",
+        "density": "Very low"
+      },
+      {
+        "type": "subtleConfetti",
+        "placement": "Optional, limited to a brief celebratory hero effect.",
+        "animation": "Short and non-looping; disabled under reduced motion.",
+        "density": "Very low"
+      }
+    ],
+    "assetStyle": "Geometric SVGs and restrained Indian tricolor accents; use official symbols respectfully and accurately.",
+    "avoid": [
+      "Distorting the Indian flag or Ashoka Chakra",
+      "Using the flag as a floor, background texture behind text, or an arbitrary card fill",
+      "Excessive confetti, fireworks, or patriotic imagery that overwhelms the club identity"
+    ]
+  },
+  "motion": {
+    "enabled": true,
+    "durationMs": {
+      "ribbonWave": 9000,
+      "confettiBurst": 1800
+    },
+    "reducedMotion": "Use static gradients and ornaments; disable confetti and wave motion."
+  }
+}

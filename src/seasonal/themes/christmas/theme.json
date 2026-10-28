@@ -1,0 +1,77 @@
+{
+  "key": "christmas",
+  "label": "Christmas",
+  "description": "Calm winter-night atmosphere with evergreen, cranberry, snow, and warm festive lights.",
+  "colors": {
+    "background": "#08110F",
+    "surface": "#101D19",
+    "surfaceElevated": "#172822",
+    "text": "#F5F7F2",
+    "textMuted": "#B9C9C1",
+    "primary": "#5BC49A",
+    "primaryHover": "#82DDB8",
+    "accent": "#D94F5C",
+    "accentSecondary": "#E7C66A",
+    "border": "#2C443A",
+    "focusRing": "#82DDB8",
+    "ambientGlow": "rgba(91, 196, 154, 0.14)"
+  },
+  "fonts": {
+    "heading": "Cinzel",
+    "body": "Manrope",
+    "fallback": "system-ui, sans-serif",
+    "character": "Friendly, crisp, calm"
+  },
+  "style": {
+    "visualDirection": "Deep evergreen surfaces, restrained red accents, icy highlights, and warm lights.",
+    "gradients": [
+      "radial-gradient(circle at 85% 8%, rgba(91,196,154,0.12), transparent 34%)",
+      "linear-gradient(135deg, #101D19 0%, #08110F 100%)"
+    ],
+    "shadows": "Soft green or warm-white glow on selected accents only.",
+    "borders": "Muted evergreen borders with occasional cranberry or gold accents."
+  },
+  "art": {
+    "decorations": [
+      {
+        "type": "snowflakes",
+        "placement": "Sparse flakes near page edges and in empty hero background space.",
+        "animation": "Slow downward drift with varied sizes and opacity.",
+        "density": "Low"
+      },
+      {
+        "type": "candyCanes",
+        "placement": "Small corner illustrations or tiny accents near decorative dividers; never repeat across every card.",
+        "animation": "Static or a very subtle sway.",
+        "density": "Very low"
+      },
+      {
+        "type": "stringLights",
+        "placement": "A short strand along a hero edge or footer boundary.",
+        "animation": "Gentle warm twinkle without flashing.",
+        "density": "Low"
+      },
+      {
+        "type": "evergreenSprigs",
+        "placement": "Occasional corner or section-edge ornament.",
+        "animation": "Static SVG.",
+        "density": "Very low"
+      }
+    ],
+    "assetStyle": "Clean vector snowflakes, restrained candy-cane stripes, evergreen sprigs, and warm-white lights.",
+    "avoid": [
+      "Dense snowfall that reduces readability",
+      "Large cartoon characters or oversized holiday props",
+      "Red and green combinations that reduce text contrast"
+    ]
+  },
+  "motion": {
+    "enabled": true,
+    "durationMs": {
+      "snowfall": 18000,
+      "lightTwinkle": 3500,
+      "candySway": 6000
+    },
+    "reducedMotion": "Disable falling snow and swaying; retain static edge decorations."
+  }
+}

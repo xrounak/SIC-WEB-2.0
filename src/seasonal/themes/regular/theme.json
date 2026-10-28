@@ -1,0 +1,45 @@
+{
+  "key": "regular",
+  "label": "Regular",
+  "description": "Neutral year-round mode with robot arms and a passing car.",
+  "colors": {
+    "background": "#0B0F14",
+    "surface": "#121923",
+    "surfaceElevated": "#1A2430",
+    "text": "#F5F7FA",
+    "textMuted": "#B5C0CC",
+    "primary": "#78A9FF",
+    "primaryHover": "#9BC0FF",
+    "accent": "#63D6B0",
+    "border": "#2B3745",
+    "focusRing": "#9BC0FF",
+    "ambientGlow": "rgba(120, 169, 255, 0.08)"
+  },
+  "fonts": {
+    "heading": "Cinzel",
+    "body": "Manrope",
+    "fallback": "system-ui, sans-serif",
+    "character": "Neutral, clear, professional"
+  },
+  "style": {
+    "visualDirection": "Clean product UI with restrained blue and teal accents.",
+    "gradients": [
+      "linear-gradient(135deg, #121923 0%, #0B0F14 100%)"
+    ],
+    "shadows": "Subtle neutral elevation.",
+    "borders": "Consistent neutral borders."
+  },
+  "art": {
+    "decorations": [],
+    "assetStyle": "No seasonal artwork.",
+    "avoid": [
+      "Festival-specific decorations",
+      "Ambient seasonal color overlays"
+    ]
+  },
+  "motion": {
+    "enabled": false,
+    "durationMs": {},
+    "reducedMotion": "No seasonal animation."
+  }
+}

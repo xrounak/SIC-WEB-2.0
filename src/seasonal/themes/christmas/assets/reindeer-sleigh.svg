@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 70">
+  <!-- Placeholder: two reindeer pulling a sleigh, facing right. Replace with your own SVG. -->
+  <g fill="#F5F7F2">
+    <!-- lead reindeer -->
+    <path d="M168 34 C176 30 188 30 194 33 L198 26 L202 27 L200 34 C204 36 205 40 202 42 L196 42 L192 52 L188 52 L190 42 L176 42 L172 54 L168 54 L170 42 C164 41 163 37 168 34 Z"/>
+    <path d="M197 26 L194 16 L197 18 L198 12 L200 19 L203 14 L201 25 Z"/>
+    <!-- second reindeer -->
+    <path d="M128 38 C136 34 148 34 154 37 L158 30 L162 31 L160 38 C164 40 165 44 162 46 L156 46 L152 56 L148 56 L150 46 L136 46 L132 58 L128 58 L130 46 C124 45 123 41 128 38 Z"/>
+    <path d="M157 30 L154 20 L157 22 L158 16 L160 23 L163 18 L161 29 Z"/>
+  </g>
+  <circle cx="203" cy="31" r="2" fill="#D94F5C"/>
+  <!-- harness -->
+  <path d="M30 44 C70 40 100 42 130 42 M150 41 C160 38 166 37 172 37" stroke="#E7C66A" stroke-width="1.2" fill="none"/>
+  <!-- sleigh -->
+  <path d="M10 36 L50 36 C56 36 58 40 56 46 L54 52 L14 52 C8 52 6 44 10 36 Z" fill="#D94F5C"/>
+  <path d="M4 58 L58 58 C64 58 66 54 64 52" stroke="#E7C66A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M18 52 L18 58 M46 52 L46 58" stroke="#E7C66A" stroke-width="2"/>
+  <!-- rider and sack -->
+  <circle cx="34" cy="26" r="6" fill="#F5F7F2"/>
+  <path d="M26 36 C26 30 42 30 42 36 Z" fill="#D94F5C"/>
+  <path d="M14 36 C10 26 16 20 22 24 C24 28 22 33 20 36 Z" fill="#5BC49A"/>
+</svg>

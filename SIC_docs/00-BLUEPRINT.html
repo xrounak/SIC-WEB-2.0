@@ -1,0 +1,799 @@
+<title>SIC Nexus 2.0 Blueprint</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: engineering spec sheet. Sticky section index on the left, one reading column, diagrams in scroll wells. */
+:root {
+  --bg: #f5f7f9;
+  --surface: #ffffff;
+  --ink: #15202b;
+  --muted: #566573;
+  --line: #d8dfe6;
+  --accent: #0b6e8a;
+  --accent-soft: #e0eff4;
+  --p0: #1d7a4a;
+  --p0-soft: #e2f3e9;
+  --p1: #8a5a0b;
+  --p1-soft: #f6ecd9;
+  --warn: #a3361f;
+  --warn-soft: #f8e4de;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1418; --surface: #151d23; --ink: #e3eaef; --muted: #93a3b0; --line: #26323b;
+    --accent: #4fb6d3; --accent-soft: #15313b;
+    --p0: #6fcf97; --p0-soft: #15301f; --p1: #e0b36a; --p1-soft: #33280f;
+    --warn: #f08b72; --warn-soft: #3a1c15;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1418; --surface: #151d23; --ink: #e3eaef; --muted: #93a3b0; --line: #26323b;
+  --accent: #4fb6d3; --accent-soft: #15313b;
+  --p0: #6fcf97; --p0-soft: #15301f; --p1: #e0b36a; --p1-soft: #33280f;
+  --warn: #f08b72; --warn-soft: #3a1c15;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 15px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.shell { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 48px; padding-block: 40px 80px; }
+nav.toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 24px); align-self: start; display: flex; flex-direction: column; gap: 2px; font-size: 13px; }
+nav.toc .label { font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+nav.toc a { color: var(--muted); text-decoration: none; padding: 4px 10px; border-left: 2px solid var(--line); }
+nav.toc a:hover, nav.toc a:focus-visible { color: var(--accent); border-left-color: var(--accent); outline: none; }
+main { min-width: 0; display: flex; flex-direction: column; gap: 64px; }
+header.doc { display: flex; flex-direction: column; gap: 14px; border-bottom: 1px solid var(--line); padding-bottom: 32px; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: clamp(32px, 5vw, 48px); font-weight: 700; letter-spacing: -.01em; }
+h2 { font-size: 28px; font-weight: 700; }
+h3 { font-size: 18px; font-weight: 500; }
+p { margin: 0; max-width: 68ch; }
+.lede { font-size: 17px; color: var(--muted); }
+section { display: flex; flex-direction: column; gap: 20px; scroll-margin-top: 24px; }
+.sub { display: flex; flex-direction: column; gap: 12px; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px 20px; font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.decisions { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.decisions div { background: var(--surface); padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
+.decisions dt { font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.decisions dd { margin: 0; font-weight: 500; }
+dl { margin: 0; }
+.well { background: var(--surface); border: 1px solid var(--line); padding: 20px; overflow-x: auto; }
+.well pre.mermaid { margin: 0; background: transparent; min-width: 560px; display: flex; justify-content: center; }
+.caption { font-size: 13px; color: var(--muted); }
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 500; background: var(--bg); }
+tr:last-child td { border-bottom: none; }
+code, .route { font-family: var(--font-mono); font-size: 12.5px; }
+.route { white-space: nowrap; color: var(--accent); }
+.tag { display: inline-block; font-family: var(--font-mono); font-size: 11px; padding: 1px 7px; border-radius: 3px; white-space: nowrap; }
+.tag.p0 { color: var(--p0); background: var(--p0-soft); }
+.tag.p1 { color: var(--p1); background: var(--p1-soft); }
+.yes { color: var(--p0); font-weight: 600; }
+.no { color: var(--muted); }
+.scope { color: var(--p1); font-weight: 500; }
+.note { border-left: 3px solid var(--accent); background: var(--accent-soft); padding: 12px 16px; max-width: 76ch; }
+.note.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+.grid2 > * { min-width: 0; }
+ol.q { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 12px; max-width: 76ch; }
+ol.q li strong { display: block; }
+ol.q li span { color: var(--muted); }
+ul.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; max-width: 72ch; }
+@media (max-width: 860px) {
+  .shell { grid-template-columns: minmax(0, 1fr); gap: 24px; padding-block: 24px 60px; }
+  nav.toc { position: static; flex-direction: row; flex-wrap: wrap; gap: 6px; }
+  nav.toc .label { width: 100%; margin: 0; }
+  nav.toc a { border: 1px solid var(--line); padding: 3px 9px; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+<nav class="toc" aria-label="Sections">
+  <span class="label">Contents</span>
+  <a href="#decisions">Decisions</a>
+  <a href="#architecture">Architecture</a>
+  <a href="#identity">Identity model</a>
+  <a href="#schema">Schema</a>
+  <a href="#states">Status machines</a>
+  <a href="#pages">Pages &amp; routes</a>
+  <a href="#flows">User flows</a>
+  <a href="#rpc">Trusted operations</a>
+  <a href="#permissions">Permissions</a>
+  <a href="#open">Open questions</a>
+</nav>
+
+<main>
+<header class="doc">
+  <span class="eyebrow">Science &amp; Innovation Club · Platform rebuild</span>
+  <h1>SIC Nexus 2.0 Blueprint</h1>
+  <p class="lede">Schema, features, pages and user flows for the first release. Business rules carry over from v1 and the SIC_docs spec. Experience, flows and UI are new; visual design is pending inspiration references.</p>
+  <div class="meta"><span>Draft · 28 Oct 2026</span><span>Scope: P0 MVP</span><span>Stack: Next.js · Supabase · Vercel</span></div>
+</header>
+
+<section id="decisions">
+  <h2>Decisions so far</h2>
+  <dl class="decisions">
+    <div><dt>Codebase</dt><dd>New project, new Supabase instance. v1 is reference only.</dd></div>
+    <div><dt>Framework</dt><dd>Next.js App Router on Vercel</dd></div>
+    <div><dt>Data access</dt><dd>supabase-js (<code>@supabase/ssr</code>) as the user; RLS is the guard; writes go through Postgres RPCs</dd></div>
+    <div><dt>Accounts</dt><dd>Everyone signs in, including registrants and applicants</dd></div>
+    <div><dt>Sign-in</dt><dd>Google, email link / OTP code, email + password</dd></div>
+    <div><dt>Email domain</dt><dd>No college domain exists. Anyone can sign up; student status is verified separately.</dd></div>
+    <div><dt>Approvals</dt><dd>Two stages: team lead, then VP / President for major events</dd></div>
+    <div><dt>Team registration</dt><dd>Leader registers and invites teammates by email; each teammate joins with an account</dd></div>
+    <div><dt>Release scope</dt><dd>Spec P0. QR attendance, competitions, certificates, news are P1.</dd></div>
+  </dl>
+</section>
+
+<section id="architecture">
+  <h2>Architecture</h2>
+  <p>The browser never holds a privileged key. Server Components read data as the signed-in user, so Row Level Security decides what comes back. Every write that changes a status, a role or a seat count goes through one Postgres function. That function checks permission, validates the transition and writes the audit row in the same transaction.</p>
+  <div class="well"><pre class="mermaid">
+flowchart LR
+  U["Browser"] --> MW["Next.js middleware: refresh session, gate /portal and /manage"]
+  MW --> RSC["Server Components: reads as the user"]
+  MW --> SA["Server Actions: Zod validation, then RPC"]
+  RSC --> PG[("Postgres with RLS")]
+  SA --> RPC["SECURITY DEFINER RPCs: transitions, registration, roles"]
+  RPC --> PG
+  RPC --> OB["email_outbox, notifications, audit_logs"]
+  OB --> W["Vercel cron / route handler sends email via provider"]
+  U --> AUTH["Supabase Auth: Google, OTP, password"]
+  U --> ST["Supabase Storage: public-media, avatars, private-docs"]
+  </pre></div>
+  <ul class="plain">
+    <li>Only the publishable key reaches the browser. The service-role key lives in Vercel server env and is used only by the email worker.</li>
+    <li>Email is written to an outbox inside the same transaction, then delivered separately. A failed send never rolls back a registration or approval.</li>
+    <li>Admin Telegram alerts (from v1) become one more outbox consumer on the server. The bot token never ships to the client.</li>
+  </ul>
+</section>
+
+<section id="identity">
+  <h2>Identity model</h2>
+  <p>Because everyone has an account, an account no longer means club membership. Three separate fields describe a person, and each changes through its own process.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Field</th><th>Values</th><th>Changed by</th></tr></thead>
+    <tbody>
+      <tr><td><code>student_status</code></td><td><code>external</code> · <code>unverified</code> · <code>pending</code> · <code>verified</code> · <code>rejected</code></td><td>Onboarding sets <code>pending</code> when a user claims to be our student and gives a roll number. Leadership verifies, usually during recruitment screening.</td></tr>
+      <tr><td><code>member_status</code></td><td><code>none</code> · <code>applicant</code> · <code>member</code> · <code>alumni</code> · <code>suspended</code></td><td>Submitting an application sets <code>applicant</code>. A <code>selected</code> decision sets <code>member</code>. Leadership handles alumni and suspension.</td></tr>
+      <tr><td><code>user_roles</code></td><td><code>team_lead</code> · <code>vice_president</code> · <code>president</code> · <code>faculty_coordinator</code> · <code>admin</code></td><td>Admin only, through <code>assign_role</code>. Audited. Lead scope comes from <code>team_members.team_role = 'lead'</code>, not from the role alone.</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Naming: <strong>teams</strong> are the club's standing units (Robotics, Media, PR). <strong>event_teams</strong> are groups that register together for one event. They never share a table.</p>
+</section>
+
+<section id="schema">
+  <h2>Schema</h2>
+  <p>Every table uses a <code>uuid</code> key, <code>timestamptz</code> times, RLS enabled and deny by default. Public pages use slugs. Important records are archived, not deleted. Each area below becomes its own migration file.</p>
+
+  <div class="sub">
+    <h3>Identity and organisation</h3>
+    <div class="well"><pre class="mermaid">
+erDiagram
+  profiles ||--o{ user_roles : holds
+  profiles ||--o{ member_domains : joins
+  domains ||--o{ member_domains : has
+  profiles ||--o{ team_members : joins
+  teams ||--o{ team_members : has
+  domains |o--o{ teams : groups
+  profiles {
+    uuid id PK "same as auth.users.id"
+    text full_name
+    text email "private, synced from auth"
+    text phone "private"
+    text avatar_url "Google photo or storage path"
+    text bio
+    text college_name
+    text branch
+    smallint academic_year
+    text roll_number "private"
+    student_status student_status
+    member_status member_status
+    bool public_profile "opt-in, default false"
+    timestamptz onboarded_at
+  }
+  user_roles {
+    uuid user_id FK
+    app_role role
+    uuid assigned_by FK
+    timestamptz created_at
+  }
+  domains {
+    uuid id PK
+    text name UK
+    text slug UK
+    text description
+    int sort_order
+    bool is_active
+  }
+  member_domains {
+    uuid member_id FK
+    uuid domain_id FK
+    timestamptz joined_at
+  }
+  teams {
+    uuid id PK
+    text name
+    text slug UK
+    text team_type "technical, operations, media"
+    uuid domain_id FK "nullable"
+    bool is_active
+  }
+  team_members {
+    uuid team_id FK
+    uuid member_id FK
+    text team_role "member, deputy, lead"
+    text status "active, inactive"
+    timestamptz joined_at
+  }
+    </pre></div>
+  </div>
+
+  <div class="sub">
+    <h3>Events, registration and event teams</h3>
+    <div class="well"><pre class="mermaid">
+erDiagram
+  teams ||--o{ events : owns
+  events ||--o{ event_reviews : "decision log"
+  events ||--o{ event_registrations : receives
+  events ||--o{ event_teams : has
+  event_teams ||--o{ event_registrations : groups
+  event_teams ||--o{ team_invites : sends
+  profiles ||--o{ event_registrations : makes
+  events {
+    uuid id PK
+    text slug UK
+    text title
+    text summary
+    text description
+    text event_type "workshop, hackathon, competition, seminar, external, meeting"
+    bool is_major "needs VP or President"
+    event_status status
+    text visibility "public, members"
+    text venue
+    timestamptz starts_at
+    timestamptz ends_at
+    timestamptz reg_opens_at
+    timestamptz reg_closes_at
+    int capacity "null means unlimited"
+    text participation "individual, team"
+    smallint team_min
+    smallint team_max
+    uuid owner_team_id FK
+    uuid domain_id FK
+    text cover_path
+    uuid created_by FK
+    timestamptz published_at
+  }
+  event_reviews {
+    uuid id PK
+    uuid event_id FK
+    text stage "lead, final"
+    uuid reviewer_id FK
+    text decision "approved, changes_requested, rejected"
+    text notes
+    timestamptz created_at
+  }
+  event_registrations {
+    uuid id PK
+    uuid event_id FK
+    uuid user_id FK
+    uuid event_team_id FK "null for individual"
+    text team_role "leader, member"
+    registration_status status
+    timestamptz created_at
+  }
+  event_teams {
+    uuid id PK
+    uuid event_id FK
+    text name "unique per event"
+    uuid leader_id FK
+    text status "forming, complete, withdrawn"
+  }
+  team_invites {
+    uuid id PK
+    uuid event_team_id FK
+    text email "normalised"
+    uuid invited_by FK
+    text token_hash
+    text status "pending, accepted, declined, revoked, expired"
+    timestamptz expires_at
+    uuid accepted_by FK
+  }
+    </pre></div>
+    <p class="caption">Unique (<code>event_id</code>, <code>user_id</code>) on registrations: one seat per person per event, alone or in a team. Capacity counts registrations, with the check made inside the RPC under a row lock on the event.</p>
+  </div>
+
+  <div class="grid2">
+    <div class="sub">
+      <h3>Projects</h3>
+      <div class="well"><pre class="mermaid">
+erDiagram
+  projects ||--o{ project_contributors : credits
+  projects ||--o{ project_domains : tagged
+  projects ||--o{ project_media : shows
+  projects ||--o{ project_reviews : "decision log"
+  projects {
+    uuid id PK
+    text slug UK
+    text title
+    text summary
+    text problem
+    text solution
+    text outcomes
+    text hardware_details
+    text software_details
+    text repo_url
+    text demo_url
+    project_status status
+    text visibility
+    uuid owner_team_id FK
+    uuid created_by FK
+    timestamptz published_at
+  }
+  project_contributors {
+    uuid project_id FK
+    uuid member_id FK
+    text contribution
+    timestamptz confirmed_at
+    bool is_public
+  }
+  project_domains {
+    uuid project_id FK
+    uuid domain_id FK
+  }
+  project_media {
+    uuid id PK
+    uuid project_id FK
+    text storage_path
+    text media_type
+    text caption
+    int sort_order
+  }
+  project_reviews {
+    uuid id PK
+    uuid project_id FK
+    uuid reviewer_id FK
+    text decision
+    text notes
+  }
+      </pre></div>
+    </div>
+    <div class="sub">
+      <h3>Recruitment</h3>
+      <div class="well"><pre class="mermaid">
+erDiagram
+  recruitment_cycles ||--o{ recruitment_applications : collects
+  recruitment_cycles ||--o{ recruitment_reviewers : "assigned to"
+  recruitment_applications ||--o{ recruitment_evaluations : "private notes"
+  recruitment_reviewers {
+    uuid cycle_id FK
+    uuid user_id FK
+    uuid assigned_by FK
+  }
+  recruitment_cycles {
+    uuid id PK
+    text name
+    timestamptz opens_at
+    timestamptz closes_at
+    text status "draft, open, closed, archived"
+    jsonb questions "extra prompts"
+  }
+  recruitment_applications {
+    uuid id PK
+    uuid cycle_id FK
+    uuid user_id FK "unique per cycle"
+    uuid_array domain_prefs
+    uuid_array team_prefs
+    text motivation
+    text experience
+    text portfolio_url
+    jsonb answers
+    application_status status
+    timestamptz submitted_at
+  }
+  recruitment_evaluations {
+    uuid id PK
+    uuid application_id FK
+    uuid evaluator_id FK
+    text stage
+    numeric score
+    text private_notes
+    text recommendation
+  }
+      </pre></div>
+      <p class="caption">Name, email, branch, year and roll number come from the applicant's profile. They are no longer copied into the application.</p>
+    </div>
+  </div>
+
+  <div class="sub">
+    <h3>Content and system</h3>
+    <div class="well"><pre class="mermaid">
+erDiagram
+  teams |o--o{ announcements : "team audience"
+  profiles ||--o{ notifications : receives
+  profiles ||--o{ audit_logs : performs
+  announcements {
+    uuid id PK
+    text title
+    text body "markdown"
+    text audience "public, members, team"
+    uuid team_id FK
+    text status "draft, published, archived"
+    timestamptz published_at
+    uuid created_by FK
+  }
+  notifications {
+    uuid id PK
+    uuid user_id FK
+    text kind
+    text title
+    text body
+    text target_url
+    timestamptz read_at
+  }
+  email_outbox {
+    uuid id PK
+    text to_email
+    text template
+    jsonb payload
+    text idempotency_key UK
+    text status "queued, sent, failed"
+    int attempts
+    text provider_message_id
+  }
+  audit_logs {
+    uuid id PK
+    uuid actor_id FK
+    text action
+    text entity_type
+    uuid entity_id
+    jsonb metadata
+    timestamptz created_at
+  }
+    </pre></div>
+  </div>
+
+  <div class="tablewrap"><table>
+    <thead><tr><th>Area</th><th>Tables</th><th>Release</th></tr></thead>
+    <tbody>
+      <tr><td>Identity, org, events, projects, recruitment, content, system</td><td>All tables above</td><td><span class="tag p0">P0</span></td></tr>
+      <tr><td>Attendance</td><td><code>attendance_sessions</code>, <code>attendance_records</code></td><td><span class="tag p1">P1</span></td></tr>
+      <tr><td>Competitions</td><td><code>competitions</code>, <code>competition_entries</code>, <code>competition_results</code>, <code>certificates</code></td><td><span class="tag p1">P1</span></td></tr>
+      <tr><td>Knowledge</td><td><code>news_articles</code>, <code>resources</code>, <code>sponsors</code></td><td><span class="tag p1">P1</span></td></tr>
+    </tbody>
+  </table></div>
+  <p class="caption">Storage buckets: <code>public-media</code> (published covers and project media), <code>avatars</code> (public read, owner write), <code>private-docs</code> (signed URLs only).</p>
+</section>
+
+<section id="states">
+  <h2>Status machines</h2>
+  <p>Only RPCs change these columns. The browser sends an intent such as approve, publish or withdraw, never a status value.</p>
+  <div class="sub">
+    <h3>Event</h3>
+    <div class="well"><pre class="mermaid">
+stateDiagram-v2
+  [*] --> draft
+  draft --> pending_review : submit
+  pending_review --> changes_requested : lead asks changes
+  changes_requested --> pending_review : resubmit
+  pending_review --> rejected : lead rejects
+  pending_review --> lead_approved : lead approves
+  lead_approved --> published : publish, minor event
+  lead_approved --> final_approved : VP or President approves, major event
+  lead_approved --> changes_requested : final reviewer asks changes
+  lead_approved --> rejected : final reviewer rejects
+  final_approved --> published : publish
+  published --> cancelled : cancel and notify registrants
+  published --> completed : after ends_at
+  completed --> archived
+  rejected --> [*]
+    </pre></div>
+  </div>
+  <div class="grid2">
+    <div class="sub">
+      <h3>Event team and invite</h3>
+      <div class="well"><pre class="mermaid">
+stateDiagram-v2
+  [*] --> forming : leader creates team
+  forming --> complete : accepted members reach team_min
+  complete --> forming : member withdraws below team_min
+  forming --> withdrawn : leader withdraws
+  complete --> withdrawn : leader withdraws
+  forming --> withdrawn : registration closes while incomplete
+      </pre></div>
+      <p class="caption">Invite: <code>pending</code> to <code>accepted</code>, <code>declined</code>, <code>revoked</code> by the leader, or <code>expired</code> at <code>reg_closes_at</code>.</p>
+    </div>
+    <div class="sub">
+      <h3>Application</h3>
+      <div class="well"><pre class="mermaid">
+stateDiagram-v2
+  [*] --> submitted
+  submitted --> screening
+  screening --> shortlisted
+  screening --> rejected
+  shortlisted --> interview
+  interview --> selected
+  interview --> waitlisted
+  interview --> rejected
+  waitlisted --> selected
+  submitted --> withdrawn : applicant withdraws
+  screening --> withdrawn : applicant withdraws
+      </pre></div>
+      <p class="caption">Applicants see a simpler status: Received, Under review, Interview, Decision. Internal stages and notes stay private.</p>
+    </div>
+  </div>
+  <p class="caption">Project: <code>draft</code> → <code>submitted</code> → <code>in_review</code> → <code>published</code> or <code>rejected</code>, with <code>changes_requested</code> going back to draft. Published projects can be archived.</p>
+</section>
+
+<section id="pages">
+  <h2>Pages and routes</h2>
+  <p>There are four route groups, each with its own layout. <code>/portal</code> is open to every signed-in account. Member-only sections unlock when <code>member_status = member</code>. <code>/manage</code> needs a leadership role or a lead seat on a team.</p>
+
+  <div class="sub">
+    <h3>Public · <code>(site)</code></h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Route</th><th>Page</th><th>Notes</th><th>Release</th></tr></thead>
+      <tbody>
+        <tr><td class="route">/</td><td>Home</td><td>Next events, featured projects, recruitment banner when a cycle is open</td><td><span class="tag p0">P0</span></td></tr>
+        <tr><td class="route">/about</td><td>About and leadership</td><td>Mission, governance, leadership cards built from opted-in profiles</td><td><span class="tag p0">P0</span></td></tr>
+        <tr><td class="route">/domains</td><td>Domains</td><td>All disciplines, with their teams</td><td><span class="tag p0">P0</span></td></tr>
+        <tr><td class="route">/domains/[slug]</td><td>Domain detail</td><td>Teams, projects and upcoming events for one domain</td><td><span class="tag p0">P0</span></td></tr>
+        <tr><td class="route">/events</td><td>Events</td><td>Upcoming and past, filter by type and domain</td><td><span class="tag p0">P0</span></td></tr>
+        <tr><td class="route">/events/[slug]</td><td>Event detail</td><td>Register button changes with state: open, full, closed, or already registered</td><td><span class="tag p0">P0</span></td></tr>
+        <tr><td class="route">/events/[slug]/register</td><td>Register</td><td>Sign-in required. Individual confirm, or team name plus invite emails</td><td><span class="tag p0">P0</span></td></tr>
+        <tr><td class="route">/invite/[token]</td><td>Team invite</td><td>Shows event and team, then Accept or Decline after sign-in</td><td><span class="tag p0">P0</span></td></tr>
+        <tr><td class="route">/projects</td><td>Projects</td><td>Gallery, filter by domain and status</td><td><span class="tag p0">P0</span></td></tr>
+        <tr><td class="route">/projects/[slug]</td><td>Project detail</td><td>Problem, build, outcomes, media, confirmed contributors</td><td><span class="tag p0">P0</span></td></tr>
+        <tr><td class="route">/join</td><td>Join SIC</td><td>How recruitment works, current cycle, eligibility</td><td><span class="tag p0">P0</span></td></tr>
+        <tr><td class="route">/join/apply</td><td>Application</td><td>Sign-in and verified-or-pending student status required</td><td><span class="tag p0">P0</span></td></tr>
+        <tr><td class="route">/contact</td><td>Contact</td><td>Social links and a contact form that writes through an RPC</td><td><span class="tag p0">P0</span></td></tr>
+        <tr><td class="route">/privacy, /terms</td><td>Policies</td><td>Required before collecting phone and roll numbers</td><td><span class="tag p0">P0</span></td></tr>
+        <tr><td class="route">/achievements, /news, /resources</td><td>Knowledge</td><td>After core launch</td><td><span class="tag p1">P1</span></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="sub">
+    <h3>Auth · <code>(auth)</code></h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Route</th><th>Page</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="route">/login</td><td>Sign in</td><td>One screen: Google button, email for a link or code, password as a secondary tab. Keeps <code>?next=</code>.</td></tr>
+        <tr><td class="route">/auth/callback</td><td>OAuth and link exchange</td><td>Route handler. Exchanges the code for a session cookie, then redirects.</td></tr>
+        <tr><td class="route">/forgot-password, /reset-password</td><td>Password reset</td><td>Only for password users</td></tr>
+        <tr><td class="route">/onboarding</td><td>Complete profile</td><td>Required once before registering or applying. Collects name, phone, college, and roll number for our students.</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="sub">
+    <h3>Portal · <code>/portal</code></h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Route</th><th>Page</th><th>Who</th></tr></thead>
+      <tbody>
+        <tr><td class="route">/portal</td><td>Dashboard: next events, pending invites, application status, notices</td><td>Any account</td></tr>
+        <tr><td class="route">/portal/profile</td><td>Edit profile, public-profile opt-in, sign-in methods</td><td>Any account</td></tr>
+        <tr><td class="route">/portal/registrations</td><td>My registrations</td><td>Any account</td></tr>
+        <tr><td class="route">/portal/registrations/[id]</td><td>Registration detail: team roster, resend or revoke invites, withdraw</td><td>Any account</td></tr>
+        <tr><td class="route">/portal/applications</td><td>My applications, applicant-visible status</td><td>Any account</td></tr>
+        <tr><td class="route">/portal/notifications</td><td>Notification centre</td><td>Any account</td></tr>
+        <tr><td class="route">/portal/teams</td><td>My club teams and domains</td><td class="scope">Member</td></tr>
+        <tr><td class="route">/portal/proposals</td><td>My event proposals; <span class="route">/new</span> and <span class="route">/[id]</span> show the review timeline</td><td class="scope">Member</td></tr>
+        <tr><td class="route">/portal/projects</td><td>My projects; <span class="route">/new</span>, <span class="route">/[id]/edit</span>, contribution confirmations</td><td class="scope">Member</td></tr>
+        <tr><td class="route">/portal/notices</td><td>Member and team announcements</td><td class="scope">Member</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="sub">
+    <h3>Manage · <code>/manage</code></h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Route</th><th>Page</th><th>Who</th></tr></thead>
+      <tbody>
+        <tr><td class="route">/manage</td><td>Inbox: everything waiting on me (reviews, applications, verifications)</td><td>Lead+</td></tr>
+        <tr><td class="route">/manage/events</td><td>Event queue by status</td><td>Lead (own teams), VP / President (all)</td></tr>
+        <tr><td class="route">/manage/events/[id]</td><td>Review and decide, edit, publish, cancel; tabs for registrations and teams; CSV export</td><td>Lead (own teams), VP / President (all)</td></tr>
+        <tr><td class="route">/manage/projects</td><td>Project review queue and publishing</td><td>Lead (own teams), VP / President (all)</td></tr>
+        <tr><td class="route">/manage/recruitment</td><td>Cycles and application pipeline (board view)</td><td>VP / President, assigned reviewers</td></tr>
+        <tr><td class="route">/manage/recruitment/[id]</td><td>Application, private evaluations, decision</td><td>VP / President, assigned reviewers</td></tr>
+        <tr><td class="route">/manage/members</td><td>Directory, student verification queue, member status</td><td>Lead (own teams), VP / President (all)</td></tr>
+        <tr><td class="route">/manage/teams, /manage/domains</td><td>Teams, domains and lead seats</td><td>VP / President</td></tr>
+        <tr><td class="route">/manage/announcements</td><td>Write and publish notices by audience</td><td>Lead (own team), VP / President (all)</td></tr>
+        <tr><td class="route">/manage/roles</td><td>Assign and revoke global roles</td><td>Admin</td></tr>
+        <tr><td class="route">/manage/audit</td><td>Audit log</td><td>President, Admin</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<section id="flows">
+  <h2>User flows</h2>
+
+  <div class="sub">
+    <h3>Sign in and onboarding</h3>
+    <p>Every flow that needs an account sends the visitor to <code>/login?next=…</code> and returns them to where they started. Onboarding happens once and asks only what the next step needs.</p>
+    <div class="well"><pre class="mermaid">
+flowchart TD
+  A(["Visitor taps Register, Apply or Sign in"]) --> B["/login with next URL"]
+  B --> C{"Method"}
+  C -->|Google| D["Google OAuth"]
+  C -->|Email| E["Magic link or 6-digit code"]
+  C -->|Password| F["Email and password"]
+  D --> G["/auth/callback sets session cookie"]
+  E --> G
+  F --> G
+  G --> H{"Profile onboarded?"}
+  H -->|Yes| M["Return to next URL"]
+  H -->|No| I["/onboarding: name, phone, college"]
+  I --> J{"Student of our college?"}
+  J -->|Yes| K["Branch, year, roll number. student_status = pending"]
+  J -->|No| L["student_status = external"]
+  K --> M
+  L --> M
+    </pre></div>
+  </div>
+
+  <div class="sub">
+    <h3>Event registration: individual and team</h3>
+    <div class="well"><pre class="mermaid">
+flowchart TD
+  A["/events/slug"] --> B{"Signed in and onboarded?"}
+  B -->|No| S["Sign in, return here"] --> B
+  B -->|Yes| C{"Open, seats left, not already registered?"}
+  C -->|No| X["Show full, closed or already-registered state"]
+  C -->|Yes| D{"Event format"}
+  D -->|Individual| E["register_individual"] --> OK["Registered. Confirmation email and notification"]
+  D -->|Team| F["Leader names team and enters teammate emails"]
+  F --> G["create_event_team: team forming, leader seat taken, invites emailed"]
+  G --> H["Teammate opens /invite/token"]
+  H --> I{"Signed in as the invited email?"}
+  I -->|No| J["Sign in or switch account"] --> I
+  I -->|Yes| K{"Already registered for this event?"}
+  K -->|Yes| Y["Blocked: one team per person"]
+  K -->|No| N["accept_invite: seat added to team"]
+  N --> P{"Accepted members reach team_min?"}
+  P -->|Yes| Q["Team complete. Leader notified"]
+  P -->|No| R["Still forming. Leader can resend or invite someone else"]
+    </pre></div>
+  </div>
+
+  <div class="sub">
+    <h3>Event proposal to publication</h3>
+    <div class="well"><pre class="mermaid">
+flowchart TD
+  A["Member: /portal/proposals/new"] --> B["Draft saved, any number of edits"]
+  B --> C["submit_event: pending_review"]
+  C --> D["Lead of owning team reviews"]
+  D -->|Request changes| E["changes_requested. Proposer edits"] --> C
+  D -->|Reject| R["rejected, reason shown to proposer"]
+  D -->|Approve| F{"is_major?"}
+  F -->|No| G["lead_approved: ready to publish"]
+  F -->|Yes| H["VP or President final review"]
+  H -->|Request changes| E
+  H -->|Reject| R
+  H -->|Approve| I["final_approved"]
+  G --> P["Publisher confirms registration window and publishes"]
+  I --> P
+  P --> Q["Live on /events. Registration opens at reg_opens_at"]
+    </pre></div>
+    <p class="caption">A person can never review their own proposal. Each decision adds an <code>event_reviews</code> row, which becomes the timeline on the proposal page.</p>
+  </div>
+
+  <div class="sub">
+    <h3>Recruitment to membership</h3>
+    <div class="well"><pre class="mermaid">
+flowchart TD
+  A["/join"] --> B{"Cycle open?"}
+  B -->|No| W["Show next cycle date, notify-me option"]
+  B -->|Yes| C{"Signed in and onboarded?"}
+  C -->|No| S["Sign in and onboarding"] --> C
+  C -->|Yes| D{"student_status"}
+  D -->|external| X["Not eligible: recruitment is for our students"]
+  D -->|pending or verified| E["/join/apply: domains, teams, motivation, portfolio"]
+  E --> F["submit_application. member_status = applicant"]
+  F --> G["Screening: reviewer checks roll number, verify_student"]
+  G --> H["Shortlist, interview, private evaluations"]
+  H --> I{"Final decision by VP or President"}
+  I -->|selected| J["decide_application: member_status = member, domains and teams added"]
+  I -->|waitlisted or rejected| K["Applicant sees outcome. Notes never shown"]
+  J --> L["Welcome email. Member sections of portal unlock"]
+    </pre></div>
+  </div>
+
+  <div class="sub">
+    <h3>Project submission</h3>
+    <div class="well"><pre class="mermaid">
+flowchart TD
+  A["Member: /portal/projects/new"] --> B["Details, domains, media, contributors picked from members"]
+  B --> C["submit_project"]
+  C --> N["Each contributor gets a confirm request"]
+  C --> D["Lead of owning team or leadership reviews"]
+  D -->|Changes| B
+  D -->|Reject| R["rejected with reason"]
+  D -->|Approve| P["published"]
+  P --> V["Public page lists only confirmed, public contributors"]
+    </pre></div>
+  </div>
+</section>
+
+<section id="rpc">
+  <h2>Trusted operations</h2>
+  <p>Each one is a Postgres function called from a Server Action. Each checks <code>auth.uid()</code> and scope, validates the transition, writes rows plus <code>audit_logs</code> plus <code>email_outbox</code>, and returns a typed result or an error code.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Function</th><th>Caller</th><th>Does</th></tr></thead>
+    <tbody>
+      <tr><td><code>complete_onboarding</code></td><td>Account</td><td>Writes allow-listed profile fields, sets <code>student_status</code></td></tr>
+      <tr><td><code>register_individual</code></td><td>Account</td><td>Locks event, checks window, capacity and duplicate, inserts registration</td></tr>
+      <tr><td><code>create_event_team</code></td><td>Account</td><td>Same checks; creates team, leader seat and invites (hashed tokens)</td></tr>
+      <tr><td><code>accept_invite</code> / <code>decline_invite</code></td><td>Invited account</td><td>Matches invite email to session email, checks capacity, updates team status</td></tr>
+      <tr><td><code>manage_invite</code></td><td>Team leader</td><td>Resend, revoke, add invite while forming</td></tr>
+      <tr><td><code>withdraw_registration</code></td><td>Registrant</td><td>Frees seat; leader withdrawing withdraws the whole team</td></tr>
+      <tr><td><code>submit_event</code> / <code>review_event</code></td><td>Member / Lead / VP / President</td><td>Event state machine, review row, notifications</td></tr>
+      <tr><td><code>publish_event</code> / <code>cancel_event</code></td><td>Lead (minor, own team), VP / President</td><td>Publication; cancellation emails every registrant</td></tr>
+      <tr><td><code>submit_project</code> / <code>review_project</code> / <code>confirm_contribution</code></td><td>Member / Lead+ / Contributor</td><td>Project state machine and credit consent</td></tr>
+      <tr><td><code>submit_application</code> / <code>withdraw_application</code></td><td>Account (student)</td><td>One application per cycle; sets <code>applicant</code></td></tr>
+      <tr><td><code>evaluate_application</code> / <code>decide_application</code></td><td>Reviewer / VP / President</td><td>Private evaluation; <code>selected</code> activates membership</td></tr>
+      <tr><td><code>verify_student</code></td><td>Lead+ / VP / President</td><td>Sets <code>verified</code> or <code>rejected</code></td></tr>
+      <tr><td><code>set_team_member</code></td><td>VP / President</td><td>Adds, removes or changes lead seats</td></tr>
+      <tr><td><code>assign_role</code> / <code>revoke_role</code></td><td>Admin</td><td>Global roles; cannot remove the last admin</td></tr>
+      <tr><td><code>publish_announcement</code></td><td>Lead (own team) / VP / President</td><td>Audience check, fan-out notifications</td></tr>
+    </tbody>
+  </table></div>
+  <p class="caption">Helper SQL functions used inside RLS: <code>has_role(role)</code>, <code>is_leadership()</code> (VP, President, Admin), <code>leads_team(team_id)</code>, <code>is_member()</code>.</p>
+</section>
+
+<section id="permissions">
+  <h2>Permissions</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Capability</th><th>Visitor</th><th>Account</th><th>Member</th><th>Lead</th><th>VP / Pres.</th><th>Admin</th></tr></thead>
+    <tbody>
+      <tr><td>Read published public content</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+      <tr><td>Register for events, accept invites</td><td class="no">Sign in</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+      <tr><td>Apply in recruitment</td><td class="no">Sign in</td><td class="scope">Our students</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td></tr>
+      <tr><td>Read members-only events and notices</td><td class="no">No</td><td class="no">No</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+      <tr><td>Propose events, submit projects</td><td class="no">No</td><td class="no">No</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+      <tr><td>Review proposals and projects</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="scope">Own teams</td><td class="yes">All</td><td class="no">Policy</td></tr>
+      <tr><td>Final approval of major events</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="yes">Yes</td><td class="no">No</td></tr>
+      <tr><td>See registration rosters</td><td class="no">No</td><td class="no">Own team only</td><td class="no">Own team only</td><td class="scope">Own teams' events</td><td class="yes">All</td><td class="yes">All</td></tr>
+      <tr><td>Recruitment review and decisions</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="scope">If assigned</td><td class="yes">Yes</td><td class="no">No</td></tr>
+      <tr><td>Verify students</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="scope">Yes</td><td class="yes">Yes</td><td class="no">No</td></tr>
+      <tr><td>Assign global roles</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="yes">Yes</td></tr>
+      <tr><td>Read audit log</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="scope">President</td><td class="yes">Yes</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="open">
+  <h2>Resolved questions</h2>
+  <p>The defaults in grey were accepted on 28 Oct 2026 and are built into the migrations. Incomplete teams are reminded and withdrawn by <code>run_scheduled_maintenance()</code>, which a Vercel cron calls.</p>
+  <ol class="q">
+    <li><strong>Which events count as major and need VP / President approval?</strong><span>Default: hackathons, competitions, external events, and anything with capacity over 100. The lead can also flag any event.</span></li>
+    <li><strong>What happens to teams still under team_min when registration closes?</strong><span>Default: they are withdrawn automatically and the leader is emailed 24 hours before close.</span></li>
+    <li><strong>Must the account email match the invited email?</strong><span>Default: yes, which stops forwarded links being used. The leader can re-invite a different address.</span></li>
+    <li><strong>Who verifies students, and with what proof?</strong><span>Default: any lead or VP / President, using the roll number checked against the college list. No ID-card uploads, to avoid storing documents.</span></li>
+    <li><strong>Capacity in P0, waitlist in P1?</strong><span>Default: a hard capacity cap in P0. The waitlist arrives with attendance in P1.</span></li>
+    <li><strong>Email provider</strong><span>Default: Resend's free tier (3,000 emails a month) with a verified club domain. Supabase SMTP handles auth emails only.</span></li>
+    <li><strong>Keep the admin Telegram alerts from v1?</strong><span>Default: yes, sent from the server for new proposals and applications.</span></li>
+    <li><strong>Import v1 data?</strong><span>Default: start empty. Optionally import past v1 events and gallery images as archived content.</span></li>
+    <li><strong>Can external participants see members-only events?</strong><span>Default: no. Visibility <code>members</code> means <code>member_status = member</code>.</span></li>
+  </ol>
+  <p class="note warn">Before anything else: revoke the v1 Telegram bot token in BotFather. It ships in the v1 JavaScript bundle and anyone can read it.</p>
+</section>
+</main>
+</div>

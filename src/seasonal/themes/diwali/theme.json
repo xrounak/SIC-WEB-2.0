@@ -1,0 +1,78 @@
+{
+  "key": "diwali",
+  "label": "Diwali",
+  "description": "Warm, elegant festive atmosphere with restrained gold light against a dark, professional interface.",
+  "colors": {
+    "background": "#080B12",
+    "surface": "#111725",
+    "surfaceElevated": "#182033",
+    "text": "#F8F5EE",
+    "textMuted": "#B9BECA",
+    "primary": "#F5B942",
+    "primaryHover": "#FFD166",
+    "accent": "#FF7A32",
+    "accentSecondary": "#9B5DE5",
+    "border": "#343044",
+    "focusRing": "#FFD166",
+    "ambientGlow": "rgba(255, 174, 66, 0.18)"
+  },
+  "fonts": {
+    "heading": "Cinzel",
+    "body": "Manrope",
+    "fallback": "system-ui, sans-serif",
+    "character": "Confident, warm, contemporary"
+  },
+  "style": {
+    "visualDirection": "Premium dark UI, golden highlights, subtle warm illumination.",
+    "gradients": [
+      "radial-gradient(circle at 15% 10%, rgba(255,174,66,0.12), transparent 35%)",
+      "linear-gradient(135deg, #111725 0%, #080B12 100%)"
+    ],
+    "shadows": "Soft amber glow used sparingly around selected accents and primary actions.",
+    "borders": "Fine warm-gray borders with occasional muted gold highlights."
+  },
+  "art": {
+    "decorations": [
+      {
+        "type": "diya",
+        "placement": "A few small diyas near lower page corners or outer edges.",
+        "animation": "Gentle flame flicker and low-intensity glow.",
+        "density": "Low",
+        "priority": "Optional"
+      },
+      {
+        "type": "stringLights",
+        "placement": "Along selected top edges or hero-section boundaries.",
+        "animation": "Subtle staggered twinkle; avoid rapid flashing.",
+        "density": "Low"
+      },
+      {
+        "type": "floatingLantern",
+        "placement": "Two or three lanterns in open background space, mainly around the hero.",
+        "animation": "Slow vertical drift with a tiny horizontal sway.",
+        "density": "Very low"
+      },
+      {
+        "type": "ambientGoldenGlow",
+        "placement": "Behind hero artwork and selected section edges.",
+        "animation": "Static or very slow opacity shift.",
+        "density": "Low"
+      }
+    ],
+    "assetStyle": "Minimal SVG silhouettes with warm gold and amber light; realistic detail should remain subtle.",
+    "avoid": [
+      "Large decorations behind headings or buttons",
+      "Excessive sparkles, fireworks, or saturated orange backgrounds",
+      "Placing diyas near text or interactive controls"
+    ]
+  },
+  "motion": {
+    "enabled": true,
+    "durationMs": {
+      "lanternDrift": 14000,
+      "flameFlicker": 1800,
+      "lightTwinkle": 3200
+    },
+    "reducedMotion": "Disable movement and use a still glow or static SVG."
+  }
+}

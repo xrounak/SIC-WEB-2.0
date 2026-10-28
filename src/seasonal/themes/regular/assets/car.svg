@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="84" viewBox="0 0 240 84">
+  <!-- Sleek electric car facing right; wheels spin with SMIL so it works inside <img>. -->
+  <defs>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1F2C3B"/>
+      <stop offset="1" stop-color="#121923"/>
+    </linearGradient>
+    <linearGradient id="beam" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#9BC0FF" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#9BC0FF" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#78A9FF" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#63D6B0" stop-opacity="0.2"/>
+    </linearGradient>
+    <g id="wheel">
+      <circle r="13" fill="#0B0F14" stroke="#78A9FF" stroke-width="2"/>
+      <circle r="7" fill="none" stroke="#B5C0CC" stroke-width="1.2"/>
+      <g stroke="#B5C0CC" stroke-width="1.4" stroke-linecap="round">
+        <line x1="0" y1="-7" x2="0" y2="7"/>
+        <line x1="-7" y1="0" x2="7" y2="0"/>
+        <line x1="-5" y1="-5" x2="5" y2="5"/>
+        <line x1="-5" y1="5" x2="5" y2="-5"/>
+      </g>
+      <circle r="2" fill="#63D6B0"/>
+    </g>
+  </defs>
+
+  <!-- Headlight beam -->
+  <path d="M206 44 L240 34 L240 58 Z" fill="url(#beam)"/>
+  <!-- Ground shadow -->
+  <ellipse cx="112" cy="78" rx="92" ry="4" fill="#000" opacity="0.35"/>
+
+  <!-- Body -->
+  <path d="M14 58 C14 48 20 44 32 42 L70 38 C84 24 100 18 126 18 C150 18 166 26 182 38 L200 40 C210 42 214 48 214 56 L214 60 C214 63 212 65 209 65 L22 65 C17 65 14 62 14 58 Z"
+        fill="url(#body)" stroke="#78A9FF" stroke-width="1.6" stroke-linejoin="round"/>
+  <!-- Windows -->
+  <path d="M80 38 C92 27 104 23 124 23 L126 38 Z" fill="url(#glass)" stroke="#78A9FF" stroke-width="1"/>
+  <path d="M132 23 C150 24 162 30 174 38 L134 38 Z" fill="url(#glass)" stroke="#78A9FF" stroke-width="1"/>
+  <!-- Accent line -->
+  <path d="M30 50 H200" stroke="#63D6B0" stroke-width="1.4" stroke-linecap="round" opacity="0.9">
+    <animate attributeName="opacity" values="0.4;1;0.4" dur="2.4s" repeatCount="indefinite"/>
+  </path>
+  <!-- Head / tail lights -->
+  <rect x="204" y="44" width="9" height="4" rx="2" fill="#E8F1FF"/>
+  <rect x="15" y="46" width="7" height="4" rx="2" fill="#FF5A6E"/>
+
+  <!-- Wheels -->
+  <g transform="translate(58 64)">
+    <use href="#wheel">
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="0.6s" repeatCount="indefinite"/>
+    </use>
+  </g>
+  <g transform="translate(176 64)">
+    <use href="#wheel">
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="0.6s" repeatCount="indefinite"/>
+    </use>
+  </g>
+</svg>

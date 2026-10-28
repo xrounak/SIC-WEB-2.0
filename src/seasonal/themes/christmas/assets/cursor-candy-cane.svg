@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <!-- Candy cane: straight end at top-left (the hotspot), hook at bottom-right. -->
+  <defs>
+    <pattern id="stripes" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="5" height="5" fill="#FFFFFF"/>
+      <rect width="2.4" height="5" fill="#D94F5C"/>
+    </pattern>
+  </defs>
+  <path d="M3 3 L20 20 A5.5 5.5 0 1 0 28 12" fill="none" stroke="#5A1A1F" stroke-width="5.6" stroke-linecap="round"/>
+  <path d="M3 3 L20 20 A5.5 5.5 0 1 0 28 12" fill="none" stroke="url(#stripes)" stroke-width="4" stroke-linecap="round"/>
+</svg>

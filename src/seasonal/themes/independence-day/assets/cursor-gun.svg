@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <!-- Pistol in side view, muzzle at top-left (the hotspot). Replace with your own SVG. -->
+  <g transform="rotate(30 16 16)">
+    <path d="M2 9 H24 C26 9 27 10 27 12 V14 H13 L12 16 H10 L9 14 H2 Z" fill="#1B3C73" stroke="#0A1018" stroke-width="1"/>
+    <path d="M17 14 H26 L28 26 C28 27 27 28 26 28 H22 C21 28 20 27 20 26 Z" fill="#334354" stroke="#0A1018" stroke-width="1"/>
+    <path d="M12 14 C12 18 14 19 17 19" fill="none" stroke="#0A1018" stroke-width="1.4"/>
+    <rect x="2" y="9" width="3" height="5" fill="#FF9933"/>
+    <path d="M7 11 H22" stroke="#FFFFFF" stroke-width="0.8" opacity="0.6"/>
+    <rect x="21" y="18" width="5" height="1.2" fill="#138808"/>
+  </g>
+</svg>
