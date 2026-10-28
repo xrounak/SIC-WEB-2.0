@@ -2,6 +2,8 @@ import Image, { type StaticImageData } from "next/image";
 import type { ReactNode } from "react";
 import { DEFAULT_THEME, type ThemeKey } from "./registry";
 import { heroArt as diwali } from "./themes/diwali/hero";
+import { heroArt as christmas } from "./themes/christmas/hero";
+import { heroArt as independenceDay } from "./themes/independence-day/hero";
 import { heroArt as regular } from "./themes/regular/hero";
 
 /**
@@ -13,6 +15,8 @@ import { heroArt as regular } from "./themes/regular/hero";
  */
 const HERO_ART: Partial<Record<ThemeKey, { src: StaticImageData; alt: string; includesTitleText?: boolean }>> = {
   diwali,
+  christmas,
+  independenceDay,
   regular,
 };
 

@@ -61,6 +61,86 @@ function EvergreenSprig({ style }: { style: CSSProperties }) {
   );
 }
 
+/** Snowman on a snow mound, waving one stick arm, scarf tail swaying. */
+function Snowman({ style }: { style: CSSProperties }) {
+  return (
+    <svg className="scene-piece edge-only" style={style} viewBox="0 0 100 130" width="100" height="130">
+      <ellipse cx="50" cy="124" rx="46" ry="7" fill="#F5F7F2" opacity="0.85" />
+      <circle cx="50" cy="100" r="24" fill="#F5F7F2" />
+      <circle cx="50" cy="66" r="17" fill="#F5F7F2" />
+      <circle cx="50" cy="38" r="12" fill="#F5F7F2" />
+      <path d="M26 104 A24 24 0 0 0 74 104" fill="#C9D6E3" opacity="0.5" />
+      {/* Hat */}
+      <rect x="37" y="25" width="26" height="3" rx="1" fill="#1B2A22" />
+      <rect x="41" y="10" width="18" height="16" rx="2" fill="#1B2A22" />
+      <rect x="41" y="21" width="18" height="3" fill="#D94F5C" />
+      {/* Face */}
+      <circle cx="45.5" cy="36" r="1.6" fill="#1B2A22" />
+      <circle cx="54.5" cy="36" r="1.6" fill="#1B2A22" />
+      <path d="M50 39 L60 41 L50 42 Z" fill="#F08A3C" />
+      <path d="M45 44 Q50 47 55 44" stroke="#1B2A22" strokeWidth="1.2" fill="none" strokeLinecap="round" />
+      {/* Buttons */}
+      <circle cx="50" cy="62" r="1.8" fill="#1B2A22" />
+      <circle cx="50" cy="70" r="1.8" fill="#1B2A22" />
+      {/* Scarf */}
+      <path d="M37 49 Q50 55 63 49 L63 53 Q50 59 37 53 Z" fill="#D94F5C" />
+      <path className="snowman-scarf" d="M56 53 L60 70 L54 70 L52 54 Z" fill="#B83A47" />
+      {/* Arms */}
+      <path d="M34 64 L14 52 M20 55 L16 47" stroke="#6B4A2E" strokeWidth="2.2" strokeLinecap="round" fill="none" />
+      <g className="snowman-wave">
+        <path d="M66 64 L86 46 M80 51 L86 54" stroke="#6B4A2E" strokeWidth="2.2" strokeLinecap="round" fill="none" />
+      </g>
+    </svg>
+  );
+}
+
+const TREE_LIGHTS: Array<[number, number, string]> = [
+  [44, 46, "#D94F5C"], [58, 50, "#E7C66A"], [38, 66, "#82DDB8"], [52, 70, "#FFF4E0"], [64, 74, "#D94F5C"],
+  [32, 90, "#E7C66A"], [46, 94, "#D94F5C"], [60, 96, "#82DDB8"], [72, 100, "#E7C66A"], [40, 106, "#FFF4E0"],
+];
+
+/** Christmas tree with twinkling lights, a gold garland and a glowing star. */
+function Tree({ style }: { style: CSSProperties }) {
+  return (
+    <svg className="scene-piece edge-only" style={style} viewBox="0 0 100 140" width="100" height="140">
+      <ellipse cx="50" cy="134" rx="44" ry="6" fill="#F5F7F2" opacity="0.85" />
+      <rect x="45" y="114" width="10" height="16" fill="#6B4A2E" />
+      <path d="M50 22 L74 60 H26 Z" fill="#2F6B4F" />
+      <path d="M50 40 L82 86 H18 Z" fill="#2B5E46" />
+      <path d="M50 62 L90 116 H10 Z" fill="#265440" />
+      <path d="M30 58 Q50 66 70 56 M24 84 Q50 94 78 82 M18 112 Q50 122 86 110" stroke="#E7C66A" strokeWidth="1.3" fill="none" opacity="0.8" />
+      {TREE_LIGHTS.map(([x, y, c], i) => (
+        <circle key={i} className="tree-light" cx={x} cy={y} r="2.6" fill={c} style={{ animationDelay: `${-(i * 0.37)}s` }} />
+      ))}
+      <path
+        className="tree-star"
+        d="M50 6 L53.5 15 L63 15.5 L55.5 21.5 L58 31 L50 25.5 L42 31 L44.5 21.5 L37 15.5 L46.5 15 Z"
+        fill="#F5D46A"
+      />
+    </svg>
+  );
+}
+
+/** Two wrapped presents; the small one gives a little hop now and then. */
+function Gifts({ style }: { style: CSSProperties }) {
+  return (
+    <svg className="scene-piece edge-only" style={style} viewBox="0 0 90 60" width="90" height="60">
+      <rect x="4" y="22" width="42" height="34" rx="2" fill="#B83A47" />
+      <rect x="22" y="22" width="6" height="34" fill="#E7C66A" />
+      <rect x="2" y="16" width="46" height="8" rx="2" fill="#D94F5C" />
+      <rect x="22" y="16" width="6" height="8" fill="#E7C66A" />
+      <path d="M25 16 C17 6 10 12 18 16 M25 16 C33 6 40 12 32 16" stroke="#E7C66A" strokeWidth="2.4" fill="none" />
+      <g className="gift-hop">
+        <rect x="52" y="32" width="32" height="24" rx="2" fill="#2F6B4F" />
+        <rect x="65" y="32" width="6" height="24" fill="#F5F7F2" />
+        <rect x="50" y="27" width="36" height="7" rx="2" fill="#3E7A5F" />
+        <rect x="65" y="27" width="6" height="7" fill="#F5F7F2" />
+        <path d="M68 27 C62 19 56 24 63 27 M68 27 C74 19 80 24 73 27" stroke="#F5F7F2" strokeWidth="2" fill="none" />
+      </g>
+    </svg>
+  );
+}
+
 export function ChristmasOverlay() {
   // Sparse flakes along both page edges; never in the reading column.
   const flakes = Array.from({ length: 14 }, (_, i) => {
@@ -98,6 +178,9 @@ export function ChristmasOverlay() {
         ))}
         <CandyCane style={{ left: 26, bottom: 18 }} />
         <EvergreenSprig style={{ right: 20, bottom: 16 }} />
+        <Snowman style={{ left: "4.5rem", bottom: 0 }} />
+        <Tree style={{ right: "7rem", bottom: 0 }} />
+        <Gifts style={{ right: "13.5rem", bottom: "0.25rem" }} />
       </BackLayer>
       <TopBand>
         <StringLights colors={["#FFF4E0", "#D94F5C", "#E7C66A", "#FFF4E0", "#82DDB8"]} spans={3} bulbsPerSpan={4} sag={18} />

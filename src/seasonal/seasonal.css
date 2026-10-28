@@ -485,6 +485,175 @@
   50% { transform: translateY(-1px); }
 }
 
+/* ---- Ground scenes: animated pieces along the bottom edge --------------- */
+
+.scene-piece {
+  position: absolute;
+  overflow: visible;
+  opacity: 0.8;
+}
+
+/* Diwali: rangoli seen on the floor, anar fountain */
+.rangoli {
+  position: absolute;
+  width: 9rem;
+  height: 9rem;
+  transform: scaleY(0.42);
+  opacity: 0.6;
+  filter: drop-shadow(0 0 10px rgb(255 174 66 / 0.35));
+}
+.rangoli-outer,
+.rangoli-inner {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: scene-spin 90s linear infinite;
+}
+.rangoli-inner {
+  animation-duration: 50s;
+  animation-direction: reverse;
+}
+.rangoli-dot {
+  animation: scene-twinkle 1.8s ease-in-out infinite;
+}
+.anar {
+  position: absolute;
+  overflow: visible;
+  opacity: 0.85;
+}
+.anar-spark {
+  animation: anar-spark 1.1s ease-out infinite;
+}
+.anar-glow {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: scene-pulse 0.6s ease-in-out infinite alternate;
+}
+@keyframes anar-spark {
+  0% { transform: translate(0, 0); opacity: 1; }
+  70% { opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)); opacity: 0; }
+}
+
+/* Christmas: snowman, tree, presents */
+.snowman-wave {
+  transform-box: view-box;
+  transform-origin: 66px 64px;
+  animation: snowman-wave 1.6s ease-in-out infinite alternate;
+}
+.snowman-scarf {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: scene-sway 2.4s ease-in-out infinite alternate;
+}
+.tree-light {
+  animation: scene-twinkle 1.8s ease-in-out infinite;
+}
+.tree-star {
+  transform-box: fill-box;
+  transform-origin: center;
+  filter: drop-shadow(0 0 4px #f5d46a);
+  animation: scene-pulse 2s ease-in-out infinite alternate;
+}
+.gift-hop {
+  animation: gift-hop 4s ease-in-out infinite;
+}
+@keyframes snowman-wave {
+  from { transform: rotate(-12deg); }
+  to { transform: rotate(14deg); }
+}
+@keyframes gift-hop {
+  0%, 80%, 90%, 100% { transform: translateY(0); }
+  85% { transform: translateY(-6px); }
+  94% { transform: translateY(-2px); }
+}
+
+/* Independence Day: waving flag, kite */
+.flag-slice {
+  animation: flag-wave 2.2s ease-in-out infinite;
+}
+.flag-shade {
+  opacity: 0;
+  animation: flag-shade 2.2s ease-in-out infinite;
+  animation-delay: inherit;
+}
+.kite-sway {
+  transform-box: view-box;
+  transform-origin: 4px 168px;
+  animation: kite-sway 5s ease-in-out infinite alternate;
+}
+.kite-tail {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: scene-sway 1.2s ease-in-out infinite alternate;
+}
+@keyframes flag-wave {
+  0%, 100% { transform: translateY(calc(var(--amp) * -1)); }
+  50% { transform: translateY(var(--amp)); }
+}
+@keyframes flag-shade {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 0.16; }
+}
+@keyframes kite-sway {
+  from { transform: rotate(-4deg); }
+  to { transform: rotate(4deg); }
+}
+
+/* Regular: drone, gears */
+.drone-hover {
+  animation: drone-hover 3s ease-in-out infinite;
+}
+.drone-rotor {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: drone-rotor 0.12s linear infinite alternate;
+}
+.drone-led {
+  animation: scene-twinkle 1s steps(2) infinite;
+}
+.drone-beam {
+  animation: drone-beam 2.4s ease-in-out infinite;
+}
+.gear-big,
+.gear-small {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: scene-spin 18s linear infinite;
+}
+.gear-small {
+  animation-duration: 12s;
+  animation-direction: reverse;
+}
+@keyframes drone-hover {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes drone-rotor {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0.3); }
+}
+@keyframes drone-beam {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+
+/* Shared */
+@keyframes scene-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes scene-twinkle {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+@keyframes scene-pulse {
+  from { transform: scale(0.9); opacity: 0.75; }
+  to { transform: scale(1.08); opacity: 1; }
+}
+@keyframes scene-sway {
+  from { transform: rotate(-7deg); }
+  to { transform: rotate(7deg); }
+}
+
 /* ---- Cursor trail (themes/shared/cursor-trail.tsx) -------------------- */
 
 .cursor-trail {
