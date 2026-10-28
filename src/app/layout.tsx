@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { SeasonalLayer } from "@/seasonal/SeasonalLayer";
+import { PageTransition } from "@/seasonal/PageTransition";
 import { AmbientBackdrop } from "@/components/layout/ambient-backdrop";
 import { DEFAULT_THEME, themeBootScript, themeCss } from "@/seasonal/registry";
 import { ThemeCursorStyles } from "@/seasonal/ThemeCursor";
@@ -74,6 +75,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <AmbientBackdrop />
         <SeasonalLayer />
         {children}
+        <PageTransition />
       </body>
     </html>
   );

@@ -654,6 +654,226 @@
   to { transform: rotate(7deg); }
 }
 
+/* ---- Button spinner (ThemeSpinner.tsx) -------------------------------- */
+
+.theme-spinner {
+  display: inline-grid;
+  width: 1.15em;
+  height: 1.15em;
+  flex: none;
+}
+.theme-spinner svg {
+  grid-area: 1 / 1;
+  display: none;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+[data-theme="diwali"] .spin-diwali,
+[data-theme="christmas"] .spin-christmas,
+[data-theme="independenceDay"] .spin-independenceDay,
+[data-theme="regular"] .spin-regular {
+  display: block;
+}
+.spin-christmas,
+.spin-independenceDay,
+.spin-regular {
+  animation: scene-spin 1.4s linear infinite;
+}
+.spin-christmas {
+  animation-duration: 2.4s;
+}
+.spin-flame {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: diya-flicker 0.5s ease-in-out infinite alternate;
+}
+
+/* ---- Page transition (PageTransition.tsx) ----------------------------- */
+
+.page-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  overflow: hidden;
+  pointer-events: none;
+  visibility: hidden;
+  --pt-cloud: #1a2430;
+  --pt-hi: #2e4a6b;
+  --pt-trail: linear-gradient(to right, transparent, var(--color-primary));
+  --pt-trail-h: 3px;
+}
+.page-transition[data-phase="cover"],
+.page-transition[data-phase="reveal"] {
+  visibility: visible;
+}
+.page-transition[data-phase="cover"] {
+  pointer-events: auto;
+  cursor: progress;
+}
+[data-theme="diwali"] .page-transition {
+  --pt-cloud: #2a1a10;
+  --pt-hi: #6b3f1a;
+}
+[data-theme="christmas"] .page-transition {
+  --pt-cloud: #bfcfd4;
+  --pt-hi: #ffffff;
+  --pt-trail: linear-gradient(to right, transparent, #fff4c2);
+}
+[data-theme="independenceDay"] .pt-left {
+  --pt-cloud: #a4561a;
+  --pt-hi: #ff9933;
+}
+[data-theme="independenceDay"] .pt-right {
+  --pt-cloud: #0d4f08;
+  --pt-hi: #2fa84f;
+}
+[data-theme="independenceDay"] .page-transition {
+  --pt-trail: linear-gradient(to bottom, #ff9933 33%, #ffffff 33% 66%, #138808 66%);
+  --pt-trail-h: 9px;
+}
+/* White mist where the saffron and green clouds meet. */
+[data-theme="independenceDay"] .pt-center {
+  background: radial-gradient(ellipse 22% 60% at 50% 50%, rgb(255 255 255 / 0.35), transparent 70%);
+}
+
+/* Frosted haze over the page: it blurs and tints what is behind instead of hiding it. */
+.pt-veil {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: color-mix(in oklab, var(--pt-cloud) 45%, transparent);
+  backdrop-filter: blur(14px) saturate(1.15);
+  transition: opacity 0.6s ease;
+}
+.page-transition[data-phase="cover"] .pt-veil {
+  opacity: 1;
+}
+
+/* Smoke rolls in from each side, then drifts back out and thins away. */
+.pt-bank {
+  position: absolute;
+  top: 0;
+  width: 60vw;
+  height: 100%;
+  opacity: 0;
+  transition:
+    transform 0.8s cubic-bezier(0.6, 0, 0.3, 1),
+    opacity 0.7s ease;
+}
+.pt-left {
+  left: 0;
+  transform: translateX(-70%);
+}
+/* Mirrored, so its smoke rolls toward the middle too. */
+.pt-right {
+  right: 0;
+  transform: scaleX(-1) translateX(-70%);
+}
+.page-transition[data-phase="cover"] .pt-bank {
+  opacity: 1;
+}
+.page-transition[data-phase="cover"] .pt-left {
+  transform: translateX(0);
+}
+.page-transition[data-phase="cover"] .pt-right {
+  transform: scaleX(-1) translateX(0);
+}
+.pt-bank i {
+  position: absolute;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in oklab, var(--pt-hi) 55%, transparent),
+    color-mix(in oklab, var(--pt-cloud) 35%, transparent) 55%,
+    transparent
+  );
+  filter: blur(26px);
+  animation: pt-smoke 6s ease-in-out infinite alternate;
+}
+@keyframes pt-smoke {
+  0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  50% { transform: translate(3vw, -2vh) rotate(8deg) scale(1.12); }
+  100% { transform: translate(-2vw, 2vh) rotate(-6deg) scale(0.94); }
+}
+
+.pt-center {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.25s;
+  background: radial-gradient(ellipse 45% 35% at 50% 48%, color-mix(in oklab, var(--color-primary) 22%, transparent), transparent 70%);
+}
+.page-transition[data-phase="cover"] .pt-center {
+  opacity: 1;
+  transition-delay: 0.3s;
+}
+.pt-craft {
+  position: absolute;
+  top: 44%;
+  left: 0;
+  animation: pt-fly 1.5s linear infinite;
+}
+.pt-craft::before {
+  content: "";
+  position: absolute;
+  right: 92%;
+  top: 50%;
+  width: 34vw;
+  height: var(--pt-trail-h);
+  translate: 0 -50%;
+  background: var(--pt-trail);
+  mask-image: linear-gradient(to right, transparent, #000);
+  border-radius: 9999px;
+}
+.pt-art {
+  display: none;
+  width: 9rem;
+  height: auto;
+  max-width: none;
+  filter: drop-shadow(0 0 1rem rgb(0 0 0 / 0.35));
+}
+[data-theme="diwali"] .pt-art-diwali,
+[data-theme="christmas"] .pt-art-christmas,
+[data-theme="independenceDay"] .pt-art-independenceDay,
+[data-theme="regular"] .pt-art-regular {
+  display: block;
+}
+.pt-art-diwali {
+  width: 4rem;
+  rotate: 90deg;
+}
+@keyframes pt-fly {
+  from { transform: translate(-20vw, -50%); }
+  to { transform: translate(115vw, -50%); }
+}
+.pt-status {
+  position: absolute;
+  top: 58%;
+  left: 50%;
+  translate: -50% 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-rajdhani);
+  font-size: 0.8rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--color-text);
+  text-shadow: 0 1px 6px rgb(0 0 0 / 0.6);
+}
+.pt-status .theme-spinner {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-transition {
+    display: none;
+  }
+}
+
 /* ---- Cursor trail (themes/shared/cursor-trail.tsx) -------------------- */
 
 .cursor-trail {

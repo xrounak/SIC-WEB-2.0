@@ -4,6 +4,7 @@ import { createContext, useActionState, useContext, useId, type ComponentProps, 
 import { useFormStatus } from "react-dom";
 import { cn } from "@/lib/cn";
 import { initialActionState, type ActionState } from "@/lib/actions/state";
+import { ThemeSpinner } from "@/seasonal/ThemeSpinner";
 import { buttonClass } from "./button";
 
 type FormAction = (state: ActionState, formData: FormData) => Promise<ActionState>;
@@ -295,7 +296,14 @@ export function SubmitButton({
       aria-busy={pending}
       className={buttonClass(variant, size, className)}
     >
-      {pending ? (pendingLabel ?? "Saving…") : children}
+      {pending ? (
+        <>
+          <ThemeSpinner />
+          {pendingLabel ?? "Saving…"}
+        </>
+      ) : (
+        children
+      )}
     </button>
   );
 }
