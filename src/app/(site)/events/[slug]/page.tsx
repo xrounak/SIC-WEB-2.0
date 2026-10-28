@@ -100,7 +100,7 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
             />
             <RegisterAction state={state} slug={slug} isTeam={event.participation === "team"} signedIn={Boolean(viewer)} />
           </Card>
-          {state === "cancelled" && <Notice tone="danger" title="This event was cancelled.">Registrants were notified by email.</Notice>}
+          {state === "cancelled" && <Notice tone="danger" title="This event was cancelled." />}
         </aside>
       </div>
     </Container>

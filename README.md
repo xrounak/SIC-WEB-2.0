@@ -10,7 +10,7 @@ Design blueprint (schema, routes, flows): [`SIC_docs/00-BLUEPRINT.html`](SIC_doc
 - **Reads** run in Server Components through `@supabase/ssr` as the signed-in user. Row Level Security decides what comes back.
 - **Writes that matter** (registration, approvals, roles, recruitment decisions) are Postgres functions in `supabase/migrations/*_workflows.sql`, called with `supabase.rpc(...)` from Server Actions. Each checks permissions, validates the state change, and writes the audit log and outgoing emails in the same transaction.
 - **Errors** from those functions are stable codes such as `EVENT_FULL`. `src/lib/rpc-errors.ts` maps them to user-facing copy.
-- **Emails and Telegram alerts** are queued in `email_outbox` and sent by a server worker using the secret key. A failed send never undoes a registration or approval.
+- **Notifications** are queued in `email_outbox` by the database functions but not sent yet: automated email is off for now, and Telegram alerts will be added later. Sign-in emails (magic link / OTP) come from Supabase Auth and are unaffected.
 - `src/proxy.ts` refreshes the session and redirects signed-out visitors away from `/portal`, `/manage`, `/onboarding` and `/join/apply`. That is only UX; the database enforces access.
 
 ## Setup
@@ -54,13 +54,12 @@ Design blueprint (schema, routes, flows): [`SIC_docs/00-BLUEPRINT.html`](SIC_doc
 
 ## Background jobs
 
-`vercel.json` schedules `/api/cron/outbox` (sends queued email/Telegram, every 5 min) and `/api/cron/maintenance` (team reminders and auto-withdrawal, invite expiry, completing past events, hourly). Both need `CRON_SECRET`, `SUPABASE_SECRET_KEY` and `RESEND_API_KEY` in Vercel. Vercel's Hobby plan only runs crons once a day; on Hobby, call both URLs from Supabase `pg_cron` + `pg_net` (or any external scheduler) with the `Authorization: Bearer $CRON_SECRET` header instead.
+`vercel.json` runs `/api/cron/maintenance` once a day (team auto-withdrawal, invite expiry, completing past events), which fits Vercel's Hobby plan. It needs `CRON_SECRET` and `SUPABASE_SECRET_KEY` in Vercel.
 
 ## Before launch
 
 - Replace the placeholder contact handles in `src/app/(site)/contact/page.tsx`.
 - Review the privacy and terms copy with the club and college.
-- Add the club's domain to Resend and set `EMAIL_FROM`.
 
 ## Scripts
 
