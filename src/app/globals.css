@@ -314,157 +314,211 @@
 }
 
 @layer components {
-  /* Logo star: slow twinkle, quick spin on hover */
-  .logo-star {
-    animation: star-twinkle 4s ease-in-out infinite;
-    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  /* Logo badge: the club seal, with a slowly turning dashed ring */
+  .logo-badge {
+    position: relative;
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    border-radius: 9999px;
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--color-primary) 55%, transparent),
+      0 0 1rem color-mix(in oklab, var(--color-primary) 28%, transparent);
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s;
   }
-  .group:hover .logo-star {
-    transform: rotate(180deg) scale(1.15);
+  .logo-badge img {
+    display: block;
+    border-radius: 9999px;
+  }
+  .logo-badge::after {
+    content: "";
+    position: absolute;
+    inset: -5px;
+    border-radius: 9999px;
+    border: 1px dashed color-mix(in oklab, var(--color-primary) 60%, transparent);
+    animation: scene-spin 24s linear infinite;
+  }
+  .group:hover .logo-badge {
+    transform: rotate(-10deg) scale(1.06);
+    box-shadow:
+      0 0 0 1px var(--color-primary),
+      0 0 1.4rem color-mix(in oklab, var(--color-primary) 50%, transparent);
   }
 
-  /* Header: transparent over the hero, solid once scrolled */
+  /*
+   * Header: a glass plate (see-through, blurred) with cut corners and a notch in the
+   * bottom edge. The straight parts of the edge are the plate's own border; the
+   * diagonals and the notch are drawn by the .hdr-tick lines, because clip-path
+   * removes borders along cuts.
+   */
   .site-header {
-    background: transparent;
-    transition: background-color 0.35s, backdrop-filter 0.35s, box-shadow 0.35s;
+    --hdr-line: color-mix(in oklab, var(--color-primary) 60%, var(--color-border));
+    height: 4rem;
   }
-  [data-scrolled="true"] .site-header {
-    background: color-mix(in oklab, var(--color-bg) 82%, transparent);
-    backdrop-filter: blur(14px);
-    box-shadow: 0 1px 0 var(--color-border);
-  }
-  .site-header-glint {
+  .hdr-plate {
     position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -1px;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(180deg, color-mix(in oklab, var(--color-bg) 58%, transparent), color-mix(in oklab, var(--color-bg) 30%, transparent));
+    backdrop-filter: blur(14px) saturate(1.25);
+    border-bottom: 1px solid var(--hdr-line);
+    clip-path: polygon(
+      0 0,
+      100% 0,
+      100% calc(100% - 12px),
+      calc(100% - 30px) 100%,
+      calc(50% + 72px) 100%,
+      calc(50% + 60px) calc(100% - 7px),
+      calc(50% - 60px) calc(100% - 7px),
+      calc(50% - 72px) 100%,
+      30px 100%,
+      0 calc(100% - 12px)
+    );
+    transition: background-color 0.35s;
+  }
+  [data-scrolled="true"] .hdr-plate {
+    background: color-mix(in oklab, var(--color-bg) 76%, transparent);
+  }
+  /* A light that travels along the bottom edge. */
+  .hdr-plate::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0 0;
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
-    background-size: 30% 100%;
+    background-size: 24% 100%;
     background-repeat: no-repeat;
-    opacity: 0;
-    transition: opacity 0.35s;
-    animation: glint 6s linear infinite;
+    animation: glint 7s linear infinite;
   }
-  [data-scrolled="true"] .site-header-glint {
+  .hdr-tick {
+    position: absolute;
+    height: 1px;
+    background: var(--hdr-line);
+    pointer-events: none;
+  }
+  .hdr-tick.is-cut-l {
+    left: 0;
+    top: calc(100% - 12px);
+    width: 32.4px;
+    transform-origin: left center;
+    transform: rotate(21.8deg);
+  }
+  .hdr-tick.is-cut-r {
+    right: 0;
+    top: calc(100% - 12px);
+    width: 32.4px;
+    transform-origin: right center;
+    transform: rotate(-21.8deg);
+  }
+  .hdr-tick.is-notch {
+    left: calc(50% - 60px);
+    width: 120px;
+    bottom: 7px;
+  }
+  .hdr-tick.is-notch-l {
+    left: calc(50% - 72px);
+    top: calc(100% - 1px);
+    width: 13.9px;
+    transform-origin: left center;
+    transform: rotate(-30.3deg);
+  }
+  .hdr-tick.is-notch-r {
+    right: calc(50% - 72px);
+    top: calc(100% - 1px);
+    width: 13.9px;
+    transform-origin: right center;
+    transform: rotate(30.3deg);
+  }
+  /* Small corner brackets at the top. */
+  .hdr-bracket {
+    position: absolute;
+    top: 5px;
+    width: 9px;
+    height: 9px;
+    pointer-events: none;
+    border: 0 solid var(--color-primary);
     opacity: 0.8;
+  }
+  .hdr-bracket.is-l {
+    left: 5px;
+    border-width: 1.5px 0 0 1.5px;
+  }
+  .hdr-bracket.is-r {
+    right: 5px;
+    border-width: 1.5px 1.5px 0 0;
   }
   .header-enter {
     animation: drop-in 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
     animation-delay: calc(var(--i, 0) * 120ms + 100ms);
   }
 
-  /* Desktop HUD nav */
-  .hud-nav {
+  /* Desktop nav: links separated by slashes; hover shows brackets, the current page is a lit tag */
+  .hdr-nav ul {
+    display: flex;
     align-items: center;
-    gap: 10px;
   }
-  .hud-nav-wing {
-    position: relative;
-    width: 42px;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--color-line-strong));
-    transform-origin: right;
-    animation: wing-in 0.8s 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-  }
-  .hud-nav-wing::after {
-    content: "";
-    position: absolute;
-    right: -3px;
-    top: -3px;
-    width: 7px;
-    height: 7px;
-    transform: rotate(45deg);
-    border: 1px solid var(--color-primary);
-  }
-  .hud-nav-wing.is-right {
-    transform-origin: left;
-    background: linear-gradient(270deg, transparent, var(--color-line-strong));
-  }
-  .hud-nav-wing.is-right::after {
-    right: auto;
-    left: -3px;
-  }
-  .hud-nav-frame {
-    position: relative;
-    padding: 0 18px;
-    clip-path: polygon(16px 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 16px 100%, 0 50%);
-    background: color-mix(in oklab, var(--color-surface) 72%, transparent);
-    backdrop-filter: blur(10px);
-  }
-  .hud-nav-outline {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    overflow: visible;
-  }
-  .hud-nav-outline path {
-    fill: none;
-    stroke: color-mix(in oklab, var(--color-primary) 70%, var(--color-border));
-    stroke-width: 1.2;
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-    animation: draw 1.4s 0.2s cubic-bezier(0.6, 0, 0.2, 1) forwards;
-  }
-  .hud-nav-scan {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(100deg, transparent 40%, color-mix(in oklab, var(--color-primary) 22%, transparent) 50%, transparent 60%);
-    background-size: 250% 100%;
-    animation: scan 7s 2s ease-in-out infinite;
-    pointer-events: none;
-  }
-  .hud-nav li {
+  .hdr-nav li {
+    display: flex;
+    align-items: center;
     animation: drop-in 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-    animation-delay: calc(var(--i) * 70ms + 500ms);
+    animation-delay: calc(var(--i) * 70ms + 300ms);
   }
-  .hud-nav-link {
+  .hdr-nav li + li::before {
+    content: "/";
+    padding: 0 0.15rem;
+    font-family: var(--font-rajdhani), system-ui, sans-serif;
+    color: color-mix(in oklab, var(--color-primary) 55%, transparent);
+  }
+  .hdr-link {
+    --cut: 7px;
     position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    padding: 12px 10px;
+    gap: 0.25rem;
+    padding: 0.55rem 0.8rem;
+    clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
     font-family: var(--font-rajdhani), system-ui, sans-serif;
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     font-weight: 600;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--color-text-muted);
-    transition: color 0.2s, text-shadow 0.2s;
+    transition: color 0.2s, background-color 0.2s;
   }
-  .hud-nav-link:hover,
-  .hud-nav-link[aria-current="page"] {
+  .hdr-link:hover,
+  .hdr-link:focus-visible {
     color: var(--color-text);
-    text-shadow: 0 0 14px color-mix(in oklab, var(--color-primary) 55%, transparent);
+    background: color-mix(in oklab, var(--color-primary) 10%, transparent);
   }
-  .hud-nav-bracket {
+  .hdr-link[aria-current="page"] {
+    color: var(--color-text);
+    background: color-mix(in oklab, var(--color-primary) 18%, transparent);
+    box-shadow: inset 2px 0 0 var(--color-primary);
+  }
+  .hdr-bracket-char {
     color: var(--color-primary);
     opacity: 0;
     transition: opacity 0.2s, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
-  .hud-nav-bracket:first-child {
-    transform: translateX(6px);
+  .hdr-bracket-char:first-child {
+    transform: translateX(5px);
   }
-  .hud-nav-bracket:last-child {
-    transform: translateX(-6px);
+  .hdr-bracket-char:last-child {
+    transform: translateX(-5px);
   }
-  .hud-nav-link:hover .hud-nav-bracket,
-  .hud-nav-link:focus-visible .hud-nav-bracket {
+  .hdr-link:hover .hdr-bracket-char,
+  .hdr-link:focus-visible .hdr-bracket-char {
     opacity: 1;
     transform: none;
   }
-  .hud-nav-link[aria-current="page"]::before {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 3px;
-    width: 5px;
-    height: 5px;
-    margin-left: -2.5px;
-    transform: rotate(45deg);
-    background: var(--color-primary);
-    box-shadow: 0 0 8px var(--color-primary);
+
+  /* Account dropdown: glass panel with a cut corner */
+  .hdr-menu {
+    --cut: 12px;
+    clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, var(--cut) 100%, 0 calc(100% - var(--cut)));
+    background: color-mix(in oklab, var(--color-surface) 88%, transparent);
+    backdrop-filter: blur(16px);
+    box-shadow: inset 0 0 0 1px var(--color-line-strong);
   }
 
   /* Mobile menu toggle: three lines morph into an X */
@@ -487,6 +541,7 @@
 
   .mobile-menu {
     animation: fade-in 0.25s ease-out both;
+    border-top: 1px solid color-mix(in oklab, var(--color-primary) 45%, transparent);
   }
   .mobile-menu-link {
     animation: slide-in 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 
@@ -11,16 +12,19 @@ export function BrandStar({ size = 18, className }: { size?: number; className?:
   );
 }
 
-/** Club wordmark: star + SIC in the brand face + college line. */
+/** Club seal (public/logo.png) with the SIC wordmark and college line. */
 export function Logo({ compact = false, size = "md" }: { compact?: boolean; size?: "md" | "lg" }) {
   const lg = size === "lg";
+  const px = lg ? 64 : 38;
   return (
-    <Link href="/" className="group inline-flex items-center gap-2.5" aria-label="SIC, Science & Innovation Club, GEC Palamu: home">
-      <BrandStar size={lg ? 30 : 20} className="logo-star text-primary" />
+    <Link href="/" className="group inline-flex items-center gap-3" aria-label="SIC, Science & Innovation Club, GEC Palamu: home">
+      <span className="logo-badge" style={{ width: px, height: px }}>
+        <Image src="/logo.png" alt="" width={px * 2} height={px * 2} priority className="size-full" />
+      </span>
       {!compact && (
         <span className="flex flex-col leading-none">
           <span className={cn("font-brand font-black tracking-[0.12em]", lg ? "text-4xl" : "text-[1.1875rem]")}>SIC</span>
-          <span className={cn("hud-label text-muted", lg ? "mt-1.5 text-[0.75rem]" : "mt-0.5 hidden text-[0.625rem] sm:block")}>GEC Palamu</span>
+          <span className={cn("hud-label text-muted", lg ? "mt-1.5 text-[0.75rem]" : "mt-0.5 hidden text-[0.625rem] min-[400px]:block")}>GEC Palamu</span>
         </span>
       )}
     </Link>

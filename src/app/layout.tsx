@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { SeasonalLayer } from "@/seasonal/SeasonalLayer";
 import { PageTransition } from "@/seasonal/PageTransition";
+import { IntroLoader } from "@/components/intro/intro-loader";
+import { introBootScript } from "@/components/intro/boot";
 import { SfxController } from "@/seasonal/SfxController";
 import { AmbientBackdrop } from "@/components/layout/ambient-backdrop";
 import { DEFAULT_THEME, themeBootScript, themeCss } from "@/seasonal/registry";
@@ -65,9 +67,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <head>
         <style dangerouslySetInnerHTML={{ __html: THEME_CSS }} />
         <ThemeCursorStyles />
-        <script dangerouslySetInnerHTML={{ __html: themeBootScript() }} />
+        <script dangerouslySetInnerHTML={{ __html: themeBootScript() + introBootScript() }} />
       </head>
       <body>
+        <IntroLoader />
         <a
           href="#main"
           className="sr-only z-50 rounded-lg bg-primary px-4 py-2 text-on-primary focus:not-sr-only focus:fixed focus:top-3 focus:left-3"

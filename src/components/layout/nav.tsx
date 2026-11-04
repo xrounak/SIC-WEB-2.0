@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/cn";
+import { buttonClass } from "@/components/ui/button";
 
 export type NavItem = { href: string; label: string; exact?: boolean };
 
@@ -13,33 +14,24 @@ function isActive(pathname: string, item: NavItem) {
 }
 
 /**
- * Desktop HUD bar: pointed frame whose outline draws itself in on load, links that
- * stagger in, brackets on hover, a star over the active page, and a light scan
- * that passes across now and then. All CSS (see .hud-nav in globals.css).
+ * Desktop links: set directly on the glass header, separated by slashes. Hover
+ * shows brackets; the current page is a lit tag. All CSS (.hdr-nav in globals.css).
  */
 export function DesktopNav({ items }: { items: NavItem[] }) {
   const pathname = usePathname();
   return (
-    <nav aria-label="Main" className="hud-nav hidden lg:flex">
-      <span className="hud-nav-wing" aria-hidden="true" />
-      <div className="hud-nav-frame">
-        <svg className="hud-nav-outline" viewBox="0 0 1000 44" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M16 1 H984 L999 22 L984 43 H16 L1 22 Z" pathLength={1} vectorEffect="non-scaling-stroke" />
-        </svg>
-        <span className="hud-nav-scan" aria-hidden="true" />
-        <ul className="relative flex items-center">
-          {items.map((item, i) => (
-            <li key={item.href} style={{ ["--i" as string]: i }}>
-              <Link href={item.href} aria-current={isActive(pathname, item) ? "page" : undefined} className="hud-nav-link">
-                <span className="hud-nav-bracket" aria-hidden="true">[</span>
-                {item.label}
-                <span className="hud-nav-bracket" aria-hidden="true">]</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <span className="hud-nav-wing is-right" aria-hidden="true" />
+    <nav aria-label="Main" className="hdr-nav hidden lg:block">
+      <ul>
+        {items.map((item, i) => (
+          <li key={item.href} style={{ ["--i" as string]: i }}>
+            <Link href={item.href} aria-current={isActive(pathname, item) ? "page" : undefined} className="hdr-link">
+              <span className="hdr-bracket-char" aria-hidden="true">[</span>
+              {item.label}
+              <span className="hdr-bracket-char" aria-hidden="true">]</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
     </nav>
   );
 }
@@ -68,7 +60,7 @@ export function MobileNav({ items, footer }: { items: NavItem[]; footer?: React.
         aria-expanded={open}
         aria-controls="mobile-menu"
         onClick={() => setOpen((v) => !v)}
-        className="menu-toggle relative inline-flex size-10 items-center justify-center"
+        className={buttonClass("secondary", "sm", "menu-toggle relative size-10 px-0")}
         data-open={open}
       >
         <span className="sr-only">{open ? "Close menu" : "Open menu"}</span>
@@ -79,7 +71,7 @@ export function MobileNav({ items, footer }: { items: NavItem[]; footer?: React.
       {/* Portalled to <body> so the header's animated (transformed) wrapper can't contain it. */}
       {open &&
         createPortal(
-        <div id="mobile-menu" className="mobile-menu fixed inset-x-0 bottom-0 top-16 z-40 flex flex-col overflow-y-auto bg-bg/95 px-6 pb-10 pt-6 backdrop-blur-lg">
+        <div id="mobile-menu" className="mobile-menu fixed inset-x-0 bottom-0 top-16 z-40 flex flex-col overflow-y-auto bg-bg/80 px-6 pb-10 pt-6 backdrop-blur-xl">
           <nav aria-label="Main" className="flex flex-col">
             {items.map((item, i) => (
               <Link

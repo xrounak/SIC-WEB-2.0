@@ -67,7 +67,7 @@ export function ModeToggle() {
     >
       {ICONS[mode]}
       <span className="hidden md:inline">{short[mode]}</span>
-      <span className="flex gap-0.5" aria-hidden="true">
+      <span className="hidden gap-0.5 sm:flex" aria-hidden="true">
         {MODES.map((m) => (
           <i key={m} className={`h-1.5 w-1.5 rounded-full ${m === mode ? "bg-primary" : "bg-line-strong"}`} />
         ))}

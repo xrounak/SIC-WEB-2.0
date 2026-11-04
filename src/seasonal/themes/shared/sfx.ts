@@ -123,6 +123,49 @@ export function setSfxActive(active: boolean) {
   if (!active && ctx.state === "running") void ctx.suspend().catch(() => {});
 }
 
+function playBuffer(id: string, gain: number, rate: number) {
+  if (!ctx || !master || ctx.state !== "running") return;
+  const buffer = buffers.get(id);
+  if (!buffer) return;
+  const src = ctx.createBufferSource();
+  src.buffer = buffer;
+  src.playbackRate.value = rate;
+  const g = ctx.createGain();
+  g.gain.value = gain;
+  src.connect(g).connect(master);
+  src.start();
+}
+
+/**
+ * Tries to get audio running. Browsers only allow sound after a click or key press,
+ * so this succeeds on a gesture (or when the visitor has used the site a lot) and
+ * otherwise resolves false, which is the cue for a "tap to enter" prompt.
+ */
+export async function unlockAudio(): Promise<boolean> {
+  const context = audio();
+  if (!context) return false;
+  if (context.state === "suspended") {
+    await Promise.race([context.resume().catch(() => {}), new Promise((r) => setTimeout(r, 300))]);
+  }
+  return context.state === "running";
+}
+
+/** Downloads and decodes sounds ahead of time. */
+export function loadSounds(ids: string[]) {
+  return Promise.all(ids.map(load));
+}
+
+/**
+ * Plays one file regardless of the theme/sound switch. Used by the intro, whose
+ * sound is part of the experience. `inMs` delays it.
+ */
+export function playSound(id: string, options: { gain?: number; rate?: number; inMs?: number } = {}) {
+  if (typeof document === "undefined") return;
+  const go = () => playBuffer(id, (options.gain ?? 1) * (0.95 + Math.random() * 0.1), options.rate ?? 1);
+  if (options.inMs) window.setTimeout(go, options.inMs);
+  else go();
+}
+
 /**
  * Plays the active theme's sound for an event, if the visitor has sound on.
  * `inMs` schedules it that far in the future; for "burst" the sound starts early

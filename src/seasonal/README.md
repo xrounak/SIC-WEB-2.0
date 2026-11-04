@@ -139,3 +139,20 @@ to MP3 in `public/sfx/`. Each theme's `sfx.ts` maps events to files:
 
 To change a sound, edit that theme's `sfx.ts`. To use another file from the kit,
 convert it: `ffmpeg -i in.wav -ac 1 -ar 44100 -codec:a libmp3lame -q:a 4 public/sfx/<id>.mp3`.
+
+## Intro loader and logo
+
+`public/logo.png` is the club seal (transparent outside the circle). It is used in
+the header, footer, sign-in pages, favicon (`src/app/icon.png`, `favicon.ico`,
+`apple-icon.png`) and the share images (`opengraph-image.png`, `twitter-image.png`).
+
+The first visit in a browser session plays a three.js + GSAP intro
+(`src/components/intro/`): three gears mesh, the page loads behind it, the gears
+melt into the seal, and the screen opens like an iris. It never plays again in the
+same session, is skipped for reduced-motion visitors, has a "Skip intro" button, and
+falls back to the plain seal when WebGL is unavailable. Colours come from the
+active theme. The intro always has sound (seven SFX Kit cues timed to the animation), whatever the
+header switch says. Browsers block audio until a click, so when audio is blocked the
+intro waits behind a "Tap to enter" button; "Skip intro" still bypasses it. Three.js
+loads only for the intro. To play it again while developing,
+clear session storage (`sessionStorage.clear()`).
