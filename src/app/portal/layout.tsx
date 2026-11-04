@@ -36,7 +36,7 @@ export default async function PortalLayout({ children }: LayoutProps<"/portal">)
   return (
     <>
       <SiteHeader />
-      <div className="relative z-10 mx-auto grid w-full max-w-content gap-4 px-4 py-4 sm:gap-6 sm:px-6 sm:py-8 lg:grid-cols-[12.5rem_1fr] lg:gap-8 lg:py-12">
+      <div className="relative z-10 mx-auto grid w-full max-w-content gap-4 px-4 py-4 sm:gap-6 sm:px-6 sm:py-8 grid-cols-[minmax(0,1fr)] lg:grid-cols-[12.5rem_minmax(0,1fr)] lg:gap-8 lg:py-12">
         <aside className="max-lg:contents lg:sticky lg:top-24 lg:flex lg:flex-col lg:gap-4 lg:self-start">
           <div className="hidden flex-col gap-1 px-3 lg:flex">
             <p className="truncate text-sm font-medium">{viewer.profile.full_name}</p>
