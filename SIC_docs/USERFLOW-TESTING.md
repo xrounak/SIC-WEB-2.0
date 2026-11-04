@@ -12,8 +12,12 @@ Mark each step `[x]` pass or write what went wrong next to it.
 
 ### 0.1 Test accounts
 
-Gmail ignores everything after `+`, so one inbox gives you many accounts.
-Replace `yourname` with your Gmail name.
+> **Sign-in is Google only now.** Each test account must be a separate Google
+> account (Gmail `+` aliases share one Google account, so they won't work).
+> Create a few free Gmail accounts, or ask club members to help. Replace the
+> emails below with those accounts. Setup: [AUTH-AND-ROLES.md](AUTH-AND-ROLES.md).
+> The "Add user" and password steps in 0.1 no longer apply: each person signs in
+> with Google once, then you run 0.3.
 
 | # | Account | Email | Role to give it |
 |---|---|---|---|
@@ -28,19 +32,12 @@ Replace `yourname` with your Gmail name.
 | I | Outsider | `yourname+outside@gmail.com` | none, not a GEC student |
 | — | Guest | not signed in | — |
 
-**Create them without email confirmation** (Supabase's free mailer sends only a
-few emails per hour):
-
-1. Supabase dashboard → **Authentication → Users → Add user → Create new user**.
-2. Enter the email and a test password, tick **Auto Confirm User**, then click **Create user**.
-3. Repeat for A–I.
-
 Use a separate browser profile or a private window per account, so you can stay
 signed in as several people at once.
 
 ### 0.2 Onboard everyone once
 
-Sign in as each of A–I at `/login` (email + password) and finish `/onboarding`.
+Sign in as each of A–I at `/login` (Continue with Google) and finish `/onboarding`.
 Answer "GEC student: yes" with a roll number for everyone except **I**, who
 answers "no".
 
@@ -116,7 +113,6 @@ Sign out and back in on every account after this so the new roles load.
 | Verify students | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ |
 | Recruitment final decision | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ |
 | Teams & domains (`/manage/teams`) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ |
-| Roles (`/manage/roles`) | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
 | Audit log (`/manage/audit`) | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ✅ |
 
 Nobody can approve their **own** event or project, or review their **own**
@@ -135,10 +131,8 @@ recruitment application.
 
 ## 3. Sign-in and onboarding (use account H)
 
-- [ ] `/login` with password works and lands on `/onboarding` the first time.
-- [ ] Wrong password shows a clear error.
-- [ ] Magic link / OTP: sends a code (Supabase mailer, may be rate-limited).
-- [ ] `/forgot-password` → reset email → `/reset-password` sets a new password.
+- [ ] `/login` shows only **Continue with Google**; it lands on `/onboarding` the first time.
+- [ ] Cancelling on Google's screen returns to `/login` with a clear error.
 - [ ] Onboarding requires name and roll number; after saving you land on `/portal`.
 - [ ] `/portal/profile` edits save; roll number is locked once verified.
 - [ ] Sign out from the header returns to the public site.
@@ -190,7 +184,6 @@ recruitment application.
 - [ ] Cancel a published event with a reason (≥ 5 characters) → page shows "This event was cancelled", registrations closed.
 - [ ] `/manage/teams`: add G to Robotics as deputy, then remove.
 - [ ] Club-wide announcement → visible to all members.
-- [ ] Cannot open `/manage/roles` (admin only).
 
 ## 9. Recruitment (B or C, plus a reviewer)
 
@@ -210,7 +203,7 @@ recruitment application.
 
 ## 11. Admin A
 
-- [ ] `/manage/roles`: give G the `vice_president` role → G (after re-login) sees VP tools. Revoke it → gone.
+- [ ] In Supabase SQL (see AUTH-AND-ROLES.md) give G `vice_president` → G (after re-login) sees VP tools. Remove it → gone.
 - [ ] `/manage/audit` lists the actions done above (reviews, publish, verify, role change) with actor and time.
 - [ ] Admin can publish/cancel events and review projects.
 - [ ] Admin is **not** a member: proposing an event or project is refused unless you also make A a member.

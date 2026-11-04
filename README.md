@@ -27,14 +27,13 @@ Design blueprint (schema, routes, flows): [`SIC_docs/00-BLUEPRINT.html`](SIC_doc
 5. Generate types: `npm run db:types`
 6. Auth settings in the Supabase dashboard:
    - Site URL: your production URL. Redirect URLs: `http://localhost:3000/**` and the production URL.
-   - Enable Google, Email (magic link / OTP) and Email + password.
-   - Email templates: point links at `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=...`
+   - Enable Google only and turn the Email provider off (see `SIC_docs/AUTH-AND-ROLES.md`).
 7. Make the first admin. After signing in once, run in the SQL editor:
    ```sql
    insert into public.user_roles (user_id, role)
    select id, 'admin' from public.profiles where email = 'you@gmail.com';
    ```
-   Then assign President / VP from `/manage/roles`.
+   Roles are given in the Supabase SQL Editor (see `SIC_docs/AUTH-AND-ROLES.md`).
 8. `npm run dev`
 
 ## Frontend: two layers

@@ -7,7 +7,6 @@ import { LoginPanel } from "./login-panel";
 export const metadata: Metadata = { title: "Sign in" };
 
 const ERRORS: Record<string, string> = {
-  link_invalid: "That sign-in link is invalid or has expired. Request a new one.",
   oauth: "Google sign-in didn't complete. Try again.",
   not_configured: "Sign-in isn't available yet: the site is not connected to Supabase.",
 };

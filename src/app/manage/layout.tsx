@@ -17,7 +17,6 @@ export default async function ManageLayout({ children }: LayoutProps<"/manage">)
     { href: "/manage/members", label: "Members" },
     { href: "/manage/announcements", label: "Announcements" },
     ...(viewer.isExec || viewer.isAdmin ? [{ href: "/manage/teams", label: "Teams & domains" }] : []),
-    ...(viewer.isAdmin ? [{ href: "/manage/roles", label: "Roles" }] : []),
     ...(viewer.isAdmin || viewer.roles.includes("president") ? [{ href: "/manage/audit", label: "Audit log" }] : []),
   ];
 

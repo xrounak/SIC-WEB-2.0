@@ -115,18 +115,18 @@ export function EmptyState({
 type Tone = "neutral" | "accent" | "success" | "warning" | "danger";
 
 const tones: Record<Tone, string> = {
-  neutral: "border-line-strong text-muted",
-  accent: "border-primary/40 bg-primary/10 text-primary",
-  success: "border-success/40 bg-success/10 text-success",
-  warning: "border-warning/40 bg-warning/10 text-warning",
-  danger: "border-danger/40 bg-danger/10 text-danger",
+  neutral: "border-line-strong bg-surface-2/60 text-muted",
+  accent: "border-primary bg-primary/10 text-primary",
+  success: "border-success bg-success/10 text-success",
+  warning: "border-warning bg-warning/10 text-warning",
+  danger: "border-danger bg-danger/10 text-danger",
 };
 
 export function Badge({ tone = "neutral", className, ...props }: ComponentProps<"span"> & { tone?: Tone }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-md border px-2 py-0.5 font-mono text-[0.6875rem] font-medium whitespace-nowrap",
+        "hud-label inline-flex items-center gap-1 border-l-2 px-2 py-0.5 text-[0.625rem] tracking-[0.14em] whitespace-nowrap",
         tones[tone],
         className,
       )}

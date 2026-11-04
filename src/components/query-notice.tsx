@@ -10,7 +10,6 @@ const MESSAGES: Record<string, { tone: "success" | "warning" | "accent"; text: s
   deleted: { tone: "accent", text: "Draft deleted." },
   "members-only": { tone: "warning", text: "That area is for club members. Apply to join when recruitment opens." },
   "no-access": { tone: "warning", text: "You don't have access to the management area." },
-  "password-updated": { tone: "success", text: "Password updated." },
 };
 
 /** Shows a one-off message passed as ?notice=… after a redirect. */

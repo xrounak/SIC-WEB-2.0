@@ -138,24 +138,3 @@ export async function announcementAction(_: ActionState, formData: FormData): Pr
   revalidatePath("/");
   return { ok: true };
 }
-
-export async function roleAction(_: ActionState, formData: FormData): Promise<ActionState> {
-  await requireManager();
-  const role = formData.get("role")?.toString();
-  const supabase = await createClient();
-  let userId = formData.get("user_id")?.toString();
-  const email = formData.get("email")?.toString().trim().toLowerCase();
-  if (!userId && email) {
-    const { data } = await supabase.from("profiles").select("id").eq("email", email).maybeSingle();
-    if (!data) return { error: "No account uses that email. They need to sign in once first.", values: { email, role: role ?? "" } };
-    userId = data.id as string;
-  }
-  if (!userId) return { error: "Enter an email." };
-  const { error } = await supabase.rpc(formData.get("intent") === "revoke" ? "revoke_role" : "assign_role", {
-    p_user_id: userId,
-    p_role: role,
-  });
-  if (error) return fromRpcError(error);
-  revalidatePath("/manage/roles");
-  return { ok: true, message: formData.get("intent") === "revoke" ? "Role removed." : "Role assigned." };
-}

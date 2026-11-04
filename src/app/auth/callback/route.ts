@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { safeNext } from "@/lib/safe-next";
 
-/** Google OAuth and PKCE magic-link return here with ?code=…&next=… */
+/** Google sign-in returns here with ?code=…&next=… */
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;
   const code = searchParams.get("code");
@@ -16,5 +16,5 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  return NextResponse.redirect(`${origin}/login?error=link_invalid&next=${encodeURIComponent(next)}`);
+  return NextResponse.redirect(`${origin}/login?error=oauth&next=${encodeURIComponent(next)}`);
 }
