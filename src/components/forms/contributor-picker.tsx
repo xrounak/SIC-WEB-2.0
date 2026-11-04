@@ -62,7 +62,7 @@ export function ContributorPicker({ projectId, excludeIds }: { projectId: string
                   <span className="flex-1 truncate">{r.full_name}</span>
                   <span className="text-[0.75rem] text-subtle">
                     {r.branch}
-                    {r.academic_year ? ` · Y${r.academic_year}` : ""}
+                    {r.academic_session ? ` · ${r.academic_session}` : ""}
                   </span>
                 </button>
               </li>

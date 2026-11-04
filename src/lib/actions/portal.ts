@@ -11,7 +11,7 @@ const profileSchema = z.object({
   phone: z.string().trim().regex(/^\+?[0-9 ]{8,16}$/, "Enter a phone number with 8 to 16 digits."),
   bio: z.string().trim().max(1000, "Keep it under 1000 characters.").optional(),
   branch: z.string().trim().max(100).optional(),
-  academic_year: z.coerce.number().int().min(1).max(6).optional(),
+  academic_session: z.string().trim().regex(/^[0-9]{4}-[0-9]{2}$/, "Choose your session.").optional(),
   public_profile: z.boolean(),
 });
 
@@ -22,7 +22,7 @@ export async function updateProfile(_: ActionState, formData: FormData): Promise
     phone: formData.get("phone"),
     bio: formData.get("bio") || undefined,
     branch: formData.get("branch") || undefined,
-    academic_year: formData.get("academic_year") || undefined,
+    academic_session: formData.get("academic_session") || undefined,
     public_profile: formData.get("public_profile") === "on",
   });
   if (!parsed.success) return fromZodError(parsed.error, formData);
@@ -35,7 +35,7 @@ export async function updateProfile(_: ActionState, formData: FormData): Promise
       phone: v.phone,
       bio: v.bio ?? null,
       branch: v.branch ?? null,
-      academic_year: v.academic_year ?? null,
+      academic_session: v.academic_session ?? null,
       public_profile: v.public_profile,
     })
     .eq("id", viewer.id);

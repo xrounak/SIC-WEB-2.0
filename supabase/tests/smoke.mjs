@@ -101,7 +101,7 @@ async function main() {
   // Onboarding
   await rejects(ids.member, `select public.register_individual(gen_random_uuid())`, [], /ONBOARDING_REQUIRED/, 'register before onboarding is refused');
   for (const name of ['pres', 'lead', 'member', 'student']) {
-    await q(ids[name], `select public.complete_onboarding($1, '9876543210', true, null, 'Mechanical', 2::smallint, $2)`, [
+    await q(ids[name], `select public.complete_onboarding($1, '9876543210', true, null, 'Mechanical', '2024-28', $2)`, [
       `Test ${name}`, `ROLL-${name}`,
     ]);
   }

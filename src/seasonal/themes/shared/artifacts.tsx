@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import type { StaticImageData } from "next/image";
+import { playSfx } from "./sfx";
 
 /**
  * Artifacts: SVG objects that fly across the screen now and then, behind the
@@ -100,6 +101,17 @@ export function ArtifactLayer({ artifacts }: { artifacts: ArtifactSpec[] }) {
 function FlightView({ flight }: { flight: Flight }) {
   const { spec, y, x } = flight;
   const rtl = spec.direction === "rtl";
+
+  // Sound (only when the visitor has "Theme + sound" on): a rocket's boom is timed to
+  // meet its burst; anything that crosses the screen is heard as it comes into view.
+  useEffect(() => {
+    if (spec.motion === "rise") {
+      if (burstOf(spec)) playSfx("burst", { inMs: spec.durationMs });
+      return;
+    }
+    const t = window.setTimeout(() => playSfx("flyby"), spec.durationMs * 0.18);
+    return () => clearTimeout(t);
+  }, [spec]);
   const style = {
     "--dur": `${spec.durationMs}ms`,
     "--alt": `${y}vh`,

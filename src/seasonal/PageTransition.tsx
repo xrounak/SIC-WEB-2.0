@@ -7,6 +7,7 @@ import sleigh from "./themes/christmas/assets/reindeer-sleigh.svg";
 import plane from "./themes/independence-day/assets/plane.svg";
 import car from "./themes/regular/assets/car.svg";
 import { ThemeSpinner } from "./ThemeSpinner";
+import { playSfx } from "./themes/shared/sfx";
 
 /**
  * Page-switch transition: two banks of cloud close in from the sides while the
@@ -55,6 +56,7 @@ export function PageTransition() {
   }, []);
   const reveal = useCallback(() => {
     clearTimers();
+    playSfx("pageReveal");
     go("reveal");
     timers.current.push(window.setTimeout(() => go("idle"), REVEAL_MS));
   }, [clearTimers, go]);
@@ -71,6 +73,7 @@ export function PageTransition() {
       if (url.pathname.startsWith("/api") || /\.[a-z0-9]+$/i.test(url.pathname)) return;
       clearTimers();
       startedAt.current = performance.now();
+      playSfx("page");
       go("cover");
       timers.current.push(window.setTimeout(reveal, MAX_COVER_MS));
     };

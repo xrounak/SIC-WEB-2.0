@@ -74,7 +74,7 @@ export default async function JoinPage() {
         <SectionTitle title="Before you apply" />
         <ul className="flex max-w-2xl list-disc flex-col gap-2 pl-5 text-sm text-muted">
           <li>Sign in with any email. We don&apos;t need a college email address.</li>
-          <li>Add your roll number in your profile. It&apos;s only visible to the people verifying it.</li>
+          <li>Add your registration number in your profile. It&apos;s only visible to the people verifying it.</li>
           <li>You can apply once per cycle and withdraw any time before a decision.</li>
         </ul>
       </section>

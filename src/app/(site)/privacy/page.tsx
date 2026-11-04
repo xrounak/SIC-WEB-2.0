@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Privacy" };
 const SECTIONS = [
   {
     title: "What we collect",
-    body: "Your name, email, phone number, college, branch and year. Students of our college also give a roll number so we can confirm eligibility for membership. If you sign in with Google, we receive your name, email and profile photo.",
+    body: "Your name, email, phone number, college, branch and session. Students of our college also give a registration number so we can confirm eligibility for membership. If you sign in with Google, we receive your name, email and profile photo.",
   },
   {
     title: "Why we collect it",
@@ -14,7 +14,7 @@ const SECTIONS = [
   },
   {
     title: "Who can see it",
-    body: "Your phone number, email and roll number are never public. Organisers see the details of people registered for events their team runs. Recruitment reviewers see applications in cycles they are assigned to. Your name and photo appear publicly only if you turn on a public profile or agree to be credited on a project.",
+    body: "Your phone number, email and registration number are never public. Organisers see the details of people registered for events their team runs. Recruitment reviewers see applications in cycles they are assigned to. Your name and photo appear publicly only if you turn on a public profile or agree to be credited on a project.",
   },
   {
     title: "How long we keep it",

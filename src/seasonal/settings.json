@@ -107,7 +107,7 @@
         "Form behavior",
         "Navigation structure"
       ],
-      "persistence": "Store the chosen key in localStorage under 'sic-active-theme'.",
+      "persistence": "Replaced by a three-state switch (off, theme, theme + sound) stored in localStorage under 'sic-mode'. Off shows the regular theme; theme and sound show defaultTheme.",
       "fallback": "If the stored key is invalid, use 'regular'."
     },
     "accessibilityAndPerformance": [

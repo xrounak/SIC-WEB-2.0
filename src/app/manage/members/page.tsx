@@ -72,7 +72,7 @@ export default async function MembersPage({ searchParams }: PageProps<"/manage/m
       {rows.length === 0 ? (
         <EmptyState title={active === "verify" ? "No students waiting for verification" : "No members found"} />
       ) : active === "verify" ? (
-        <Table head={["Student", "Roll number", "Branch / year", "Since", ""]}>
+        <Table head={["Student", "Registration number", "Branch / session", "Since", ""]}>
           {rows.map((p) => (
             <tr key={p.id}>
               <td>
@@ -81,7 +81,7 @@ export default async function MembersPage({ searchParams }: PageProps<"/manage/m
               </td>
               <td className="font-mono text-[0.8125rem]">{p.roll_number}</td>
               <td className="text-muted">
-                {p.branch} · Y{p.academic_year}
+                {p.branch} · {p.academic_session}
               </td>
               <td className="text-muted">{formatDate(p.created_at)}</td>
               <td>
@@ -116,7 +116,7 @@ export default async function MembersPage({ searchParams }: PageProps<"/manage/m
               </td>
               <td className="text-muted">
                 {p.branch ?? "—"}
-                {p.academic_year ? ` · Y${p.academic_year}` : ""}
+                {p.academic_session ? ` · ${p.academic_session}` : ""}
               </td>
               <td>
                 <StatusBadge status={p.member_status} />

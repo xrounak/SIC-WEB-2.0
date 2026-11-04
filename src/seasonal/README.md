@@ -111,3 +111,31 @@ reduced motion. Rockets launch from the side margins so they never cross the hea
 1. Create `themes/<name>/` with `theme.json` (copy an existing one), `overlay.tsx`, `artifacts.ts` and `assets/`.
 2. Import the `theme.json` in `registry.ts` and add the key to `supportedThemes` in `settings.json`.
 3. Register the overlay in `themes/index.ts`.
+
+## Theme switch and sound effects
+
+The header has one switch with three states (`sic-mode` in `localStorage`):
+
+| State | Look | Sound |
+|---|---|---|
+| Off | the plain default (`regular` theme) | none |
+| Theme | the theme set by the developer | none |
+| Theme + sound | the same theme | its sound effects |
+
+The developer's theme is `product.themeSwitching.defaultTheme` in `settings.json`
+(or `NEXT_PUBLIC_DEFAULT_THEME`). First-time visitors get "Theme" with no sound.
+
+Sounds come from [SFX Kit by Wyzowl](https://github.com/wyzowl/sfx-kit) (CC0), trimmed
+to MP3 in `public/sfx/`. Each theme's `sfx.ts` maps events to files:
+
+| Event | When |
+|---|---|
+| `click` | buttons, links, switches |
+| `key` / `enter` / `space` | typing in a text field |
+| `scroll` | a soft swish after about 700 px of scrolling, at most once a second |
+| `flyby` | a plane, sleigh or car crossing the screen |
+| `burst` | a rocket exploding (`leadMs` is how far into the sound the boom lands) |
+| `page` / `pageReveal` | page change: clouds closing / parting |
+
+To change a sound, edit that theme's `sfx.ts`. To use another file from the kit,
+convert it: `ffmpeg -i in.wav -ac 1 -ar 44100 -codec:a libmp3lame -q:a 4 public/sfx/<id>.mp3`.

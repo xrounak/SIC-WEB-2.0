@@ -106,7 +106,7 @@ export async function searchMembers(query: string) {
   await requireOnboarded();
   const supabase = await createClient();
   const { data } = await supabase.rpc("search_members", { p_query: query });
-  return (data ?? []) as Array<{ id: string; full_name: string; avatar_url: string | null; branch: string | null; academic_year: number | null }>;
+  return (data ?? []) as Array<{ id: string; full_name: string; avatar_url: string | null; branch: string | null; academic_session: string | null }>;
 }
 
 export async function confirmContribution(_: ActionState, formData: FormData): Promise<ActionState> {

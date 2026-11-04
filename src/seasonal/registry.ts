@@ -27,7 +27,13 @@ type ThemeSpec = (typeof THEMES)[ThemeKey];
 export const THEME_KEYS = settings.product.themeSwitching.supportedThemes.filter(
   (k): k is ThemeKey => k in THEMES,
 );
-export const STORAGE_KEY = "sic-active-theme";
+export const MODE_KEY = "sic-mode";
+export const MODES = ["off", "theme", "sound"] as const;
+export type Mode = (typeof MODES)[number];
+
+export function isMode(value: unknown): value is Mode {
+  return typeof value === "string" && (MODES as readonly string[]).includes(value);
+}
 export const FALLBACK_THEME: ThemeKey = "regular";
 
 export function isThemeKey(value: unknown): value is ThemeKey {
@@ -87,9 +93,10 @@ export function themeCss() {
 }
 
 /**
- * Runs before first paint: applies the stored theme (or the default) so there is
- * no flash, and falls back to "regular" when the stored key is invalid.
+ * Runs before first paint: applies the visitor's saved mode (off / theme / sound) so
+ * there is no flash. Off shows the default look; theme and sound show the theme the
+ * developer chose. A first-time visitor gets "theme".
  */
 export function themeBootScript() {
-  return `(function(){try{var k=localStorage.getItem(${JSON.stringify(STORAGE_KEY)});var ok=${JSON.stringify(THEME_KEYS)};if(k!==null){document.documentElement.dataset.theme=ok.indexOf(k)>-1?k:${JSON.stringify(FALLBACK_THEME)};}}catch(e){}})();`;
+  return `(function(){var d=document.documentElement,m="theme";try{var k=localStorage.getItem(${JSON.stringify(MODE_KEY)});if(${JSON.stringify(MODES)}.indexOf(k)>-1)m=k;}catch(e){}d.dataset.mode=m;d.dataset.theme=m==="off"?${JSON.stringify(FALLBACK_THEME)}:${JSON.stringify(DEFAULT_THEME)};})();`;
 }

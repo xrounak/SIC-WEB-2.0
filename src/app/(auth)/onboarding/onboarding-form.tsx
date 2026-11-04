@@ -3,10 +3,9 @@
 import { useState } from "react";
 import { completeOnboarding } from "@/lib/actions/auth";
 import { ActionForm, SelectField, SubmitButton, TextField } from "@/components/ui/form";
+import { branchOptionsWith, sessionOptionsWith } from "@/lib/academics";
 import { cn } from "@/lib/cn";
 import type { Profile } from "@/lib/types";
-
-const YEARS = [1, 2, 3, 4, 5].map((y) => ({ value: String(y), label: `Year ${y}` }));
 
 export function OnboardingForm({ profile, next }: { profile: Profile; next: string }) {
   const verified = profile.student_status === "verified";
@@ -54,11 +53,12 @@ export function OnboardingForm({ profile, next }: { profile: Profile; next: stri
 
       {student === "yes" ? (
         <div className="grid gap-4 sm:grid-cols-2">
-          <TextField name="branch" label="Branch" defaultValue={profile.branch} placeholder="e.g. Mechanical" className="sm:col-span-2" />
-          <SelectField name="academic_year" label="Year" options={YEARS} placeholder="Choose" defaultValue={profile.academic_year?.toString()} />
+          <SelectField name="branch" label="Branch" options={branchOptionsWith(profile.branch)} placeholder="Choose" defaultValue={profile.branch} />
+          <SelectField name="academic_session" label="Session" options={sessionOptionsWith(profile.academic_session)} placeholder="Choose" defaultValue={profile.academic_session} />
           <TextField
             name="roll_number"
-            label="Roll number"
+            label="Registration number"
+            className="sm:col-span-2"
             defaultValue={profile.roll_number}
             disabled={verified}
             hint={verified ? "Verified. Contact the club to change it." : "Needed to verify you for membership. Never public."}
@@ -68,8 +68,8 @@ export function OnboardingForm({ profile, next }: { profile: Profile; next: stri
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           <TextField name="college_name" label="College" defaultValue={profile.college_name} className="sm:col-span-2" />
-          <TextField name="branch" label="Branch" required={false} defaultValue={profile.branch} />
-          <SelectField name="academic_year" label="Year" required={false} options={YEARS} placeholder="Choose" defaultValue={profile.academic_year?.toString()} />
+          <SelectField name="branch" label="Branch" required={false} options={branchOptionsWith(profile.branch)} placeholder="Choose" defaultValue={profile.branch} />
+          <SelectField name="academic_session" label="Session" required={false} options={sessionOptionsWith(profile.academic_session)} placeholder="Choose" defaultValue={profile.academic_session} />
         </div>
       )}
 

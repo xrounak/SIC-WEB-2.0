@@ -3,6 +3,7 @@ import Link from "next/link";
 import { requireOnboarded } from "@/lib/auth";
 import { updateProfile } from "@/lib/actions/portal";
 import { ROLE_LABEL } from "@/lib/format";
+import { branchOptionsWith, sessionOptionsWith } from "@/lib/academics";
 import { ActionForm, CheckboxField, SelectField, SubmitButton, TextAreaField, TextField } from "@/components/ui/form";
 import { Avatar, Card, Meta, PageHeader, StatusBadge } from "@/components/ui/primitives";
 
@@ -25,12 +26,12 @@ export default async function ProfilePage() {
               { label: "Student status", value: <StatusBadge status={p.student_status} /> },
               { label: "Membership", value: <StatusBadge status={p.member_status} /> },
               { label: "Roles", value: viewer.roles.length ? viewer.roles.map((r) => ROLE_LABEL[r]).join(", ") : "None" },
-              ...(p.roll_number ? [{ label: "Roll number", value: <span className="font-mono">{p.roll_number}</span> }] : []),
+              ...(p.roll_number ? [{ label: "Registration number", value: <span className="font-mono">{p.roll_number}</span> }] : []),
               ...(p.college_name ? [{ label: "College", value: p.college_name }] : []),
             ]}
           />
           <Link href="/onboarding?next=/portal/profile" className="mt-4 inline-block text-[0.8125rem] text-primary">
-            Change college or roll number →
+            Change college or registration number →
           </Link>
         </div>
       </Card>
@@ -40,14 +41,14 @@ export default async function ProfilePage() {
           <div className="grid gap-4 sm:grid-cols-2">
             <TextField name="full_name" label="Full name" defaultValue={p.full_name} />
             <TextField name="phone" label="Phone" type="tel" defaultValue={p.phone} />
-            <TextField name="branch" label="Branch" required={false} defaultValue={p.branch} />
+            <SelectField name="branch" label="Branch" required={false} placeholder="Not set" defaultValue={p.branch} options={branchOptionsWith(p.branch)} />
             <SelectField
-              name="academic_year"
-              label="Year"
+              name="academic_session"
+              label="Session"
               required={false}
               placeholder="Not set"
-              defaultValue={p.academic_year?.toString()}
-              options={[1, 2, 3, 4, 5].map((y) => ({ value: String(y), label: `Year ${y}` }))}
+              defaultValue={p.academic_session}
+              options={sessionOptionsWith(p.academic_session)}
             />
           </div>
           <TextAreaField name="bio" label="Short bio" required={false} rows={3} defaultValue={p.bio} hint="Shown on your public profile, if enabled." />

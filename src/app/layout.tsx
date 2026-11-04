@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { SeasonalLayer } from "@/seasonal/SeasonalLayer";
 import { PageTransition } from "@/seasonal/PageTransition";
+import { SfxController } from "@/seasonal/SfxController";
 import { AmbientBackdrop } from "@/components/layout/ambient-backdrop";
 import { DEFAULT_THEME, themeBootScript, themeCss } from "@/seasonal/registry";
 import { ThemeCursorStyles } from "@/seasonal/ThemeCursor";
@@ -57,6 +58,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       data-theme={DEFAULT_THEME}
+      data-mode="theme"
       suppressHydrationWarning
       className={`${cinzel.variable} ${manrope.variable} ${rajdhani.variable} antialiased`}
     >
@@ -76,6 +78,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <SeasonalLayer />
         {children}
         <PageTransition />
+        <SfxController />
       </body>
     </html>
   );

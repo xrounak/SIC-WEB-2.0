@@ -65,8 +65,8 @@ export default async function ApplicationPage({ params }: PageProps<"/manage/rec
               items={[
                 { label: "Email", value: profile?.email ?? "—" },
                 { label: "Phone", value: profile?.phone ?? "—" },
-                { label: "Branch / year", value: `${profile?.branch ?? "—"} · Year ${profile?.academic_year ?? "—"}` },
-                { label: "Roll number", value: <span className="font-mono">{profile?.roll_number ?? "—"}</span> },
+                { label: "Branch / session", value: `${profile?.branch ?? "—"} · ${profile?.academic_session ?? "—"}` },
+                { label: "Registration number", value: <span className="font-mono">{profile?.roll_number ?? "—"}</span> },
                 { label: "Student status", value: profile ? <StatusBadge status={profile.student_status} /> : "—" },
                 { label: "Submitted", value: formatDateTime(app.submitted_at) },
                 { label: "Domains", value: name(app.domain_prefs, domains) || "—" },
@@ -75,7 +75,7 @@ export default async function ApplicationPage({ params }: PageProps<"/manage/rec
             />
             {profile?.student_status === "pending" && !own && (
               <div className="flex flex-col gap-2 rounded-lg border border-warning/40 bg-warning/5 p-3">
-                <p className="text-sm">Check the roll number against the college list, then verify.</p>
+                <p className="text-sm">Check the registration number against the college list, then verify.</p>
                 <div className="flex gap-2">
                   <ActionForm action={verifyStudent} className="gap-0">
                     <input type="hidden" name="user_id" value={app.user_id} />

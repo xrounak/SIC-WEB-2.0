@@ -1,7 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { FALLBACK_THEME, STORAGE_KEY, isThemeKey, type ThemeKey } from "./registry";
+import { FALLBACK_THEME, isThemeKey, type ThemeKey } from "./registry";
 
 /** Watches <html data-theme>, the one place the active theme lives. */
 function subscribe(onChange: () => void) {
@@ -21,14 +21,4 @@ function read(): ThemeKey {
  */
 export function useActiveTheme<T extends ThemeKey | null>(serverValue: T): ThemeKey | T {
   return useSyncExternalStore<ThemeKey | T>(subscribe, read, () => serverValue);
-}
-
-/** Switches theme instantly, without a reload, and remembers it in this browser. */
-export function setActiveTheme(key: ThemeKey) {
-  document.documentElement.dataset.theme = key;
-  try {
-    localStorage.setItem(STORAGE_KEY, key);
-  } catch {
-    // Private mode or blocked storage: the switch still applies for this visit.
-  }
 }

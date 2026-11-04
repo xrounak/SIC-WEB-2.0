@@ -63,7 +63,7 @@ export default async function PortalHome({ searchParams }: PageProps<"/portal">)
       )}
       {p.student_status === "pending" && (
         <Notice tone="warning" title="Student status: waiting for verification">
-          A club lead will confirm your roll number. You can still register for events.
+          A club lead will confirm your registration number. You can still register for events.
         </Notice>
       )}
       {!viewer.isMember && cycle && !app && p.student_status !== "external" && (

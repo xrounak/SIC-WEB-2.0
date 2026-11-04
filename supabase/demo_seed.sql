@@ -35,7 +35,7 @@ on conflict (id) do nothing;
 update public.profiles p
 set phone = v.phone,
     branch = v.branch,
-    academic_year = v.yr,
+    academic_session = case v.yr when 4 then '2022-26' when 3 then '2023-27' when 2 then '2024-28' when 1 then '2025-29' end,
     roll_number = v.roll,
     college_name = v.college,
     bio = v.bio,

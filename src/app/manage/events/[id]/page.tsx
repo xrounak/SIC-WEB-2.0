@@ -20,7 +20,7 @@ type RosterRow = {
   team_role: string | null;
   created_at: string;
   event_team_id: string | null;
-  profiles: { full_name: string; email: string; phone: string | null; college_name: string | null; branch: string | null; academic_year: number | null } | null;
+  profiles: { full_name: string; email: string; phone: string | null; college_name: string | null; branch: string | null; academic_session: string | null } | null;
   event_teams: { name: string; status: string } | null;
 };
 
@@ -36,7 +36,7 @@ export default async function ManageEventPage({ params }: PageProps<"/manage/eve
     supabase.from("event_reviews").select("*").eq("event_id", id).order("created_at"),
     supabase
       .from("event_registrations")
-      .select("id, status, team_role, created_at, event_team_id, profiles(full_name, email, phone, college_name, branch, academic_year), event_teams(name, status)")
+      .select("id, status, team_role, created_at, event_team_id, profiles(full_name, email, phone, college_name, branch, academic_session), event_teams(name, status)")
       .eq("event_id", id)
       .order("created_at"),
     supabase.from("profiles").select("full_name, email").eq("id", event.created_by).maybeSingle(),
@@ -112,7 +112,7 @@ export default async function ManageEventPage({ params }: PageProps<"/manage/eve
                       <span className="block text-[0.75rem] text-subtle">
                         {r.profiles?.college_name ?? "Our college"}
                         {r.profiles?.branch ? ` · ${r.profiles.branch}` : ""}
-                        {r.profiles?.academic_year ? ` · Y${r.profiles.academic_year}` : ""}
+                        {r.profiles?.academic_session ? ` · ${r.profiles.academic_session}` : ""}
                       </span>
                     </td>
                     <td className="text-[0.8125rem] text-muted">

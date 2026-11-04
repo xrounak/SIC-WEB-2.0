@@ -48,11 +48,11 @@ export default async function ApplyPage() {
       <PageHeader hud
         eyebrow={cycle.name}
         title="Apply to SIC"
-        description={`Applications close on ${formatDate(cycle.closes_at)}. Your name, branch, year and roll number come from your profile.`}
+        description={`Applications close on ${formatDate(cycle.closes_at)}. Your name, branch, session and registration number come from your profile.`}
       />
       <div className="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-xl border border-line bg-surface px-4 py-3 text-sm">
         <span>{p.full_name}</span>
-        <span className="text-muted">{p.branch} · Year {p.academic_year}</span>
+        <span className="text-muted">{p.branch} · {p.academic_session}</span>
         <span className="font-mono text-muted">{p.roll_number}</span>
         <StatusBadge status={p.student_status} />
       </div>

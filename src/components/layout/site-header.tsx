@@ -6,8 +6,7 @@ import { Avatar } from "@/components/ui/primitives";
 import { Logo } from "./logo";
 import { HeaderScrollState } from "./header-scroll";
 import { DesktopNav, MobileNav, type NavItem } from "./nav";
-import { ThemeSwitcher } from "@/seasonal/ThemeSwitcher";
-import { DEFAULT_THEME } from "@/seasonal/registry";
+import { ModeToggle } from "@/seasonal/ModeToggle";
 
 const PUBLIC_NAV: NavItem[] = [
   { href: "/events", label: "Events" },
@@ -65,7 +64,7 @@ export async function SiteHeader() {
           <DesktopNav items={PUBLIC_NAV} />
         </div>
         <div className="header-enter flex items-center gap-1.5" style={{ ["--i" as string]: 2 }}>
-          <ThemeSwitcher serverTheme={DEFAULT_THEME} />
+          <ModeToggle />
           {account}
           <MobileNav items={PUBLIC_NAV} />
         </div>

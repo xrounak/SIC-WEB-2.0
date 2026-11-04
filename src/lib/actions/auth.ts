@@ -50,15 +50,15 @@ const onboardingSchema = z
     is_our_student: z.enum(["yes", "no"], { message: "Choose one." }),
     college_name: z.string().trim().max(200).optional(),
     branch: z.string().trim().max(100).optional(),
-    academic_year: z.coerce.number().int().min(1).max(6).optional(),
+    academic_session: z.string().trim().regex(/^[0-9]{4}-[0-9]{2}$/, "Choose your session.").optional(),
     roll_number: z.string().trim().max(40).optional(),
   })
   .superRefine((v, ctx) => {
     if (v.is_our_student === "yes") {
-      if (!v.branch) ctx.addIssue({ code: "custom", path: ["branch"], message: "Enter your branch." });
-      if (!v.academic_year) ctx.addIssue({ code: "custom", path: ["academic_year"], message: "Choose your year." });
+      if (!v.branch) ctx.addIssue({ code: "custom", path: ["branch"], message: "Choose your branch." });
+      if (!v.academic_session) ctx.addIssue({ code: "custom", path: ["academic_session"], message: "Choose your session." });
       if (!v.roll_number || v.roll_number.length < 3)
-        ctx.addIssue({ code: "custom", path: ["roll_number"], message: "Enter your roll number." });
+        ctx.addIssue({ code: "custom", path: ["roll_number"], message: "Enter your registration number." });
     } else if (!v.college_name || v.college_name.length < 2) {
       ctx.addIssue({ code: "custom", path: ["college_name"], message: "Enter your college name." });
     }
@@ -80,7 +80,7 @@ export async function completeOnboarding(_: ActionState, formData: FormData): Pr
     p_is_our_student: v.is_our_student === "yes",
     p_college_name: v.college_name ?? null,
     p_branch: v.branch ?? null,
-    p_academic_year: v.academic_year ?? null,
+    p_academic_session: v.academic_session ?? null,
     p_roll_number: v.roll_number ?? null,
   });
   if (error) return fromRpcError(error, formData);

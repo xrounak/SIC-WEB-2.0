@@ -22,6 +22,7 @@ export type Profile = {
   college_name: string | null;
   branch: string | null;
   academic_year: number | null;
+  academic_session: string | null;
   roll_number: string | null;
   student_status: StudentStatus;
   member_status: MemberStatus;
