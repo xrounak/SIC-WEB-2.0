@@ -8,12 +8,15 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { safeNext } from "@/lib/safe-next";
 import { fromRpcError, fromZodError, type ActionState } from "./state";
 
+/** Where Google should send the visitor back to: the address they are actually using. */
 async function siteOrigin() {
-  if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "");
   const h = await headers();
   const host = h.get("x-forwarded-host") ?? h.get("host");
-  const proto = h.get("x-forwarded-proto") ?? "http";
-  return `${proto}://${host}`;
+  if (host) {
+    const proto = h.get("x-forwarded-proto") ?? (host.startsWith("localhost") || host.startsWith("127.") ? "http" : "https");
+    return `${proto}://${host}`;
+  }
+  return (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
 }
 
 const NOT_CONFIGURED: ActionState = {

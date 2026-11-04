@@ -12,6 +12,14 @@ const PROTECTED_PREFIXES = ["/portal", "/manage", "/onboarding", "/join/apply"];
  */
 export async function updateSession(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
+
+  // If Supabase falls back to the Site URL (return URL not in its allow list), the
+  // Google sign-in code arrives on a normal page. Hand it to the callback route.
+  if (request.nextUrl.searchParams.has("code") && !pathname.startsWith("/auth/")) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/auth/callback";
+    return NextResponse.redirect(url);
+  }
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-pathname", pathname + search);
   const next = () => NextResponse.next({ request: { headers: requestHeaders } });
