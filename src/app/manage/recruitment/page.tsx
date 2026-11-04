@@ -48,22 +48,22 @@ export default async function RecruitmentPage({ searchParams }: PageProps<"/mana
     }
   }
   let reviewers: Array<{ user_id: string; name: string }> = [];
-  if (cycle && viewer.isExec) {
+  if (cycle && (viewer.isExec || viewer.isAdmin)) {
     const { data: rv } = await supabase.from("recruitment_reviewers").select("user_id").eq("cycle_id", cycle.id);
     const rIds = (rv ?? []).map((r) => r.user_id as string);
     const { data: rNames } = rIds.length ? await supabase.from("profiles").select("id, full_name").in("id", rIds) : { data: [] };
     reviewers = rIds.map((uid) => ({ user_id: uid, name: (rNames ?? []).find((n) => n.id === uid)?.full_name ?? "Member" }));
   }
   const editing = edit === "new" ? undefined : cycles.find((c) => c.id === edit);
-  const showForm = viewer.isExec && (edit === "new" || editing);
+  const showForm = (viewer.isExec || viewer.isAdmin) && (edit === "new" || editing);
 
   return (
     <div className="flex flex-col gap-8">
       <PageHeader
         eyebrow="Manage"
         title="Recruitment"
-        description="Reviewers move applications through screening and interviews. The VP or President makes final decisions."
-        actions={viewer.isExec && <Link href="/manage/recruitment?edit=new" className="text-sm text-primary">+ New cycle</Link>}
+        description="Reviewers move applications through screening and interviews. The VP, President or an admin makes final decisions."
+        actions={(viewer.isExec || viewer.isAdmin) && <Link href="/manage/recruitment?edit=new" className="text-sm text-primary">+ New cycle</Link>}
       />
 
       {showForm && (
@@ -84,7 +84,7 @@ export default async function RecruitmentPage({ searchParams }: PageProps<"/mana
       )}
 
       {cycles.length === 0 ? (
-        <EmptyState title="No recruitment cycles yet" description={viewer.isExec ? "Create one to start accepting applications." : "The VP or President creates cycles."} />
+        <EmptyState title="No recruitment cycles yet" description={viewer.isExec || viewer.isAdmin ? "Create one to start accepting applications." : "The VP, President or an admin creates cycles."} />
       ) : (
         <>
           <nav aria-label="Cycles" className="flex flex-wrap items-center gap-2">
@@ -105,7 +105,7 @@ export default async function RecruitmentPage({ searchParams }: PageProps<"/mana
           {cycle && (
             <p className="text-sm text-muted">
               {formatDate(cycle.opens_at)} – {formatDate(cycle.closes_at)} · {apps.length} application{apps.length === 1 ? "" : "s"}
-              {viewer.isExec && (
+              {(viewer.isExec || viewer.isAdmin) && (
                 <>
                   {" · "}
                   <Link href={`/manage/recruitment?cycle=${cycle.id}&edit=${cycle.id}`} className="text-primary">
@@ -116,7 +116,7 @@ export default async function RecruitmentPage({ searchParams }: PageProps<"/mana
             </p>
           )}
 
-          {cycle && viewer.isExec && (
+          {cycle && (viewer.isExec || viewer.isAdmin) && (
             <Card className="flex flex-col gap-3 p-5">
               <h2 className="text-lg font-semibold">Reviewers for {cycle.name}</h2>
               <p className="text-[0.8125rem] text-muted">Reviewers can screen, interview and evaluate. The VP and President always can.</p>
@@ -147,14 +147,14 @@ export default async function RecruitmentPage({ searchParams }: PageProps<"/mana
             </Card>
           )}
 
-          <div className="-mx-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0">
-            <div className="grid min-w-[56.25rem] grid-cols-5 gap-3">
+          <div className="md:overflow-x-auto md:pb-2">
+            <div className="grid gap-3 md:min-w-[56.25rem] md:grid-cols-5">
               {COLUMNS.map((col) => {
                 const list = apps.filter((a) =>
                   col.key === "decided" ? ["selected", "waitlisted", "rejected", "withdrawn"].includes(a.status) : a.status === col.key,
                 );
                 return (
-                  <div key={col.key} className="flex flex-col gap-2 rounded-xl border border-line bg-surface-2/40 p-2">
+                  <div key={col.key} className={`flex-col gap-2 rounded-xl border border-line bg-surface-2/40 p-2 ${list.length === 0 ? "hidden md:flex" : "flex"}`}>
                     <p className="flex items-center justify-between px-2 py-1 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-subtle">
                       {col.label} <span className="tabular">{list.length}</span>
                     </p>

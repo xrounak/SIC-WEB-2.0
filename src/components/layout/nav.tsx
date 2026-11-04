@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/cn";
 import { buttonClass } from "@/components/ui/button";
@@ -101,17 +101,31 @@ export function MobileNav({ items, footer }: { items: NavItem[]; footer?: React.
 /** Vertical navigation for portal and manage areas; becomes a scrolling tab row on small screens. */
 export function SideNav({ items, label }: { items: Array<NavItem & { badge?: number }>; label: string }) {
   const pathname = usePathname();
+  const strip = useRef<HTMLElement>(null);
+
+  // On phones the links form a scrolling strip: keep the current page centred in it.
+  useEffect(() => {
+    const el = strip.current;
+    const current = el?.querySelector<HTMLElement>('[aria-current="page"]');
+    if (!el || !current || el.scrollWidth <= el.clientWidth) return;
+    el.scrollTo({ left: current.offsetLeft - (el.clientWidth - current.offsetWidth) / 2, behavior: "smooth" });
+  }, [pathname]);
+
   return (
-    <nav aria-label={label} className="-mx-4 overflow-x-auto px-4 lg:mx-0 lg:overflow-visible lg:px-0">
-      <ul className="flex gap-1 lg:flex-col">
+    <nav
+      ref={strip}
+      aria-label={label}
+      className="side-strip sticky top-16 z-30 -mx-4 overflow-x-auto border-b border-line bg-bg/80 px-4 backdrop-blur-xl lg:static lg:mx-0 lg:overflow-visible lg:border-0 lg:bg-transparent lg:px-0 lg:backdrop-blur-none"
+    >
+      <ul className="flex gap-1 py-1.5 lg:flex-col lg:py-0">
         {items.map((item) => (
           <li key={item.href}>
             <Link
               href={item.href}
               aria-current={isActive(pathname, item) ? "page" : undefined}
               className={cn(
-                "flex items-center justify-between gap-3 whitespace-nowrap rounded-lg px-3 py-2 text-sm text-muted transition-colors",
-                "hover:bg-surface-2 hover:text-fg aria-[current=page]:bg-surface-2 aria-[current=page]:text-fg",
+                "flex items-center justify-between gap-3 whitespace-nowrap px-3 py-2.5 text-sm text-muted transition-colors lg:rounded-lg lg:py-2",
+                "hover:bg-surface-2 hover:text-fg aria-[current=page]:bg-primary/15 aria-[current=page]:text-fg max-lg:aria-[current=page]:shadow-[inset_0_-2px_0_var(--color-primary)] lg:aria-[current=page]:bg-surface-2",
               )}
             >
               {item.label}

@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/site";
 import { getNextCycle, getOpenCycle } from "@/lib/data";
 import { getViewer } from "@/lib/auth";
 import { formatDate } from "@/lib/format";
 import { ButtonLink } from "@/components/ui/button";
 import { Card, Container, Notice, PageHeader, SectionTitle } from "@/components/ui/primitives";
 
-export const metadata: Metadata = { title: "Join SIC" };
+export const metadata: Metadata = pageMetadata({ title: "Join SIC", description: "Join the Science & Innovation Club at GEC Palamu: how recruitment works, who can apply and what members get.", path: "/join" });
 
 const STEPS = [
   ["Apply", "Tell us which domains and teams interest you and what you'd like to build."],

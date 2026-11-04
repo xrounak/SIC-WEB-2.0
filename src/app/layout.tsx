@@ -4,6 +4,7 @@ import { SeasonalLayer } from "@/seasonal/SeasonalLayer";
 import { PageTransition } from "@/seasonal/PageTransition";
 import { IntroLoader } from "@/components/intro/intro-loader";
 import { introBootScript } from "@/components/intro/boot";
+import { DEFAULT_OG_IMAGE, SITE_DESCRIPTION, SITE_KEYWORDS, SITE_NAME, SITE_SHORT_NAME, SITE_URL } from "@/lib/site";
 import { SfxController } from "@/seasonal/SfxController";
 import { AmbientBackdrop } from "@/components/layout/ambient-backdrop";
 import { DEFAULT_THEME, themeBootScript, themeCss } from "@/seasonal/registry";
@@ -41,9 +42,19 @@ const rajdhani = localFont({
 });
 
 export const metadata: Metadata = {
-  title: { default: "SIC · Science & Innovation Club, GEC Palamu", template: "%s · SIC" },
-  description:
-    "The Science & Innovation Club: projects, workshops, hackathons and a community of builders across every engineering discipline.",
+  metadataBase: new URL(SITE_URL),
+  title: { default: SITE_NAME, template: "%s · SIC" },
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_SHORT_NAME,
+  keywords: SITE_KEYWORDS,
+  authors: [{ name: "Science & Innovation Club, GEC Palamu", url: SITE_URL }],
+  creator: "Science & Innovation Club, GEC Palamu",
+  publisher: "Government Engineering College, Palamu",
+  formatDetection: { email: false, address: false, telephone: false },
+  openGraph: { type: "website", siteName: SITE_NAME, locale: "en_IN", url: SITE_URL, title: SITE_NAME, description: SITE_DESCRIPTION, images: [DEFAULT_OG_IMAGE] },
+  twitter: { card: "summary_large_image", title: SITE_NAME, description: SITE_DESCRIPTION, images: [DEFAULT_OG_IMAGE.url] },
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 } },
+  ...(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION } } : {}),
 };
 
 export const viewport: Viewport = {
@@ -58,7 +69,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     // data-theme is the server default; the boot script may swap it before paint.
     <html
-      lang="en"
+      lang="en-IN"
       data-theme={DEFAULT_THEME}
       data-mode="theme"
       suppressHydrationWarning

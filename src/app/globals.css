@@ -512,6 +512,82 @@
     transform: none;
   }
 
+  /* Phone table: rows become cards. Labels come from the --hN variables Table sets. */
+  @media (max-width: 639px) {
+    .rtable,
+    .rtable tbody {
+      display: block;
+      min-width: 0;
+    }
+    .rtable thead {
+      display: none;
+    }
+    .rtable tbody tr {
+      display: grid;
+      gap: 0.4rem;
+      padding: 0.85rem 1rem;
+    }
+    .rtable tbody td {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0 !important;
+      text-align: right;
+    }
+    .rtable tbody td:first-child {
+      display: block;
+      text-align: left;
+      font-size: 0.9375rem;
+    }
+    .rtable tbody td::before {
+      flex: none;
+      text-align: left;
+      font-family: var(--font-rajdhani), system-ui, sans-serif;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--color-subtle);
+    }
+    .rtable tbody td:first-child::before {
+      content: none;
+    }
+    .rtable tbody td:nth-child(2)::before { content: var(--h2); }
+    .rtable tbody td:nth-child(3)::before { content: var(--h3); }
+    .rtable tbody td:nth-child(4)::before { content: var(--h4); }
+    .rtable tbody td:nth-child(5)::before { content: var(--h5); }
+    .rtable tbody td:nth-child(6)::before { content: var(--h6); }
+    .rtable tbody td:nth-child(7)::before { content: var(--h7); }
+    .rtable tbody td:nth-child(8)::before { content: var(--h8); }
+    /* Cells with no heading are action buttons: full width, buttons at the end. */
+    .rtable tbody td:last-child:not(:first-child):has(button, a.btn, form) {
+      justify-content: flex-end;
+    }
+  }
+
+  /* Touch screens: bigger targets for small buttons, no sticky hover. */
+  @media (pointer: coarse) {
+    .btn-sm {
+      min-height: 2.5rem;
+    }
+    .side-strip a {
+      min-height: 2.75rem;
+    }
+  }
+  .side-strip {
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .side-strip::-webkit-scrollbar {
+    display: none;
+  }
+  @media (max-width: 1023px) {
+    .side-strip {
+      mask-image: linear-gradient(90deg, transparent, #000 4%, #000 92%, transparent);
+    }
+  }
+
   /* Account dropdown: glass panel with a cut corner */
   .hdr-menu {
     --cut: 12px;

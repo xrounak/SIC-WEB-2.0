@@ -1,5 +1,9 @@
+import type { Metadata } from "next";
 import { Logo } from "@/components/layout/logo";
+import { NO_INDEX } from "@/lib/site";
 import { SetupNotice } from "@/components/layout/setup-notice";
+
+export const metadata: Metadata = NO_INDEX;
 
 export default function AuthLayout({ children }: LayoutProps<"/">) {
   return (

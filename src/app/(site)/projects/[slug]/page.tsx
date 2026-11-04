@@ -3,12 +3,22 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProjectBySlug } from "@/lib/data";
 import { formatDate, storageUrl } from "@/lib/format";
+import { SITE_URL, absoluteUrl, pageMetadata, snippet } from "@/lib/site";
+import { JsonLd, breadcrumbLd } from "@/components/json-ld";
 import { buttonClass } from "@/components/ui/button";
 import { Avatar, Badge, Card, Container, Eyebrow } from "@/components/ui/primitives";
 
 export async function generateMetadata({ params }: PageProps<"/projects/[slug]">): Promise<Metadata> {
-  const data = await getProjectBySlug((await params).slug);
-  return data ? { title: data.project.title, description: data.project.summary ?? undefined } : { title: "Project" };
+  const { slug } = await params;
+  const data = await getProjectBySlug(slug);
+  if (!data || data.project.status !== "published") return { title: "Project", robots: { index: false } };
+  return pageMetadata({
+    title: data.project.title,
+    description: snippet(data.project.summary ?? data.project.solution ?? data.project.problem) || `${data.project.title}: a project by the Science & Innovation Club, GEC Palamu.`,
+    path: `/projects/${slug}`,
+    image: storageUrl(data.project.cover_path),
+    type: "article",
+  });
 }
 
 export default async function ProjectPage({ params }: PageProps<"/projects/[slug]">) {
@@ -25,8 +35,23 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[slug
     { title: "Outcomes", body: project.outcomes },
   ].filter((s) => s.body);
 
+  const projectLd = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    name: project.title,
+    description: snippet(project.summary ?? project.solution, 300) || undefined,
+    url: absoluteUrl(`/projects/${project.slug}`),
+    image: cover ?? undefined,
+    datePublished: project.published_at ?? undefined,
+    author: contributors.map((c) => ({ "@type": "Person", name: c.full_name })),
+    publisher: { "@type": "Organization", name: "Science & Innovation Club, GEC Palamu", url: SITE_URL },
+    sameAs: project.repo_url ? [project.repo_url] : undefined,
+    keywords: domains.map((d) => d.name).join(", ") || undefined,
+  };
+
   return (
     <Container className="flex flex-col gap-10 py-12">
+      <JsonLd data={[projectLd, breadcrumbLd([["Projects", "/projects"], [project.title, `/projects/${project.slug}`]])]} />
       <Link href="/projects" className="text-sm text-muted hover:text-fg">
         ← All projects
       </Link>

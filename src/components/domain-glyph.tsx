@@ -14,6 +14,9 @@ const PATHS: Record<string, string> = {
   electronics: "M10 10h12v12H10zM13 6v4M19 6v4M13 22v4M19 22v4M6 13h4M6 19h4M22 13h4M22 19h4M14 14h4v4h-4z",
   // robot arm
   robotics: "M5 27h12M11 27v-5M8 22h6l3-9M17 13l7-4M24 9l3 3M24 9l-1-4M17 13a2 2 0 1 0 0 .1",
+  // robot arm with a signal
+  "iot-robotics":
+    "M4 28h11M9.5 28v-5M6.5 23h6l2.5-8M15 15l5-3M24 14a1.4 1.4 0 1 0 0 .1M21 9.5a5 5 0 0 1 6 0M18 6a9.5 9.5 0 0 1 12.5 0",
   // signal
   iot: "M16 24a1.5 1.5 0 1 0 0 .1M11 19a7 7 0 0 1 10 0M7 15a12.5 12.5 0 0 1 18 0M3.5 11a17.5 17.5 0 0 1 25 0",
   // network

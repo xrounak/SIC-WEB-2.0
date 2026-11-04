@@ -70,8 +70,8 @@ on conflict do nothing;
 insert into public.team_members (team_id, member_id, team_role)
 select t.id, p.id, v.team_role
 from (values
-  ('robotics', 'yourname+lead@gmail.com', 'lead'),
-  ('robotics', 'yourname+member@gmail.com', 'member'),
+  ('iot-robotics', 'yourname+lead@gmail.com', 'lead'),
+  ('iot-robotics', 'yourname+member@gmail.com', 'member'),
   ('software', 'yourname+member2@gmail.com', 'member')
 ) as v (team, email, team_role)
 join public.teams t on t.slug = v.team
@@ -111,7 +111,7 @@ Sign out and back in on every account after this so the new roles load.
 | Publish / cancel event | ❌ | ❌ | ❌ | ❌ | ✅ own team | ✅ | ✅ | ❌ | ✅ |
 | Review projects | ❌ | ❌ | ❌ | ❌ | ✅ own team | ✅ | ✅ | ❌ | ✅ |
 | Verify students | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ |
-| Recruitment final decision | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ |
+| Recruitment final decision | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ |
 | Teams & domains (`/manage/teams`) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ |
 | Audit log (`/manage/audit`) | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ✅ |
 

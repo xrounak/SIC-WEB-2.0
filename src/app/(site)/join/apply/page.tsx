@@ -8,7 +8,7 @@ import { ActionForm, CheckboxGroup, SubmitButton, TextAreaField, TextField } fro
 import { ButtonLink } from "@/components/ui/button";
 import { Container, EmptyState, Notice, PageHeader, StatusBadge } from "@/components/ui/primitives";
 
-export const metadata: Metadata = { title: "Apply" };
+export const metadata: Metadata = { title: "Apply", robots: { index: false, follow: false } };
 
 export default async function ApplyPage() {
   const viewer = await requireOnboarded();

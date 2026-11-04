@@ -1,4 +1,4 @@
-import type { ComponentProps, ReactNode } from "react";
+import type { ComponentProps, CSSProperties, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
 export function Container({ className, ...props }: ComponentProps<"div">) {
@@ -250,10 +250,16 @@ export function Meta({ items }: { items: Array<{ label: string; value: ReactNode
   );
 }
 
+/**
+ * Data table. From the sm breakpoint up it is a normal table; on phones every row
+ * becomes a small card (first cell is the title, the rest are "label  value" lines,
+ * labels taken from `head`). See .rtable in globals.css.
+ */
 export function Table({ head, children }: { head: string[]; children: ReactNode }) {
+  const labels = Object.fromEntries(head.map((h, i) => [`--h${i + 1}`, JSON.stringify(h)])) as CSSProperties;
   return (
     <div className="overflow-x-auto rounded-xl border border-line bg-surface">
-      <table className="w-full min-w-[35rem] border-collapse text-sm">
+      <table className="rtable w-full border-collapse text-sm sm:min-w-[35rem]" style={labels}>
         <thead>
           <tr className="border-b border-line bg-surface-2/60 text-left">
             {head.map((h) => (

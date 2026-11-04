@@ -4,11 +4,18 @@ import { notFound } from "next/navigation";
 import { getDomains, getLeadership, getPublishedProjects, getTeams, getUpcomingEvents } from "@/lib/data";
 import { Avatar, Container, EmptyState, PageHeader, SectionTitle } from "@/components/ui/primitives";
 import { EventCard, ProjectCard } from "@/components/cards";
+import { pageMetadata, snippet } from "@/lib/site";
+import { JsonLd, breadcrumbLd } from "@/components/json-ld";
 
 export async function generateMetadata({ params }: PageProps<"/domains/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const domain = (await getDomains()).find((d) => d.slug === slug);
-  return { title: domain?.name ?? "Domain" };
+  if (!domain) return { title: "Domain", robots: { index: false } };
+  return pageMetadata({
+    title: domain.name,
+    description: snippet(domain.description) || `${domain.name} at the Science & Innovation Club, GEC Palamu: teams, events and projects.`,
+    path: `/domains/${slug}`,
+  });
 }
 
 export default async function DomainPage({ params }: PageProps<"/domains/[slug]">) {
@@ -26,6 +33,7 @@ export default async function DomainPage({ params }: PageProps<"/domains/[slug]"
 
   return (
     <Container className="flex flex-col gap-14 py-12">
+      <JsonLd data={breadcrumbLd([["Domains", "/domains"], [domain.name, `/domains/${slug}`]])} />
       <Link href="/domains" className="text-sm text-muted hover:text-fg">
         ← All domains
       </Link>

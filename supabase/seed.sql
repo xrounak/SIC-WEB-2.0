@@ -1,30 +1,20 @@
--- Reference data: domains (disciplines) and club teams.
+-- Reference data: the club's four domains and its teams.
 -- Safe to re-run. Adjust names to match the club before production.
 
 insert into public.domains (name, slug, sort_order) values
   ('Mechanical', 'mechanical', 10),
   ('Civil', 'civil', 20),
-  ('Electrical', 'electrical', 30),
-  ('Electronics', 'electronics', 40),
-  ('Robotics', 'robotics', 50),
-  ('IoT', 'iot', 60),
-  ('AI / ML', 'ai-ml', 70),
-  ('Software', 'software', 80),
-  ('Research', 'research', 90)
+  ('IoT & Robotics', 'iot-robotics', 30),
+  ('Software', 'software', 40)
 on conflict (slug) do nothing;
 
 insert into public.teams (name, slug, team_type, domain_id)
 select v.name, v.slug, v.team_type, d.id
 from (values
-  ('Robotics', 'robotics', 'technical', 'robotics'),
-  ('IoT & Embedded', 'iot-embedded', 'technical', 'iot'),
-  ('AI / ML', 'ai-ml', 'technical', 'ai-ml'),
+  ('Mechanical', 'mechanical', 'technical', 'mechanical'),
+  ('Civil', 'civil', 'technical', 'civil'),
+  ('IoT & Robotics', 'iot-robotics', 'technical', 'iot-robotics'),
   ('Software', 'software', 'technical', 'software'),
-  ('Mechanical Design', 'mechanical-design', 'technical', 'mechanical'),
-  ('Civil & Structures', 'civil-structures', 'technical', 'civil'),
-  ('Electrical & Power', 'electrical-power', 'technical', 'electrical'),
-  ('Electronics', 'electronics', 'technical', 'electronics'),
-  ('Research', 'research', 'technical', 'research'),
   ('Media', 'media', 'media', null),
   ('Management', 'management', 'operations', null),
   ('PR & Outreach', 'pr-outreach', 'operations', null)

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/site";
 import { getPastEvents, getUpcomingEvents } from "@/lib/data";
 import { Container, EmptyState, PageHeader, SectionTitle } from "@/components/ui/primitives";
 import { EventCard } from "@/components/cards";
@@ -6,7 +7,7 @@ import { EVENT_TYPE_LABEL } from "@/lib/format";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 
-export const metadata: Metadata = { title: "Events" };
+export const metadata: Metadata = pageMetadata({ title: "Events", description: "Workshops, hackathons, competitions and talks by the Science & Innovation Club at GEC Palamu. See what is coming up and register.", path: "/events" });
 
 export default async function EventsPage({ searchParams }: PageProps<"/events">) {
   const { type } = await searchParams;

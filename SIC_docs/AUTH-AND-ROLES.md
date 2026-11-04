@@ -118,15 +118,15 @@ where role = 'admin'
 
 ### Put someone in a team (or make them lead)
 
-Team slugs: `robotics`, `iot-embedded`, `ai-ml`, `software`, `mechanical-design`,
-`civil-structures`, `electrical-power`, `electronics` (see `public.teams`).
+Team slugs: `mechanical`, `civil`, `iot-robotics`, `software`, `media`, `management`,
+`pr-outreach` (see `public.teams`).
 `team_role` is `member`, `deputy` or `lead`.
 
 ```sql
 insert into public.team_members (team_id, member_id, team_role)
 select t.id, p.id, 'lead'
 from public.teams t, public.profiles p
-where t.slug = 'robotics' and p.email = 'someone@gmail.com'
+where t.slug = 'iot-robotics' and p.email = 'someone@gmail.com'
 on conflict (team_id, member_id) do update set team_role = excluded.team_role;
 ```
 
@@ -134,7 +134,7 @@ Remove from a team:
 
 ```sql
 delete from public.team_members
-where team_id = (select id from public.teams where slug = 'robotics')
+where team_id = (select id from public.teams where slug = 'iot-robotics')
   and member_id = (select id from public.profiles where email = 'someone@gmail.com');
 ```
 

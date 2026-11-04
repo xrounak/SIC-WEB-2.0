@@ -5,14 +5,23 @@ import { getEventBySlug, getSeatsTaken } from "@/lib/data";
 import { getViewer } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { EVENT_TYPE_LABEL, formatDateTime, storageUrl } from "@/lib/format";
+import { SITE_URL, absoluteUrl, pageMetadata, snippet } from "@/lib/site";
+import { JsonLd, breadcrumbLd } from "@/components/json-ld";
 import { ButtonLink } from "@/components/ui/button";
 import { Badge, Card, Container, Eyebrow, Meta, Notice, StatusBadge } from "@/components/ui/primitives";
 import { DateTile } from "@/components/cards";
 import type { SicEvent } from "@/lib/types";
 
 export async function generateMetadata({ params }: PageProps<"/events/[slug]">): Promise<Metadata> {
-  const event = await getEventBySlug((await params).slug);
-  return event ? { title: event.title, description: event.summary ?? undefined } : { title: "Event" };
+  const { slug } = await params;
+  const event = await getEventBySlug(slug);
+  if (!event || !["published", "completed", "cancelled"].includes(event.status)) return { title: "Event", robots: { index: false } };
+  return pageMetadata({
+    title: event.title,
+    description: snippet(event.summary ?? event.description) || `${event.title}: an event by the Science & Innovation Club, GEC Palamu.`,
+    path: `/events/${slug}`,
+    image: storageUrl(event.cover_path),
+  });
 }
 
 type RegState = "open" | "not-open" | "closed" | "full" | "registered" | "cancelled" | "past";
@@ -51,8 +60,36 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
   const cover = storageUrl(event.cover_path);
   const seatsLeft = event.capacity ? Math.max(event.capacity - seatsTaken, 0) : null;
 
+  const eventLd = {
+    "@context": "https://schema.org",
+    "@type": "Event",
+    name: event.title,
+    description: snippet(event.summary ?? event.description, 300) || undefined,
+    url: absoluteUrl(`/events/${slug}`),
+    image: cover ?? undefined,
+    startDate: event.starts_at ?? undefined,
+    endDate: event.ends_at ?? undefined,
+    eventStatus: event.status === "cancelled" ? "https://schema.org/EventCancelled" : "https://schema.org/EventScheduled",
+    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+    location: {
+      "@type": "Place",
+      name: event.venue ?? "Government Engineering College, Palamu",
+      address: { "@type": "PostalAddress", addressLocality: "Palamu", addressRegion: "Jharkhand", addressCountry: "IN" },
+    },
+    organizer: { "@type": "Organization", name: "Science & Innovation Club, GEC Palamu", url: SITE_URL },
+    isAccessibleForFree: true,
+    offers: {
+      "@type": "Offer",
+      price: 0,
+      priceCurrency: "INR",
+      url: absoluteUrl(`/events/${slug}`),
+      availability: event.status === "published" ? "https://schema.org/InStock" : "https://schema.org/SoldOut",
+    },
+  };
+
   return (
     <Container className="flex flex-col gap-10 py-12">
+      <JsonLd data={[eventLd, breadcrumbLd([["Events", "/events"], [event.title, `/events/${slug}`]])]} />
       <Link href="/events" className="text-sm text-muted hover:text-fg">
         ← All events
       </Link>

@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/site";
 import Link from "next/link";
 import { getDomains, getTeams } from "@/lib/data";
 import { Container, EmptyState, PageHeader } from "@/components/ui/primitives";
 
-export const metadata: Metadata = { title: "Domains" };
+export const metadata: Metadata = pageMetadata({ title: "Domains", description: "Mechanical, Civil, IoT & Robotics and Software: the four domains of the Science & Innovation Club, GEC Palamu, with their teams, events and projects.", path: "/domains" });
 
 export default async function DomainsPage() {
   const [domains, teams] = await Promise.all([getDomains(), getTeams()]);

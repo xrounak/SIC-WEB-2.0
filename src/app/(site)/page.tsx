@@ -1,3 +1,6 @@
+import type { Metadata } from "next";
+import { pageMetadata, SITE_DESCRIPTION } from "@/lib/site";
+import { JsonLd, organizationLd, websiteLd } from "@/components/json-ld";
 import { getDomains, getOpenCycle, getPublicAnnouncements, getPublishedProjects, getTeams, getUpcomingEvents } from "@/lib/data";
 import { formatDate } from "@/lib/format";
 import { Container, EmptyState } from "@/components/ui/primitives";
@@ -6,6 +9,8 @@ import { BracketLink, ChamferButton, ChamferPanel, SectionHead } from "@/compone
 import { DomainGlyph } from "@/components/domain-glyph";
 import { HorizontalScroller } from "@/components/horizontal-scroller";
 import { ThemedHeroTitle } from "@/seasonal/HeroArt";
+
+export const metadata: Metadata = pageMetadata({ description: SITE_DESCRIPTION, path: "/" });
 
 export default async function HomePage() {
   const [events, projects, domains, teams, cycle, announcements] = await Promise.all([
@@ -19,6 +24,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <JsonLd data={[organizationLd, websiteLd]} />
       {/* ------------------------------------------------------------- Hero */}
       <section className="relative flex min-h-[calc(100svh-4rem)] flex-col items-center justify-center overflow-hidden px-4 text-center">
         <div className="hero-zoom flex flex-col items-center">

@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/site";
 import Link from "next/link";
 import { getDomains, getPublishedProjects } from "@/lib/data";
 import { cn } from "@/lib/cn";
 import { Container, EmptyState, PageHeader } from "@/components/ui/primitives";
 import { ProjectCard } from "@/components/cards";
 
-export const metadata: Metadata = { title: "Projects" };
+export const metadata: Metadata = pageMetadata({ title: "Projects", description: "Projects built by students of the Science & Innovation Club, GEC Palamu: robots, IoT systems, structures and software, with the teams behind them.", path: "/projects" });
 
 export default async function ProjectsPage({ searchParams }: PageProps<"/projects">) {
   const { domain } = await searchParams;

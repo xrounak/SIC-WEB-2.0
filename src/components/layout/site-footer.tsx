@@ -71,7 +71,7 @@ function Marquee({ words, reverse, small }: { words: string[]; reverse?: boolean
 
 export async function SiteFooter() {
   const domains = await getDomains();
-  const domainNames = domains.length ? domains.map((d) => d.name) : ["Mechanical", "Civil", "Electrical", "Electronics", "Robotics", "IoT", "AI / ML", "Software", "Research"];
+  const domainNames = domains.length ? domains.map((d) => d.name) : ["Mechanical", "Civil", "IoT & Robotics", "Software"];
 
   return (
     <footer className="site-footer relative z-10 mt-28 overflow-hidden border-t border-line bg-bg">
@@ -88,8 +88,8 @@ export async function SiteFooter() {
         <div className="flex flex-col items-start gap-5">
           <Logo size="lg" />
           <p className="max-w-sm text-muted">
-            The Science &amp; Innovation Club of GEC Palamu: students from every branch building robots, circuits,
-            structures, software and research together.
+            The Science &amp; Innovation Club of GEC Palamu: students from every branch building machines, robots,
+            structures and software together.
           </p>
           <a href="#main" className="footer-top group hud-label inline-flex items-center gap-2 py-2 text-[0.75rem] text-muted hover:text-primary">
             <span className="text-primary">[</span>

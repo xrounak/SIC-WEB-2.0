@@ -72,15 +72,15 @@ on conflict do nothing;
 insert into public.team_members (team_id, member_id, team_role)
 select t.id, v.member::uuid, v.role
 from (values
-  ('robotics',          'd0000000-0000-4000-8000-000000000004', 'lead'),
-  ('robotics',          'd0000000-0000-4000-8000-000000000008', 'member'),
-  ('robotics',          'd0000000-0000-4000-8000-000000000001', 'member'),
+  ('iot-robotics',          'd0000000-0000-4000-8000-000000000004', 'lead'),
+  ('iot-robotics',          'd0000000-0000-4000-8000-000000000008', 'member'),
+  ('iot-robotics',          'd0000000-0000-4000-8000-000000000001', 'member'),
   ('software',          'd0000000-0000-4000-8000-000000000005', 'lead'),
   ('software',          'd0000000-0000-4000-8000-000000000009', 'member'),
-  ('ai-ml',             'd0000000-0000-4000-8000-000000000006', 'lead'),
-  ('iot-embedded',      'd0000000-0000-4000-8000-000000000007', 'lead'),
-  ('electronics',       'd0000000-0000-4000-8000-000000000002', 'lead'),
-  ('civil-structures',  'd0000000-0000-4000-8000-000000000010', 'member'),
+  ('software',             'd0000000-0000-4000-8000-000000000006', 'lead'),
+  ('iot-robotics',      'd0000000-0000-4000-8000-000000000007', 'lead'),
+  ('iot-robotics',       'd0000000-0000-4000-8000-000000000002', 'lead'),
+  ('civil',  'd0000000-0000-4000-8000-000000000010', 'member'),
   ('media',             'd0000000-0000-4000-8000-000000000009', 'deputy')
 ) as v (team, member, role)
 join public.teams t on t.slug = v.team
@@ -89,13 +89,13 @@ on conflict do nothing;
 insert into public.member_domains (member_id, domain_id)
 select v.member::uuid, d.id
 from (values
-  ('d0000000-0000-4000-8000-000000000001', 'mechanical'), ('d0000000-0000-4000-8000-000000000001', 'robotics'),
-  ('d0000000-0000-4000-8000-000000000002', 'electronics'),
-  ('d0000000-0000-4000-8000-000000000004', 'robotics'), ('d0000000-0000-4000-8000-000000000004', 'mechanical'),
+  ('d0000000-0000-4000-8000-000000000001', 'mechanical'), ('d0000000-0000-4000-8000-000000000001', 'iot-robotics'),
+  ('d0000000-0000-4000-8000-000000000002', 'iot-robotics'),
+  ('d0000000-0000-4000-8000-000000000004', 'iot-robotics'), ('d0000000-0000-4000-8000-000000000004', 'mechanical'),
   ('d0000000-0000-4000-8000-000000000005', 'software'),
-  ('d0000000-0000-4000-8000-000000000006', 'ai-ml'),
-  ('d0000000-0000-4000-8000-000000000007', 'iot'), ('d0000000-0000-4000-8000-000000000007', 'electronics'),
-  ('d0000000-0000-4000-8000-000000000008', 'robotics'), ('d0000000-0000-4000-8000-000000000008', 'electrical'),
+  ('d0000000-0000-4000-8000-000000000006', 'software'),
+  ('d0000000-0000-4000-8000-000000000007', 'iot-robotics'), ('d0000000-0000-4000-8000-000000000007', 'iot-robotics'),
+  ('d0000000-0000-4000-8000-000000000008', 'iot-robotics'), ('d0000000-0000-4000-8000-000000000008', 'iot-robotics'),
   ('d0000000-0000-4000-8000-000000000009', 'software'),
   ('d0000000-0000-4000-8000-000000000010', 'civil')
 ) as v (member, domain)
@@ -119,27 +119,27 @@ from (values
    'A hands-on first workshop: blink, sense, and drive a motor.',
    E'Never touched a microcontroller? Start here.\n\nWe''ll wire up LEDs, read a temperature sensor and drive a small DC motor with an Arduino Uno. Kits are provided; bring a laptop with the Arduino IDE installed.\n\nOpen to all branches and years.',
    'workshop', false, 'published', 'public', 'Electronics Lab 2',
-   interval '5 days', interval '3 hours', interval '-6 days', interval '4 days', 60, 'individual', null::int, null::int, 'iot-embedded', 'iot', 'd0000000-0000-4000-8000-000000000007'),
+   interval '5 days', interval '3 hours', interval '-6 days', interval '4 days', 60, 'individual', null::int, null::int, 'iot-robotics', 'iot-robotics', 'd0000000-0000-4000-8000-000000000007'),
   ('e0000000-0000-4000-8000-000000000002', 'line-follower-sprint', 'Line Follower Sprint',
    'Build a line-following robot in teams and race it on our track.',
    E'Teams of 2 to 4 design, build and tune a line follower. Fastest clean lap wins.\n\nRules: max 20 × 20 cm footprint, any microcontroller, no pre-built commercial chassis. Track and timing gates provided on the day.\n\nPrizes for the top three teams and the best newcomer team.',
    'competition', true, 'published', 'public', 'Main Workshop Bay',
-   interval '12 days', interval '6 hours', interval '-5 days', interval '10 days', 80, 'team', 2, 4, 'robotics', 'robotics', 'd0000000-0000-4000-8000-000000000004'),
+   interval '12 days', interval '6 hours', interval '-5 days', interval '10 days', 80, 'team', 2, 4, 'iot-robotics', 'iot-robotics', 'd0000000-0000-4000-8000-000000000004'),
   ('e0000000-0000-4000-8000-000000000003', 'intro-to-pytorch', 'Intro to PyTorch',
    'Train your first image classifier, from tensors to a working model.',
    E'A members-only session. We cover tensors, autograd, a small CNN and how to read training curves. Bring a laptop; we''ll use Google Colab.',
    'workshop', false, 'published', 'members', 'Seminar Hall 1',
-   interval '8 days', interval '2 hours', interval '-3 days', interval '7 days', 40, 'individual', null, null, 'ai-ml', 'ai-ml', 'd0000000-0000-4000-8000-000000000006'),
+   interval '8 days', interval '2 hours', interval '-3 days', interval '7 days', 40, 'individual', null, null, 'software', 'software', 'd0000000-0000-4000-8000-000000000006'),
   ('e0000000-0000-4000-8000-000000000004', 'popsicle-bridge-challenge', 'Popsicle Bridge Challenge',
    'Design the strongest bridge per gram from popsicle sticks and glue.',
    E'Teams of 2 or 3 build a 50 cm span bridge using only the sticks and glue we provide. Bridges are load-tested to failure on the day. Score = load at failure ÷ bridge mass.',
    'competition', true, 'published', 'public', 'Civil Engineering Block, Ground Floor',
-   interval '20 days', interval '5 hours', interval '-2 days', interval '15 days', 60, 'team', 2, 3, 'civil-structures', 'civil', 'd0000000-0000-4000-8000-000000000010'),
+   interval '20 days', interval '5 hours', interval '-2 days', interval '15 days', 60, 'team', 2, 3, 'civil', 'civil', 'd0000000-0000-4000-8000-000000000010'),
   ('e0000000-0000-4000-8000-000000000005', 'careers-in-embedded-systems', 'Talk: Careers in Embedded Systems',
    'An industry engineer on firmware jobs, internships and what to learn first.',
    E'Our guest, a senior firmware engineer, talks about the path from college projects to embedded roles, followed by open Q&A.',
    'seminar', true, 'published', 'public', 'Auditorium',
-   interval '3 days', interval '90 minutes', interval '-8 days', interval '3 days', 150, 'individual', null, null, 'iot-embedded', 'electronics', 'd0000000-0000-4000-8000-000000000007'),
+   interval '3 days', interval '90 minutes', interval '-8 days', interval '3 days', 150, 'individual', null, null, 'iot-robotics', 'iot-robotics', 'd0000000-0000-4000-8000-000000000007'),
   ('e0000000-0000-4000-8000-000000000006', 'hacksic-24', 'HackSIC 24',
    'A 24-hour hackathon on campus problems. Registration opens soon.',
    E'Build anything that makes campus life better: hardware, software or both. Mentors on call all night, food included. Teams of 2 to 4.',
@@ -149,12 +149,12 @@ from (values
    'Learn to solder by building a small LED badge you keep.',
    E'Through-hole soldering basics, safety and inspection.',
    'workshop', false, 'completed', 'public', 'Electronics Lab 1',
-   interval '-20 days', interval '3 hours', interval '-35 days', interval '-21 days', 30, 'individual', null, null, 'electronics', 'electronics', 'd0000000-0000-4000-8000-000000000002'),
+   interval '-20 days', interval '3 hours', interval '-35 days', interval '-21 days', 30, 'individual', null, null, 'iot-robotics', 'iot-robotics', 'd0000000-0000-4000-8000-000000000002'),
   ('e0000000-0000-4000-8000-000000000008', 'drone-basics', 'Drone Basics',
    'How quadcopters fly: frames, motors, ESCs and flight controllers.',
    E'An introductory seminar with a live indoor flight demo.',
    'seminar', false, 'completed', 'public', 'Seminar Hall 2',
-   interval '-45 days', interval '2 hours', interval '-60 days', interval '-46 days', 100, 'individual', null, null, 'robotics', 'robotics', 'd0000000-0000-4000-8000-000000000004'),
+   interval '-45 days', interval '2 hours', interval '-60 days', interval '-46 days', 100, 'individual', null, null, 'iot-robotics', 'iot-robotics', 'd0000000-0000-4000-8000-000000000004'),
   ('e0000000-0000-4000-8000-000000000009', 'git-for-everyone', 'Git & GitHub for Everyone',
    'Version control for non-CS students: commits, branches and pull requests.',
    E'A beginner session so every team can share code and CAD files properly.',
@@ -164,17 +164,17 @@ from (values
    'A two-day build camp for our RoboWars entry, open to other colleges.',
    E'Design reviews, weapon safety, and full-speed test fights in the cage.',
    'external', true, 'lead_approved', 'public', 'Main Workshop Bay',
-   interval '25 days', interval '2 days', null, null, 40, 'team', 3, 5, 'robotics', 'robotics', 'd0000000-0000-4000-8000-000000000008'),
+   interval '25 days', interval '2 days', null, null, 40, 'team', 3, 5, 'iot-robotics', 'iot-robotics', 'd0000000-0000-4000-8000-000000000008'),
   ('e0000000-0000-4000-8000-000000000011', 'total-station-surveying', 'Surveying with a Total Station',
    'Field session on modern surveying instruments.',
    E'Draft: need to confirm instrument availability with the department.',
    'workshop', false, 'draft', 'public', 'Campus grounds',
-   interval '35 days', interval '3 hours', null, null, 25, 'individual', null, null, 'civil-structures', 'civil', 'd0000000-0000-4000-8000-000000000010'),
+   interval '35 days', interval '3 hours', null, null, 25, 'individual', null, null, 'civil', 'civil', 'd0000000-0000-4000-8000-000000000010'),
   ('e0000000-0000-4000-8000-000000000012', 'fusion-360-crash-course', 'Fusion 360 Crash Course',
    'CAD from sketch to printable part in one evening.',
    E'Sketches, constraints, extrudes and exporting for 3D printing.',
    'workshop', false, 'changes_requested', 'public', 'Computer Lab 1',
-   interval '18 days', interval '3 hours', null, null, 35, 'individual', null, null, 'mechanical-design', 'mechanical', 'd0000000-0000-4000-8000-000000000008')
+   interval '18 days', interval '3 hours', null, null, 35, 'individual', null, null, 'mechanical', 'mechanical', 'd0000000-0000-4000-8000-000000000008')
 ) as v (id, slug, title, summary, description, etype, major, status, vis, venue, starts, dur, opens, closes, cap, part, tmin, tmax, team, domain, by)
 on conflict (id) do nothing;
 
@@ -255,7 +255,7 @@ from (values
    'Lap time went from 16.4 s to 9.8 s. Placed 2nd at the zonal robotics meet.',
    'ATmega328P, TB6612FNG motor driver, N20 600 RPM motors, QTR-8RC sensor array, 2S LiPo.',
    'Arduino C++, PID tuned with a serial plotter and logged runs.', 'https://github.com/',
-   'published', 'robotics', 'd0000000-0000-4000-8000-000000000004', interval '30 days'),
+   'published', 'iot-robotics', 'd0000000-0000-4000-8000-000000000004', interval '30 days'),
   ('a0000000-0000-4000-8000-000000000002', 'smart-irrigation-controller', 'Smart Irrigation Controller',
    'Soil-moisture driven watering for the college garden, monitored over Wi-Fi.',
    'Garden staff watered on a fixed schedule, wasting water after rain.',
@@ -263,7 +263,7 @@ from (values
    'About 35% less water used over six weeks of testing.',
    'ESP32, capacitive moisture sensors, 12 V solenoid valve, relay module, 20 W solar panel.',
    'ESP-IDF firmware, MQTT, a small web dashboard.', null,
-   'published', 'iot-embedded', 'd0000000-0000-4000-8000-000000000007', interval '20 days'),
+   'published', 'iot-robotics', 'd0000000-0000-4000-8000-000000000007', interval '20 days'),
   ('a0000000-0000-4000-8000-000000000003', 'campus-lost-and-found', 'Campus Lost & Found',
    'A web app where students post and claim lost items with photo matching.',
    'Lost items ended up in a cupboard nobody checked; WhatsApp posts got buried.',
@@ -277,17 +277,17 @@ from (values
    'Fine-tuned a small CNN on a public crack dataset plus 600 photos we labelled around campus.',
    '94% precision on our held-out campus photos; the civil department now uses it for first-pass screening.',
    'Phone camera on a telescopic pole.', 'PyTorch, MobileNetV3, a Streamlit review tool.', null,
-   'published', 'ai-ml', 'd0000000-0000-4000-8000-000000000006', interval '8 days'),
+   'published', 'software', 'd0000000-0000-4000-8000-000000000006', interval '8 days'),
   ('a0000000-0000-4000-8000-000000000005', null, 'Low-cost Weather Station',
    'Temperature, humidity, pressure and rainfall logging for under ₹2,000.',
    'The department''s weather data comes from a station 20 km away.',
    'An ESP8266 with BME280 and a tipping-bucket rain gauge, posting every 5 minutes.',
    null, 'ESP8266, BME280, 3D-printed rain gauge and radiation shield.', 'Arduino, InfluxDB.', null,
-   'submitted', 'iot-embedded', 'd0000000-0000-4000-8000-000000000007', interval '2 days'),
+   'submitted', 'iot-robotics', 'd0000000-0000-4000-8000-000000000007', interval '2 days'),
   ('a0000000-0000-4000-8000-000000000006', null, 'Truss Analysis Toolkit',
    'A small tool to check student truss designs before building them.',
    'Draft', 'Draft', null, null, null, null,
-   'draft', 'civil-structures', 'd0000000-0000-4000-8000-000000000010', interval '1 day')
+   'draft', 'civil', 'd0000000-0000-4000-8000-000000000010', interval '1 day')
 ) as v (id, slug, title, summary, problem, solution, outcomes, hw, sw, repo, status, team, by, ago)
 on conflict (id) do nothing;
 
@@ -308,11 +308,11 @@ on conflict do nothing;
 insert into public.project_domains (project_id, domain_id)
 select v.p::uuid, d.id
 from (values
-  ('a0000000-0000-4000-8000-000000000001', 'robotics'), ('a0000000-0000-4000-8000-000000000001', 'electronics'),
-  ('a0000000-0000-4000-8000-000000000002', 'iot'), ('a0000000-0000-4000-8000-000000000002', 'electronics'),
+  ('a0000000-0000-4000-8000-000000000001', 'iot-robotics'), ('a0000000-0000-4000-8000-000000000001', 'iot-robotics'),
+  ('a0000000-0000-4000-8000-000000000002', 'iot-robotics'), ('a0000000-0000-4000-8000-000000000002', 'iot-robotics'),
   ('a0000000-0000-4000-8000-000000000003', 'software'),
-  ('a0000000-0000-4000-8000-000000000004', 'ai-ml'), ('a0000000-0000-4000-8000-000000000004', 'civil'),
-  ('a0000000-0000-4000-8000-000000000005', 'iot')
+  ('a0000000-0000-4000-8000-000000000004', 'software'), ('a0000000-0000-4000-8000-000000000004', 'civil'),
+  ('a0000000-0000-4000-8000-000000000005', 'iot-robotics')
 ) as v (p, domain)
 join public.domains d on d.slug = v.domain
 on conflict do nothing;
@@ -338,13 +338,13 @@ on conflict do nothing;
 insert into public.recruitment_applications (id, cycle_id, user_id, domain_prefs, team_prefs, motivation, experience, portfolio_url, status, submitted_at)
 values
   ('b0000000-0000-4000-8000-000000000001', 'c0000000-0000-4000-8000-000000000001', 'd0000000-0000-4000-8000-000000000011',
-   array[(select id from public.domains where slug = 'electronics'), (select id from public.domains where slug = 'iot')],
-   array[(select id from public.teams where slug = 'iot-embedded')],
+   array[(select id from public.domains where slug = 'iot-robotics'), (select id from public.domains where slug = 'iot-robotics')],
+   array[(select id from public.teams where slug = 'iot-robotics')],
    'I''ve been repairing radios with my father since school and want to learn how to design my own boards and sensors.',
    'Built a home temperature logger with an Arduino Nano.', null, 'screening', now() - interval '3 days'),
   ('b0000000-0000-4000-8000-000000000002', 'c0000000-0000-4000-8000-000000000001', 'd0000000-0000-4000-8000-000000000012',
-   array[(select id from public.domains where slug = 'robotics'), (select id from public.domains where slug = 'mechanical')],
-   array[(select id from public.teams where slug = 'robotics'), (select id from public.teams where slug = 'mechanical-design')],
+   array[(select id from public.domains where slug = 'iot-robotics'), (select id from public.domains where slug = 'mechanical')],
+   array[(select id from public.teams where slug = 'iot-robotics'), (select id from public.teams where slug = 'mechanical')],
    'I want to build combat robots and learn proper CAD. I enjoyed the Drone Basics seminar and want to go further.',
    'SolidWorks basics from coursework; built a small RC car.', 'https://github.com/', 'interview', now() - interval '4 days')
 on conflict do nothing;
@@ -369,7 +369,7 @@ insert into public.announcements (title, body, audience, team_id, status, publis
    'members', null, 'published', now() - interval '2 days', 'd0000000-0000-4000-8000-000000000001'),
   ('Motor driver order arrived',
    'The TB6612 boards for the Line Follower Sprint are in the robotics cupboard. Sign them out in the register.',
-   'team', (select id from public.teams where slug = 'robotics'), 'published', now() - interval '6 hours', 'd0000000-0000-4000-8000-000000000004');
+   'team', (select id from public.teams where slug = 'iot-robotics'), 'published', now() - interval '6 hours', 'd0000000-0000-4000-8000-000000000004');
 
 insert into public.notifications (user_id, kind, title, body, target_url, created_at) values
   ('d0000000-0000-4000-8000-000000000008', 'event_decision', 'Changes requested on "Fusion 360 Crash Course"',
@@ -397,5 +397,5 @@ commit;
 --   select id, r::public.app_role from public.profiles, unnest(array['admin', 'president']) r where email = 'you@gmail.com'
 --   on conflict do nothing;
 -- insert into public.team_members (team_id, member_id, team_role)
---   select t.id, p.id, 'lead' from public.teams t, public.profiles p where t.slug = 'robotics' and p.email = 'you@gmail.com'
+--   select t.id, p.id, 'lead' from public.teams t, public.profiles p where t.slug = 'iot-robotics' and p.email = 'you@gmail.com'
 --   on conflict do nothing;

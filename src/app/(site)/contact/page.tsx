@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/site";
 import { Card, Container, PageHeader } from "@/components/ui/primitives";
 
-export const metadata: Metadata = { title: "Contact" };
+export const metadata: Metadata = pageMetadata({ title: "Contact", description: "Contact the Science & Innovation Club at Government Engineering College, Palamu: questions, collaborations and event queries.", path: "/contact" });
 
 // Replace with the club's real handles and address before launch.
 const CHANNELS = [

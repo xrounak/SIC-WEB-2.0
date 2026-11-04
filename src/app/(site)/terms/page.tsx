@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/site";
 import { Container, PageHeader } from "@/components/ui/primitives";
 
-export const metadata: Metadata = { title: "Terms" };
+export const metadata: Metadata = pageMetadata({ title: "Terms", description: "Terms of use for the Science & Innovation Club website at GEC Palamu.", path: "/terms" });
 
 const SECTIONS = [
   {

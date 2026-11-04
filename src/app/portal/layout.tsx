@@ -1,8 +1,12 @@
+import type { Metadata } from "next";
 import { requireOnboarded } from "@/lib/auth";
+import { NO_INDEX } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SideNav } from "@/components/layout/nav";
 import { StatusBadge } from "@/components/ui/primitives";
+
+export const metadata: Metadata = NO_INDEX;
 
 export default async function PortalLayout({ children }: LayoutProps<"/portal">) {
   const viewer = await requireOnboarded();
@@ -32,8 +36,8 @@ export default async function PortalLayout({ children }: LayoutProps<"/portal">)
   return (
     <>
       <SiteHeader />
-      <div className="relative z-10 mx-auto grid w-full max-w-content gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[12.5rem_1fr] lg:py-12">
-        <aside className="flex flex-col gap-4 lg:sticky lg:top-24 lg:self-start">
+      <div className="relative z-10 mx-auto grid w-full max-w-content gap-4 px-4 py-4 sm:gap-6 sm:px-6 sm:py-8 lg:grid-cols-[12.5rem_1fr] lg:gap-8 lg:py-12">
+        <aside className="max-lg:contents lg:sticky lg:top-24 lg:flex lg:flex-col lg:gap-4 lg:self-start">
           <div className="hidden flex-col gap-1 px-3 lg:flex">
             <p className="truncate text-sm font-medium">{viewer.profile.full_name}</p>
             <StatusBadge status={viewer.profile.member_status} className="self-start" />

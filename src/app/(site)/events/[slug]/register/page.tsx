@@ -8,7 +8,7 @@ import { createTeam, registerIndividual } from "@/lib/actions/events";
 import { ActionForm, SubmitButton, TextAreaField, TextField } from "@/components/ui/form";
 import { Card, Container, Meta, PageHeader } from "@/components/ui/primitives";
 
-export const metadata: Metadata = { title: "Register" };
+export const metadata: Metadata = { title: "Register", robots: { index: false, follow: false } };
 
 export default async function RegisterPage({ params }: PageProps<"/events/[slug]/register">) {
   const { slug } = await params;

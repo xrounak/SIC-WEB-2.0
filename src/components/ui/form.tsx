@@ -1,6 +1,7 @@
 "use client";
 
-import { createContext, useActionState, useContext, useId, type ComponentProps, type ReactNode } from "react";
+import { createContext, useActionState, useContext, useEffect, useId, useState, type ComponentProps, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { useFormStatus } from "react-dom";
 import { cn } from "@/lib/cn";
 import { initialActionState, type ActionState } from "@/lib/actions/state";
@@ -10,6 +11,38 @@ import { buttonClass } from "./button";
 type FormAction = (state: ActionState, formData: FormData) => Promise<ActionState>;
 
 const FormStateContext = createContext<ActionState>(initialActionState);
+
+const resultIds = new WeakMap<object, number>();
+let nextResultId = 0;
+function resultId(state: ActionState) {
+  if (!resultIds.has(state)) resultIds.set(state, ++nextResultId);
+  return resultIds.get(state)!;
+}
+
+/** Floating result for row-level forms that have no room for an inline message. */
+function Toast({ tone, text }: { tone: "error" | "ok"; text: string }) {
+  const [open, setOpen] = useState(true);
+  useEffect(() => {
+    const t = window.setTimeout(() => setOpen(false), tone === "error" ? 9000 : 4000);
+    return () => clearTimeout(t);
+  }, [tone]);
+  if (!open || typeof document === "undefined") return null;
+  return createPortal(
+    <div
+      role={tone === "error" ? "alert" : "status"}
+      className={cn(
+        "hdr-menu fixed bottom-5 right-5 z-[95] flex max-w-sm items-start gap-3 px-4 py-3 text-sm",
+        tone === "error" ? "text-danger" : "text-success",
+      )}
+    >
+      <span className="flex-1">{text}</span>
+      <button type="button" onClick={() => setOpen(false)} aria-label="Dismiss" className="text-muted hover:text-fg">
+        ×
+      </button>
+    </div>,
+    document.body,
+  );
+}
 
 /**
  * Form bound to a server action through useActionState.
@@ -29,9 +62,11 @@ export function ActionForm({
   hideMessages?: boolean;
 }) {
   const [state, formAction] = useActionState(action, initialActionState);
+  const toastText = hideMessages ? (state.error ?? (state.ok ? (state.message ?? successMessage) : undefined)) : undefined;
   return (
     <FormStateContext value={state}>
       <form action={formAction} className={cn("flex flex-col gap-4", className)} noValidate>
+        {toastText && <Toast key={resultId(state)} tone={state.error ? "error" : "ok"} text={toastText} />}
         {!hideMessages && state.error && (
           <p role="alert" className="rounded-lg border border-danger/40 bg-danger/10 px-3 py-2 text-sm text-danger">
             {state.error}
@@ -53,7 +88,7 @@ export function useFormState() {
 }
 
 export const inputClass =
-  "w-full rounded-lg border border-line-strong bg-bg px-3 py-2 text-sm text-fg placeholder:text-subtle transition-colors hover:border-subtle focus:border-primary focus:outline-none aria-[invalid=true]:border-danger";
+  "w-full rounded-lg border border-line-strong bg-bg px-3 py-2 text-base text-fg placeholder:text-subtle sm:text-sm transition-colors hover:border-subtle focus:border-primary focus:outline-none aria-[invalid=true]:border-danger";
 
 type FieldProps = {
   name: string;

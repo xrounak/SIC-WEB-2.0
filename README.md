@@ -76,3 +76,15 @@ Design blueprint (schema, routes, flows): [`SIC_docs/00-BLUEPRINT.html`](SIC_doc
 - Never put the secret key, email API key or bot token in a `NEXT_PUBLIC_` variable.
 - Every schema change is a new file in `supabase/migrations/`. Never change the schema only in the dashboard.
 - Status columns change only through workflow functions. Do not grant clients `update` on them.
+
+## SEO
+
+Public pages carry a title, description, canonical address and share preview
+(`src/lib/site.ts` builds them). `robots.txt`, `sitemap.xml` (home, public pages and every
+published event, project and domain) and `manifest.webmanifest` are generated. Home has
+Organization and WebSite structured data; events have Event data; events, projects and
+domains have breadcrumbs. Portal, manage, sign-in, onboarding and application pages are
+marked `noindex`. The address comes from `NEXT_PUBLIC_SITE_URL` (a production build never
+uses localhost; it falls back to `https://sic-gecp.vercel.app`). Optional:
+`NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` adds the Search Console verification tag.
+

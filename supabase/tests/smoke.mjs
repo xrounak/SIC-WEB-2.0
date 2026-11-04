@@ -19,7 +19,8 @@ const SUPABASE_STUB = `
   create role service_role nologin bypassrls;
   create schema extensions;
   create schema auth;
-  create table auth.users (id uuid primary key, email text, raw_user_meta_data jsonb default '{}'::jsonb);
+  create table auth.users (id uuid primary key, email text, raw_user_meta_data jsonb default '{}'::jsonb,
+    instance_id uuid, aud text, role text, email_confirmed_at timestamptz, raw_app_meta_data jsonb, created_at timestamptz, updated_at timestamptz);
   create function auth.uid() returns uuid language sql stable as
     $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
   create schema storage;
@@ -76,6 +77,8 @@ async function main() {
   }
   await db.exec(readFileSync(join(root, 'seed.sql'), 'utf8'));
   ok('seed.sql');
+  assert.deepEqual((await db.query('select slug from public.domains order by sort_order')).rows.map((r) => r.slug), ['mechanical', 'civil', 'iot-robotics', 'software']);
+  ok('the club has exactly four domains');
 
   // Users
   const ids = {};
@@ -95,8 +98,8 @@ async function main() {
 
   const team = async (slug) => (await db.query('select id from public.teams where slug = $1', [slug])).rows[0].id;
   const domain = async (slug) => (await db.query('select id from public.domains where slug = $1', [slug])).rows[0].id;
-  const robotics = await team('robotics');
-  const roboticsDomain = await domain('robotics');
+  const robotics = await team('iot-robotics');
+  const roboticsDomain = await domain('iot-robotics');
 
   // Onboarding
   await rejects(ids.member, `select public.register_individual(gen_random_uuid())`, [], /ONBOARDING_REQUIRED/, 'register before onboarding is refused');
@@ -123,16 +126,24 @@ async function main() {
     const appId = (await q(ids[name], `select public.submit_application($1, array[$2]::uuid[], array[$3]::uuid[], 'I would love to build robots with the club.') as id`, [cycleId, roboticsDomain, robotics]))[0].id;
     await rejects(ids[name], `select public.submit_application($1, array[$2]::uuid[], '{}', 'Applying a second time to the same cycle.')`, [cycleId, roboticsDomain], /ALREADY_APPLIED/, `${name}: duplicate application refused`);
     assert.equal((await q(ids.member === ids[name] ? ids.lead : ids.member, `select * from public.recruitment_applications where id = $1`, [appId])).length, 0);
-    await q(ids.pres, `select public.move_application($1, 'screening')`, [appId]);
-    await q(ids.pres, `select public.move_application($1, 'shortlisted')`, [appId]);
-    await q(ids.pres, `select public.move_application($1, 'interview')`, [appId]);
-    await q(ids.pres, `select public.evaluate_application($1, 'interview', 8.5, 'Strong hands-on skills', 'select')`, [appId]);
+    // The president runs one applicant's pipeline, an admin the other's.
+    const boss = name === 'member' ? ids.admin : ids.pres;
+    await q(boss, `select public.move_application($1, 'screening')`, [appId]);
+    await q(boss, `select public.move_application($1, 'shortlisted')`, [appId]);
+    await q(boss, `select public.move_application($1, 'interview')`, [appId]);
+    await q(boss, `select public.evaluate_application($1, 'interview', 8.5, 'Strong hands-on skills', 'select')`, [appId]);
     assert.equal((await q(ids[name], `select * from public.recruitment_evaluations`)).length, 0);
-    await rejects(ids.pres, `select public.decide_application($1, 'selected')`, [appId], /STUDENT_NOT_VERIFIED/, `${name}: selection needs verified student`);
-    await q(ids.pres, `select public.verify_student($1, true)`, [ids[name]]);
-    await q(ids.pres, `select public.decide_application($1, 'selected')`, [appId]);
+    await rejects(boss, `select public.decide_application($1, 'selected')`, [appId], /STUDENT_NOT_VERIFIED/, `${name}: selection needs verified student`);
+    await q(boss, `select public.verify_student($1, true)`, [ids[name]]);
+    await q(boss, `select public.decide_application($1, 'selected')`, [appId]);
   }
   ok('applicants cannot read each other or their evaluations');
+  // An account that is only an admin can verify students too (it used to get NOT_ALLOWED).
+  await db.query(`update public.profiles set student_status = 'pending' where id = $1`, [ids.mate]);
+  await rejects(ids.member, `select public.verify_student($1, true)`, [ids.mate], /NOT_ALLOWED/, 'plain members cannot verify students');
+  await q(ids.admin, `select public.verify_student($1, true)`, [ids.mate]);
+  assert.equal((await db.query('select student_status from public.profiles where id = $1', [ids.mate])).rows[0].student_status, 'verified');
+  ok('admin can verify a pending student');
   const memberRow = await db.query('select member_status from public.profiles where id = $1', [ids.member]);
   assert.equal(memberRow.rows[0].member_status, 'member');
   const seats = await db.query('select count(*)::int as n from public.team_members where team_id = $1', [robotics]);
@@ -233,6 +244,14 @@ async function main() {
   const [{ run_scheduled_maintenance: report }] = await q('service', 'select public.run_scheduled_maintenance()');
   assert.equal(typeof report.completed_events, 'number');
   ok('scheduled maintenance runs');
+
+  // The demo data loads on top of the four-domain seed, and its cleanup undoes it.
+  await db.exec(readFileSync(join(root, 'demo_seed.sql'), 'utf8'));
+  assert.equal((await db.query(`select count(*)::int as n from public.profiles where email like 'demo.%@example.com'`)).rows[0].n, 14);
+  ok('demo_seed.sql loads');
+  await db.exec(readFileSync(join(root, 'demo_cleanup.sql'), 'utf8'));
+  assert.equal((await db.query(`select count(*)::int as n from public.profiles where email like 'demo.%@example.com'`)).rows[0].n, 0);
+  ok('demo_cleanup.sql removes it');
 
   console.log(`\n${passed} checks passed`);
 }

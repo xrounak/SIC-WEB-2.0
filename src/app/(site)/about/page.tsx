@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/site";
 import { getLeadership, getTeams } from "@/lib/data";
 import { ROLE_LABEL } from "@/lib/format";
 import { Avatar, Container, Eyebrow, PageHeader, SectionTitle } from "@/components/ui/primitives";
 
-export const metadata: Metadata = { title: "About" };
+export const metadata: Metadata = pageMetadata({ title: "About", description: "About the Science & Innovation Club of GEC Palamu: who we are, what we build and how students from every branch work together.", path: "/about" });
 
 const PRINCIPLES = [
   {
@@ -12,7 +13,7 @@ const PRINCIPLES = [
   },
   {
     title: "Across disciplines",
-    body: "Mechanical, civil, electrical, electronics, IoT, AI and software students share benches, not just events.",
+    body: "Mechanical, civil, IoT and robotics, and software students share benches, not just events.",
   },
   {
     title: "Reviewed and credited",
