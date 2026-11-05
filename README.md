@@ -85,6 +85,7 @@ published event, project and domain) and `manifest.webmanifest` are generated. H
 Organization and WebSite structured data; events have Event data; events, projects and
 domains have breadcrumbs. Portal, manage, sign-in, onboarding and application pages are
 marked `noindex`. The address comes from `NEXT_PUBLIC_SITE_URL` (a production build never
-uses localhost; it falls back to `https://sic-gecp.vercel.app`). Optional:
+uses localhost; it falls back to `https://sic.gecp.in`). To send old addresses to the main
+domain, set `SITE_REDIRECT_HOSTS` (comma-separated hosts) in Vercel. Optional:
 `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` adds the Search Console verification tag.
 

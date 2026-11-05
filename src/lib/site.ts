@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 /** The public address search engines should use. Override with NEXT_PUBLIC_SITE_URL. */
-const DEFAULT_SITE_URL = "https://sic-gecp.vercel.app";
+const DEFAULT_SITE_URL = "https://sic.gecp.in";
 
 function resolveSiteUrl() {
   const fromEnv = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/$/, "");

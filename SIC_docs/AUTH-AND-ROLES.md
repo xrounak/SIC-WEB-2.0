@@ -26,7 +26,7 @@ Your Supabase project: `zybpkaqyolzmihqojzyo`
    - Application type: **Web application**.
    - **Authorized JavaScript origins**:
      - `http://localhost:3000`
-     - your live site, e.g. `https://sic-gecpalamu.vercel.app`
+     - your live site: `https://sic.gecp.in` (and any `*.vercel.app` address you still use)
    - **Authorized redirect URIs** (exactly this, it is Supabase's callback):
      - `https://zybpkaqyolzmihqojzyo.supabase.co/auth/v1/callback`
    - Click **Create** and copy the **Client ID** and **Client secret**.
