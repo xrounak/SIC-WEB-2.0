@@ -1,23 +1,34 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { INTRO_KEY } from "./boot";
 import { INTRO_CSS } from "./intro-css";
 import { loadSounds, unlockAudio } from "@/seasonal/themes/shared/sfx";
 
 /** The shortest the intro plays, and the longest it waits for the page to finish loading. */
-const MIN_MS = 3000;
-const MAX_WAIT_MS = 7000;
+const MIN_MS = 4900;
+const MAX_WAIT_MS = 7500;
 /** Every sound the intro plays; loaded up front so each cue lands on time. */
-const INTRO_SOUNDS = ["digital-power-up", "digital-process-subtle", "mechanical-latch-heavy", "riser-1s-soft", "boom-hit-medium", "shimmer-medium-bright", "whoosh-slow-medium"];
+const INTRO_SOUNDS = [
+  "digital-power-up",
+  "whoosh-medium-soft",
+  "digital-process-subtle",
+  "riser-1s-soft",
+  "mechanical-latch-heavy",
+  "cinematic-drum-big",
+  "boom-hit-medium",
+  "keyboard-letter-soft",
+  "whoosh-fast-soft",
+  "shimmer-medium-bright",
+  "whoosh-fast-medium",
+];
 
 /**
- * Full-screen intro, shown once per browser session. The markup renders on the server
- * so the cover is there from the first paint; the three.js scene (components/intro/
- * scene.ts) loads on demand and draws into the canvas. If WebGL is unavailable the
- * seal is shown instead. The cover removes itself when the page has loaded and the
- * animation has played, or on "Skip".
+ * Full-screen intro ("Four disciplines"), shown once per browser session. The markup renders
+ * on the server so the cover is there from the first paint; the three.js scene
+ * (components/intro/scene.ts) loads on demand. Without WebGL a pulsing SIC wordmark is
+ * shown with a plain progress bar. The cover removes itself when the page has loaded and the show
+ * has played, or on "Skip".
  */
 export function IntroLoader() {
   const root = useRef<HTMLDivElement>(null);
@@ -25,18 +36,31 @@ export function IntroLoader() {
   const percent = useRef<HTMLSpanElement>(null);
   const status = useRef<HTMLSpanElement>(null);
   const bar = useRef<HTMLElement>(null);
-  const logo = useRef<HTMLDivElement>(null);
+  const domain = useRef<HTMLParagraphElement>(null);
   const flash = useRef<HTMLDivElement>(null);
+  const title = useRef<HTMLParagraphElement>(null);
+  const subtitle = useRef<HTMLParagraphElement>(null);
+  const log = useRef<HTMLDivElement>(null);
   const gate = useRef<HTMLButtonElement>(null);
   const skip = useRef<() => void>(() => {});
 
   useEffect(() => {
     const html = document.documentElement;
     if (html.dataset.intro === "done") return;
-    const els = { root: root.current, canvas: canvas.current, percent: percent.current, status: status.current, bar: bar.current, logo: logo.current, flash: flash.current };
-    if (!els.root || !els.canvas || !els.percent || !els.status || !els.bar || !els.logo || !els.flash) return;
-    const ui = { root: els.root, percent: els.percent, status: els.status, bar: els.bar, logo: els.logo, flash: els.flash };
-    const canvasEl = els.canvas;
+    const refs = [root, canvas, percent, status, bar, flash, title, subtitle, log, domain];
+    if (refs.some((r) => !r.current)) return;
+    const ui = {
+      root: root.current!,
+      canvas: canvas.current!,
+      percent: percent.current!,
+      status: status.current!,
+      bar: bar.current!,
+      domain: domain.current!,
+      flash: flash.current!,
+      title: title.current!,
+      subtitle: subtitle.current!,
+      log: log.current!,
+    };
 
     let cancelled = false;
     let skipped = false;
@@ -59,21 +83,25 @@ export function IntroLoader() {
       else window.addEventListener("load", () => resolve(), { once: true });
       timers.push(window.setTimeout(resolve, MAX_WAIT_MS));
     });
-    const minPlayed = new Promise<void>((resolve) => {
-      const id = window.setTimeout(resolve, MIN_MS);
-      timers.push(id);
-      skip.current = () => {
-        skipped = true;
-        clearTimeout(id);
-        resolve();
-      };
-    });
+    // The minimum play time starts with the show (after the sound gate, if any).
+    let minTimer = 0;
+    let resolveMin: () => void = () => {};
+    const minPlayed = new Promise<void>((resolve) => (resolveMin = resolve));
+    const startMinClock = () => {
+      minTimer = window.setTimeout(resolveMin, MIN_MS);
+      timers.push(minTimer);
+    };
+    skip.current = () => {
+      skipped = true;
+      clearTimeout(minTimer);
+      resolveMin();
+    };
 
     (async () => {
       const colors = getComputedStyle(html);
 
-      // The intro's sound is part of it. Browsers block audio until a click or key
-      // press, so when it is blocked the intro waits behind a "Tap to enter" button.
+      // The sound is part of the show. Browsers block audio until a click or key press,
+      // so when it is blocked the intro waits behind an "Enter" button.
       const unlocked = await unlockAudio();
       if (!unlocked && !skipped) {
         ui.root.classList.add("is-gated");
@@ -94,14 +122,17 @@ export function IntroLoader() {
       if (cancelled) return;
       await loadSounds(INTRO_SOUNDS);
       if (cancelled) return;
+      startMinClock();
+      ui.root.classList.add("is-playing");
 
       try {
         const { startIntro } = await import("./scene");
         if (cancelled) return;
-        scene = startIntro(canvasEl, ui, {
-          primary: colors.getPropertyValue("--color-primary").trim() || "#F5B942",
-          accent: colors.getPropertyValue("--color-accent").trim() || "#FF7A32",
+        scene = await startIntro(ui, {
+          primary: colors.getPropertyValue("--color-primary").trim() || "#78a9ff",
+          accent: colors.getPropertyValue("--color-accent").trim() || "#ff7a32",
         });
+        if (cancelled) scene.dispose();
       } catch {
         // No WebGL (or the chunk failed): show the seal with a plain progress bar.
         ui.root.classList.add("is-fallback");
@@ -109,6 +140,8 @@ export function IntroLoader() {
         ui.bar.style.transition = `transform ${MIN_MS}ms ease-out`;
         ui.percent.textContent = "";
         ui.status.textContent = "Loading";
+        ui.title.textContent = "SCIENCE & INNOVATION CLUB";
+        ui.subtitle.textContent = "GEC PALAMU · EST. 2023";
       }
       await Promise.all([minPlayed, loaded]);
       if (cancelled) return;
@@ -130,28 +163,41 @@ export function IntroLoader() {
 
   return (
     <div ref={root} className="intro" role="status" aria-label="Loading SIC">
+      <p ref={domain} className="intro-domain" aria-hidden="true" />
       <canvas ref={canvas} className="intro-canvas" aria-hidden="true" />
+      <div className="intro-grid" aria-hidden="true" />
       <div className="intro-vignette" aria-hidden="true" />
       <div className="intro-scan" aria-hidden="true" />
+      <div className="intro-bars" aria-hidden="true">
+        <i />
+        <i />
+      </div>
       <span className="intro-corner is-tl" aria-hidden="true" />
       <span className="intro-corner is-tr" aria-hidden="true" />
       <span className="intro-corner is-bl" aria-hidden="true" />
       <span className="intro-corner is-br" aria-hidden="true" />
 
       <p className="intro-tag is-l hud-label" aria-hidden="true">
-        SIC // Boot sequence
+        <i className="intro-rec" /> SIC // Ignition sequence
       </p>
       <p className="intro-tag is-r hud-label" aria-hidden="true">
         GEC Palamu · Est. 2023
       </p>
 
-      <div ref={logo} className="intro-logo" aria-hidden="true">
-        <Image src="/logo.png" alt="" width={512} height={512} priority className="size-full" />
+      <p className="intro-mark" aria-hidden="true">
+        SIC
+      </p>
+
+      <div className="intro-titles" aria-hidden="true">
+        <p ref={title} className="intro-title" />
+        <p ref={subtitle} className="intro-subtitle hud-label" />
       </div>
+
+      <div ref={log} className="intro-log hud-label" aria-hidden="true" />
 
       <div className="intro-bottom">
         <div className="intro-readout hud-label">
-          <span ref={status}>Powering up</span>
+          <span ref={status}>Ignition</span>
           <span ref={percent} className="tabular-nums">
             000%
           </span>
@@ -164,8 +210,8 @@ export function IntroLoader() {
         </button>
       </div>
       <button ref={gate} type="button" className="intro-gate hud-label" tabIndex={-1}>
-        <span>Tap to enter</span>
-        <small>Sound on</small>
+        <span>Enter SIC</span>
+        <small>Sound on · best with headphones</small>
       </button>
       <div ref={flash} className="intro-flash" aria-hidden="true" />
       <style dangerouslySetInnerHTML={{ __html: INTRO_CSS }} />

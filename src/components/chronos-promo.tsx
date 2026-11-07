@@ -63,8 +63,19 @@ export function ChronosPromo() {
       snoozedUntil = Number(localStorage.getItem(POPUP_KEY) ?? 0);
     } catch {}
     if (t > snoozedUntil) {
-      const id = window.setTimeout(() => setPopup(true), 2500);
-      return () => clearTimeout(id);
+      // Wait for the site's intro to finish, then give the page a moment.
+      const html = document.documentElement;
+      let id = 0;
+      const arm = () => (id = window.setTimeout(() => setPopup(true), 2500));
+      if (html.dataset.intro === "done") arm();
+      const watch = new MutationObserver(() => {
+        if (html.dataset.intro === "done" && !id) arm();
+      });
+      watch.observe(html, { attributes: true, attributeFilter: ["data-intro"] });
+      return () => {
+        watch.disconnect();
+        clearTimeout(id);
+      };
     }
   }, []);
 
