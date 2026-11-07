@@ -73,6 +73,7 @@ export type SicEvent = {
   team_max: number | null;
   owner_team_id: string;
   domain_id: string | null;
+  festival: string | null;
   cover_path: string | null;
   created_by: string;
   published_at: string | null;

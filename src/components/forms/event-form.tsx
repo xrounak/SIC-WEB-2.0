@@ -51,6 +51,15 @@ export function EventForm({ event, teams, domains }: { event?: SicEvent; teams: 
             defaultValue={event?.domain_id}
             options={domains.map((d) => ({ value: d.id, label: d.name }))}
           />
+          <SelectField
+            name="festival"
+            label="Part of a festival"
+            required={false}
+            placeholder="No"
+            defaultValue={event?.festival}
+            options={[{ value: "chronos", label: "Chronos 2026" }]}
+            hint="Chronos events also appear on chronos.sic.gecp.in."
+          />
         </div>
       </fieldset>
 

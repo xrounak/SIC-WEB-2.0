@@ -245,6 +245,25 @@ async function main() {
   assert.equal(typeof report.completed_events, 'number');
   ok('scheduled maintenance runs');
 
+  // Chronos time-trial leaderboard: anyone posts and reads through the RPCs only.
+  const [{ submit_chronos_run: place1 }] = await q(null, 'select public.submit_chronos_run($1, $2, $3)', ['  Rover   Ace ', 95.456, 12]);
+  assert.equal(place1, 1);
+  const [{ submit_chronos_run: place2 }] = await q(ids.member, 'select public.submit_chronos_run($1, $2, $3)', ['Speedy', 80, 3]);
+  assert.equal(place2, 1);
+  const board = await q(null, 'select * from public.chronos_leaderboard(10)');
+  assert.deepEqual(
+    board.map((r) => [Number(r.place), r.name, Number(r.seconds)]),
+    [
+      [1, 'Speedy', 80],
+      [2, 'Rover Ace', 95.46],
+    ],
+  );
+  ok('chronos runs post and rank, names tidied');
+  await rejects(null, 'select public.submit_chronos_run($1, $2, $3)', ['x', 90, 0], /NAME_LENGTH/, 'chronos name too short');
+  await rejects(null, 'select public.submit_chronos_run($1, $2, $3)', ['Cheater', 3, 0], /TIME_OUT_OF_RANGE/, 'chronos impossible time');
+  await rejects(null, 'select * from public.chronos_runs', [], /permission denied/, 'chronos table closed to clients');
+  await rejects(ids.member, `insert into public.chronos_runs (name, seconds) values ('Direct', 50)`, [], /permission denied/, 'chronos direct insert blocked');
+
   // The demo data loads on top of the four-domain seed, and its cleanup undoes it.
   await db.exec(readFileSync(join(root, 'demo_seed.sql'), 'utf8'));
   assert.equal((await db.query(`select count(*)::int as n from public.profiles where email like 'demo.%@example.com'`)).rows[0].n, 14);

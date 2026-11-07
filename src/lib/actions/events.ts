@@ -104,6 +104,9 @@ export async function manageInvite(_: ActionState, formData: FormData): Promise<
 // Proposals
 // ---------------------------------------------------------------------------
 
+/** Festivals an event can be part of; each has its own microsite. */
+const FESTIVALS = ["chronos"] as const;
+
 const eventSchema = z
   .object({
     title: z.string().trim().min(3, "Use at least 3 characters.").max(140),
@@ -122,6 +125,7 @@ const eventSchema = z
     participation: z.enum(["individual", "team"]),
     team_min: z.coerce.number().int().min(1).max(10).optional(),
     team_max: z.coerce.number().int().min(2).max(10).optional(),
+    festival: z.enum(FESTIVALS).optional(),
   })
   .superRefine((v, ctx) => {
     if (v.participation === "team") {
@@ -163,6 +167,7 @@ export async function saveEvent(_: ActionState, formData: FormData): Promise<Act
     participation: v.participation,
     team_min: team ? v.team_min : null,
     team_max: team ? v.team_max : null,
+    festival: v.festival ?? null,
   };
 
   const supabase = await createClient();
