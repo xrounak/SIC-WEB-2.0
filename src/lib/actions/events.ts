@@ -89,6 +89,45 @@ export async function addTeamInvites(_: ActionState, formData: FormData): Promis
   return { ok: true, message: emails.length === 1 ? "Invite sent." : `${emails.length} invites sent.` };
 }
 
+/** Accept or decline an invite from Portal > Invites (no email link needed). */
+export async function respondInvite(_: ActionState, formData: FormData): Promise<ActionState> {
+  await requireViewer();
+  const inviteId = id.parse(formData.get("invite_id"));
+  const accept = formData.get("intent") === "accept";
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("respond_team_invite", { p_invite_id: inviteId, p_accept: accept });
+  if (error) return fromRpcError(error);
+  revalidatePath("/portal", "layout");
+  if (accept) redirect("/portal/registrations?notice=joined");
+  return { ok: true, message: "Invite declined. The team leader has been told." };
+}
+
+export type Invitee = { id: string; full_name: string; avatar_url: string | null; email_hint: string; college: string | null };
+
+/** People the leader can still invite to this team (name search, or an exact email). */
+export async function searchInvitees(teamId: string, query: string): Promise<Invitee[]> {
+  await requireViewer();
+  const team = id.safeParse(teamId);
+  if (!team.success || query.trim().length < 2) return [];
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("find_invitees", { p_team_id: team.data, p_query: query.slice(0, 80) });
+  if (error) return [];
+  return (data ?? []) as Invitee[];
+}
+
+/** Invite people picked in the search, by account. */
+export async function invitePeople(_: ActionState, formData: FormData): Promise<ActionState> {
+  await requireViewer();
+  const teamId = id.parse(formData.get("team_id"));
+  const userIds = formData.getAll("user_id").map((v) => id.parse(v));
+  if (userIds.length === 0) return { error: "Pick someone to invite first." };
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("invite_to_team", { p_team_id: teamId, p_user_ids: userIds });
+  if (error) return fromRpcError(error);
+  revalidatePath("/portal/registrations", "layout");
+  return { ok: true, message: userIds.length === 1 ? "Invite sent. They'll see it in their portal." : `${userIds.length} invites sent.` };
+}
+
 export async function manageInvite(_: ActionState, formData: FormData): Promise<ActionState> {
   await requireViewer();
   const inviteId = id.parse(formData.get("invite_id"));

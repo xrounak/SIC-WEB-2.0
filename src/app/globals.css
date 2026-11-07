@@ -859,9 +859,108 @@
 
 /* Long-form text from the database (descriptions, announcements). */
 .prose-sic {
-  max-width: 68ch;
+  max-width: 70ch;
   color: var(--color-text);
-  white-space: pre-line;
+  line-height: 1.7;
+}
+.prose-sic > * + * {
+  margin-top: 0.9em;
+}
+.prose-sic h2,
+.prose-sic h3 {
+  scroll-margin-top: 6rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+.prose-sic h2 {
+  margin-top: 1.8em;
+  padding-bottom: 0.35em;
+  font-size: 1.35rem;
+  border-bottom: 1px solid var(--color-line);
+}
+.prose-sic h3 {
+  margin-top: 1.4em;
+  font-size: 1.1rem;
+  color: var(--color-primary);
+}
+.prose-sic > :first-child {
+  margin-top: 0;
+}
+.prose-sic ul,
+.prose-sic ol {
+  padding-left: 1.4em;
+}
+.prose-sic ul {
+  list-style: disc;
+}
+.prose-sic ol {
+  list-style: decimal;
+}
+.prose-sic li + li {
+  margin-top: 0.3em;
+}
+.prose-sic li::marker {
+  color: var(--color-primary);
+}
+.prose-sic a {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.prose-sic strong {
+  font-weight: 650;
+  color: var(--color-fg, var(--color-text));
+}
+.prose-sic code {
+  padding: 0.1em 0.35em;
+  font-size: 0.88em;
+  border-radius: 0.3rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+}
+.prose-sic blockquote {
+  padding: 0.6em 1em;
+  color: var(--color-text-muted);
+  border-left: 3px solid var(--color-primary);
+  background: color-mix(in oklab, var(--color-primary) 8%, transparent);
+}
+.prose-sic hr {
+  border: 0;
+  border-top: 1px solid var(--color-line);
+}
+.prose-sic img {
+  max-width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-line);
+}
+.prose-table {
+  overflow-x: auto;
+  border: 1px solid var(--color-line);
+  border-radius: 0.75rem;
+}
+.prose-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92em;
+}
+.prose-table th,
+.prose-table td {
+  padding: 0.55em 0.8em;
+  text-align: left;
+  border-bottom: 1px solid var(--color-line);
+}
+.prose-table th {
+  font-weight: 600;
+  background: var(--color-surface);
+}
+.prose-table tr:last-child td {
+  border-bottom: 0;
+}
+/* A folded rule book shows its start and fades out */
+.rule-fold {
+  max-height: 26rem;
+  overflow: hidden;
+  mask-image: linear-gradient(#000 70%, transparent);
 }
 
 @media (prefers-reduced-motion: reduce) {

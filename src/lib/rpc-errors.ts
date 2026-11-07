@@ -46,6 +46,8 @@ export const RPC_ERROR_MESSAGES = {
   CANNOT_INVITE_SELF: "You're already on the team. Invite your teammates' emails.",
   INVITE_EMAIL_INVALID: "One of the email addresses isn't valid.",
   ALREADY_INVITED: "That email already has a pending invite.",
+  NO_ACCOUNT: "Nobody with that email has signed in to the SIC website yet. Ask them to sign in once, then invite them.",
+  INVITEE_REGISTERED: "That person is already registered for this event (alone or in another team).",
   INVITE_NOT_FOUND: "This invite link isn't valid.",
   INVITE_EMAIL_MISMATCH: "This invite was sent to a different email. Sign in with that account.",
   INVITE_EXPIRED: "This invite has expired. Ask the team leader to send a new one.",

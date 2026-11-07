@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { formatDate, formatDateTime, isPast } from "@/lib/format";
 import { addTeamInvites, manageInvite, withdrawRegistration } from "@/lib/actions/events";
 import { ActionForm, SubmitButton, TextAreaField } from "@/components/ui/form";
+import { InvitePicker } from "@/components/forms/invite-picker";
 import { Avatar, Card, Meta, PageHeader, StatusBadge } from "@/components/ui/primitives";
 import type { SicEvent } from "@/lib/types";
 
@@ -95,7 +96,9 @@ export default async function RegistrationPage({ params }: PageProps<"/portal/re
                   <span className="inline-flex size-8 items-center justify-center rounded-full border border-dashed border-line-strong text-subtle">@</span>
                   <span className="flex min-w-0 flex-1 flex-col">
                     <span className="truncate text-sm">{i.email}</span>
-                    <span className="text-[0.75rem] text-subtle">Invite expires {formatDate(i.expires_at)}</span>
+                    <span className="text-[0.75rem] text-subtle">
+                      {i.status === "pending" ? `Waiting for an answer · until ${formatDate(i.expires_at)}` : i.status === "declined" ? "Declined" : `Invite ${i.status}`}
+                    </span>
                   </span>
                   <StatusBadge status={i.status} />
                   {isLeader && active && ["pending", "expired", "declined"].includes(i.status) && (
@@ -120,14 +123,24 @@ export default async function RegistrationPage({ params }: PageProps<"/portal/re
               ))}
           </ul>
           {canInvite && (
-            <Card className="p-5">
-              <ActionForm action={addTeamInvites}>
-                <input type="hidden" name="team_id" value={team.id} />
-                <TextAreaField name="emails" label="Invite more teammates" rows={2} placeholder="teammate@gmail.com" hint="One email per line." />
-                <SubmitButton variant="secondary" className="self-start" pendingLabel="Sending…">
-                  Send invites
-                </SubmitButton>
-              </ActionForm>
+            <Card className="flex flex-col gap-4 p-5">
+              <InvitePicker teamId={team.id} slotsLeft={(event.team_max ?? 0) - members.length - invites.filter((i) => i.status === "pending").length} />
+              <details className="text-sm">
+                <summary className="cursor-pointer text-muted hover:text-fg">Or paste email addresses</summary>
+                <ActionForm action={addTeamInvites} className="mt-3">
+                  <input type="hidden" name="team_id" value={team.id} />
+                  <TextAreaField
+                    name="emails"
+                    label="Emails"
+                    rows={2}
+                    placeholder="teammate@gmail.com"
+                    hint="One per line. Each person must have signed in to the SIC website once."
+                  />
+                  <SubmitButton variant="ghost" className="self-start" pendingLabel="Sending…">
+                    Invite by email
+                  </SubmitButton>
+                </ActionForm>
+              </details>
             </Card>
           )}
         </section>

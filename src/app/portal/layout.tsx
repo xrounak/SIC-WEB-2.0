@@ -11,15 +11,20 @@ export const metadata: Metadata = NO_INDEX;
 export default async function PortalLayout({ children }: LayoutProps<"/portal">) {
   const viewer = await requireOnboarded();
   const supabase = await createClient();
-  const { count: unread } = await supabase
-    .from("notifications")
-    .select("id", { count: "exact", head: true })
-    .eq("user_id", viewer.id)
-    .is("read_at", null);
+  const [{ count: unread }, { count: invites }] = await Promise.all([
+    supabase.from("notifications").select("id", { count: "exact", head: true }).eq("user_id", viewer.id).is("read_at", null),
+    supabase
+      .from("team_invites")
+      .select("id", { count: "exact", head: true })
+      .eq("email", viewer.profile.email)
+      .eq("status", "pending")
+      .gt("expires_at", new Date().toISOString()),
+  ]);
 
   const items = [
     { href: "/portal", label: "Overview", exact: true },
     { href: "/portal/registrations", label: "Registrations" },
+    { href: "/portal/invites", label: "Team invites", badge: invites ?? 0 },
     { href: "/portal/applications", label: "Applications" },
     { href: "/portal/notifications", label: "Notifications", badge: unread ?? 0 },
     ...(viewer.isMember

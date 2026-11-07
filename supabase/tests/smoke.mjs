@@ -207,6 +207,36 @@ async function main() {
   assert.equal(Number(taken), 2);
   ok('public seat count');
 
+  // In-app invites: accounts only, accept or decline from the portal
+  await rejects(ids.external, `select public.add_team_invites($1, array['nobody@gmail.com'])`, [teamId], /NO_ACCOUNT/, 'cannot invite an email without an account');
+  await rejects(ids.external, `select public.add_team_invites($1, array['mate@gmail.com'])`, [teamId], /INVITEE_REGISTERED/, 'cannot invite someone already registered');
+  await rejects(ids.member, `select * from public.find_invitees($1, 'test')`, [teamId], /NOT_ALLOWED/, 'only the leader searches for invitees');
+  const found = await q(ids.external, `select * from public.find_invitees($1, 'test')`, [teamId]);
+  assert.ok(found.some((p) => p.id === ids.student));
+  assert.ok(!found.some((p) => p.id === ids.mate || p.id === ids.external));
+  assert.ok(found.every((p) => p.email_hint.includes('***@') && !('email' in p)));
+  ok('leader finds invitable people, emails masked, members and self excluded');
+  await q(ids.external, 'select public.invite_to_team($1, array[$2]::uuid[])', [teamId, ids.student]);
+  const note = await q(ids.student, `select * from public.notifications where kind = 'team_invite'`);
+  assert.equal(note.length, 1);
+  const [inv] = await q(ids.student, 'select * from public.my_team_invites()');
+  assert.equal(inv.team_name, 'Bolts');
+  assert.equal(inv.status, 'pending');
+  assert.equal(Number(inv.team_size), 2);
+  ok('invitee is notified and sees the invite in the portal');
+  await rejects(ids.member, 'select public.respond_team_invite($1, true)', [inv.id], /INVITE_NOT_FOUND/, 'someone else cannot answer your invite');
+  await q(ids.student, 'select public.respond_team_invite($1, false)', [inv.id]);
+  assert.equal((await q(ids.student, 'select * from public.my_team_invites()'))[0].status, 'declined');
+  assert.ok((await q(ids.external, `select * from public.notifications where kind = 'team_invite_declined'`)).length >= 1);
+  ok('decline is recorded and the leader is told');
+  await q(ids.external, `select public.add_team_invites($1, array['student@gmail.com'])`, [teamId]);
+  const [again] = (await q(ids.student, 'select * from public.my_team_invites()')).filter((i) => i.status === 'pending');
+  await q(ids.student, 'select public.respond_team_invite($1, true)', [again.id]);
+  assert.equal((await q(ids.external, `select * from public.event_registrations where event_team_id = $1 and status <> 'cancelled'`, [teamId])).length, 3);
+  await rejects(ids.student, 'select public.respond_team_invite($1, true)', [again.id], /INVITE_ACCEPTED/, 'an accepted invite cannot be answered again');
+  await rejects(ids.external, `select public.add_team_invites($1, array['pres@gmail.com'])`, [teamId], /TOO_MANY_INVITES/, 'full team takes no more invites');
+  ok('re-invite after a decline, accept joins the team');
+
   // Leader withdraws: whole team goes
   const [{ id: leaderReg }] = await q(ids.external, `select id from public.event_registrations where user_id = $1`, [ids.external]);
   await q(ids.external, 'select public.withdraw_registration($1)', [leaderReg]);
@@ -263,6 +293,15 @@ async function main() {
   await rejects(null, 'select public.submit_chronos_run($1, $2, $3)', ['Cheater', 3, 0], /TIME_OUT_OF_RANGE/, 'chronos impossible time');
   await rejects(null, 'select * from public.chronos_runs', [], /permission denied/, 'chronos table closed to clients');
   await rejects(ids.member, `insert into public.chronos_runs (name, seconds) values ('Direct', 50)`, [], /permission denied/, 'chronos direct insert blocked');
+
+  // The one-off demo event script runs (twice, it replaces itself) and can be removed.
+  await db.exec(readFileSync(join(root, 'demo_event.sql'), 'utf8'));
+  await db.exec(readFileSync(join(root, 'demo_event.sql'), 'utf8'));
+  const demo = await q(null, `select title, participation, festival from public.events where slug = 'demo-event'`);
+  assert.equal(demo.length, 1);
+  assert.equal(demo[0].festival, 'chronos');
+  await db.exec(`delete from public.events where slug = 'demo-event'`);
+  ok('demo_event.sql adds one public demo event');
 
   // The demo data loads on top of the four-domain seed, and its cleanup undoes it.
   await db.exec(readFileSync(join(root, 'demo_seed.sql'), 'utf8'));

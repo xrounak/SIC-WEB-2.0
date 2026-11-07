@@ -54,11 +54,10 @@ export default async function PortalHome({ searchParams }: PageProps<"/portal">)
 
       {(invites?.length ?? 0) > 0 && (
         <Notice tone="accent" title={`You have ${invites!.length} pending team invite${invites!.length > 1 ? "s" : ""}.`}>
-          Open the invite link from your email, or check{" "}
-          <Link href="/portal/notifications" className="text-primary underline">
-            notifications
-          </Link>
-          .
+          <Link href="/portal/invites" className="text-primary underline">
+            Open your team invites
+          </Link>{" "}
+          to accept or decline.
         </Notice>
       )}
       {p.student_status === "pending" && (

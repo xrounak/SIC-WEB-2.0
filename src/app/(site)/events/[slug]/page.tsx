@@ -10,6 +10,8 @@ import { JsonLd, breadcrumbLd } from "@/components/json-ld";
 import { ButtonLink } from "@/components/ui/button";
 import { Badge, Card, Container, Eyebrow, Meta, Notice, StatusBadge } from "@/components/ui/primitives";
 import { DateTile } from "@/components/cards";
+import { Markdown, outline } from "@/components/markdown";
+import { Expandable } from "@/components/rule-book";
 import type { SicEvent } from "@/lib/types";
 
 export async function generateMetadata({ params }: PageProps<"/events/[slug]">): Promise<Metadata> {
@@ -58,6 +60,7 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
   }
   const state = registrationState(event, seatsTaken, registered);
   const cover = storageUrl(event.cover_path);
+  const toc = event.description ? outline(event.description) : [];
   const seatsLeft = event.capacity ? Math.max(event.capacity - seatsTaken, 0) : null;
 
   const eventLd = {
@@ -108,9 +111,21 @@ export default async function EventPage({ params }: PageProps<"/events/[slug]">)
             <img src={cover} alt="" className="aspect-[16/9] w-full rounded-xl border border-line object-cover" />
           )}
           {event.description && (
-            <section className="flex flex-col gap-3">
-              <Eyebrow>About this event</Eyebrow>
-              <div className="prose-sic">{event.description}</div>
+            <section id="rule-book" className="flex scroll-mt-24 flex-col gap-4">
+              <Eyebrow>About &amp; rule book</Eyebrow>
+              {toc.length >= 2 && (
+                <nav aria-label="Rule book contents" className="flex flex-col gap-1.5 rounded-xl border border-line bg-surface/60 p-4">
+                  <p className="font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-subtle">Contents</p>
+                  {toc.map((h) => (
+                    <a key={h.id} href={`#${h.id}`} className={`text-sm text-muted hover:text-primary ${h.depth === 3 ? "pl-4" : ""}`}>
+                      {h.text}
+                    </a>
+                  ))}
+                </nav>
+              )}
+              <Expandable long={event.description.length > 1800}>
+                <Markdown source={event.description} />
+              </Expandable>
             </section>
           )}
         </article>

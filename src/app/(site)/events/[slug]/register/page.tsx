@@ -53,10 +53,10 @@ export default async function RegisterPage({ params }: PageProps<"/events/[slug]
             required={false}
             rows={3}
             placeholder={"friend1@gmail.com\nfriend2@gmail.com"}
-            hint={`Up to ${(event.team_max ?? 2) - 1}, one per line. They must sign in with this exact email to accept. You can add more later.`}
+            hint={`Optional, up to ${(event.team_max ?? 2) - 1}, one per line. Each teammate must have signed in to the SIC website once. After creating the team you can also find people by name; they accept in their portal.`}
           />
           <SubmitButton size="lg" pendingLabel="Creating team…">
-            Create team and send invites
+            Create team
           </SubmitButton>
         </ActionForm>
       ) : (

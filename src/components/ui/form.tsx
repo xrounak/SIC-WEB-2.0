@@ -98,7 +98,7 @@ type FieldProps = {
   required?: boolean;
 };
 
-function FieldShell({
+export function FieldShell({
   id,
   label,
   hint,
@@ -137,7 +137,7 @@ function FieldShell({
   );
 }
 
-function useField(name: string, defaultValue?: string | number | null) {
+export function useField(name: string, defaultValue?: string | number | null) {
   const id = useId();
   const state = useFormState();
   const error = state.fieldErrors?.[name];

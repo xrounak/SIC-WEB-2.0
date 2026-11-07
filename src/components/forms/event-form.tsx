@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { saveEvent } from "@/lib/actions/events";
-import { ActionForm, SelectField, SubmitButton, TextAreaField, TextField } from "@/components/ui/form";
+import { ActionForm, SelectField, SubmitButton, TextField } from "@/components/ui/form";
+import { MarkdownField } from "@/components/forms/markdown-field";
 import { EVENT_TYPE_LABEL, toLocalInput } from "@/lib/format";
 import type { Domain, SicEvent, Team } from "@/lib/types";
 
@@ -17,7 +18,13 @@ export function EventForm({ event, teams, domains }: { event?: SicEvent; teams: 
         <legend className="mb-2 font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-subtle">The event</legend>
         <TextField name="title" label="Title" defaultValue={event?.title} maxLength={140} />
         <TextField name="summary" label="One-line summary" defaultValue={event?.summary} maxLength={300} hint="Shown on event cards." />
-        <TextAreaField name="description" label="Description" rows={8} defaultValue={event?.description} hint="What will people do, learn or build? Who is it for? What should they bring?" />
+        <MarkdownField
+          name="description"
+          label="Description and rule book"
+          defaultValue={event?.description}
+          maxLength={20000}
+          hint="Markdown: ## headings, - lists, **bold**, tables and links. Put the rule book here (rules, judging, what to bring). Use Preview to check it."
+        />
         <div className="grid gap-4 sm:grid-cols-2">
           <SelectField
             name="event_type"
