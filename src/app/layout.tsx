@@ -9,6 +9,7 @@ import { SfxController } from "@/seasonal/SfxController";
 import { AmbientBackdrop } from "@/components/layout/ambient-backdrop";
 import { DEFAULT_THEME, themeBootScript, themeCss } from "@/seasonal/registry";
 import { ThemeCursorStyles } from "@/seasonal/ThemeCursor";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import "../seasonal/seasonal.css";
 
@@ -93,6 +94,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {children}
         <PageTransition />
         <SfxController />
+        <Analytics />
       </body>
     </html>
   );
