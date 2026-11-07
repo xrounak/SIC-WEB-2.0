@@ -1,6 +1,7 @@
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SetupNotice } from "@/components/layout/setup-notice";
+import { ChronosPromo } from "@/components/chronos-promo";
 
 export default function SiteLayout({ children }: LayoutProps<"/">) {
   return (
@@ -11,6 +12,7 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
         {children}
       </main>
       <SiteFooter />
+      <ChronosPromo />
     </>
   );
 }
