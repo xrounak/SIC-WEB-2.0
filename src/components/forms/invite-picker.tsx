@@ -118,9 +118,11 @@ export function InvitePicker({ teamId, slotsLeft }: { teamId: string; slotsLeft:
           ))}
         </ul>
       )}
-      <SubmitButton variant="secondary" className="self-start" pendingLabel="Sending…">
-        {picked.length > 1 ? `Send ${picked.length} invites` : "Send invite"}
-      </SubmitButton>
+      {picked.length > 0 && (
+        <SubmitButton variant="secondary" className="self-start" pendingLabel="Sending…">
+          {picked.length > 1 ? `Send ${picked.length} invites` : "Send invite"}
+        </SubmitButton>
+      )}
     </ActionForm>
   );
 }

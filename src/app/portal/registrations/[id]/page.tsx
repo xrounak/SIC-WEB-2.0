@@ -5,7 +5,7 @@ import { requireOnboarded } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { formatDate, formatDateTime, isPast } from "@/lib/format";
 import { addTeamInvites, manageInvite, withdrawRegistration } from "@/lib/actions/events";
-import { ActionForm, SubmitButton, TextAreaField } from "@/components/ui/form";
+import { ActionForm, SubmitButton, TextField } from "@/components/ui/form";
 import { InvitePicker } from "@/components/forms/invite-picker";
 import { Avatar, Card, Meta, PageHeader, StatusBadge } from "@/components/ui/primitives";
 import type { SicEvent } from "@/lib/types";
@@ -126,15 +126,16 @@ export default async function RegistrationPage({ params }: PageProps<"/portal/re
             <Card className="flex flex-col gap-4 p-5">
               <InvitePicker teamId={team.id} slotsLeft={(event.team_max ?? 0) - members.length - invites.filter((i) => i.status === "pending").length} />
               <details className="text-sm">
-                <summary className="cursor-pointer text-muted hover:text-fg">Or paste email addresses</summary>
+                <summary className="cursor-pointer text-muted hover:text-fg">Or invite by email address</summary>
                 <ActionForm action={addTeamInvites} className="mt-3">
                   <input type="hidden" name="team_id" value={team.id} />
-                  <TextAreaField
+                  <TextField
                     name="emails"
-                    label="Emails"
-                    rows={2}
+                    type="email"
+                    label="Teammate's email"
                     placeholder="teammate@gmail.com"
-                    hint="One per line. Each person must have signed in to the SIC website once."
+                    autoComplete="off"
+                    hint="One email at a time: the exact address they sign in to the SIC website with. They must have signed in at least once. The invite appears in their Portal → Team invites, where they accept or decline."
                   />
                   <SubmitButton variant="ghost" className="self-start" pendingLabel="Sending…">
                     Invite by email

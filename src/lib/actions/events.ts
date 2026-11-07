@@ -6,7 +6,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { requireMember, requireOnboarded, requireViewer } from "@/lib/auth";
 import { fromLocalInput } from "@/lib/format";
-import { fromRpcError, fromZodError, type ActionState } from "./state";
+import { formValues, fromRpcError, fromZodError, type ActionState } from "./state";
 
 const id = z.string().uuid();
 
@@ -81,12 +81,15 @@ export async function addTeamInvites(_: ActionState, formData: FormData): Promis
   await requireViewer();
   const teamId = id.parse(formData.get("team_id"));
   const emails = emailsFrom(formData.get("emails"));
-  if (emails.length === 0) return { fieldErrors: { emails: "Enter at least one email." }, error: "Check the highlighted fields." };
+  if (emails.length === 0) return { fieldErrors: { emails: "Enter your teammate's email." }, error: "Enter an email to send the invite.", values: formValues(formData) };
+  if (emails.length > 1) return { fieldErrors: { emails: "Add one email at a time." }, error: "Invite one person at a time.", values: formValues(formData) };
+  if (!z.string().email().safeParse(emails[0]).success)
+    return { fieldErrors: { emails: "That doesn't look like an email address." }, error: "Check the email address.", values: formValues(formData) };
   const supabase = await createClient();
   const { error } = await supabase.rpc("add_team_invites", { p_team_id: teamId, p_emails: emails });
   if (error) return fromRpcError(error, formData);
   revalidatePath("/portal/registrations", "layout");
-  return { ok: true, message: emails.length === 1 ? "Invite sent." : `${emails.length} invites sent.` };
+  return { ok: true, message: "Invite sent. They'll see it in Portal → Team invites." };
 }
 
 /** Accept or decline an invite from Portal > Invites (no email link needed). */
