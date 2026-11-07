@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getDomains } from "@/lib/data";
 import { BrandStar, Logo } from "./logo";
+import { Credit } from "./credit";
 
 const LINKS = [
   {
@@ -133,7 +134,11 @@ export async function SiteFooter() {
       <div className="relative border-t border-line bg-bg">
         <div className="mx-auto flex w-full max-w-content flex-col gap-2 px-4 py-5 text-[0.8125rem] text-subtle sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <p>© {new Date().getFullYear()} Science &amp; Innovation Club, GEC Palamu</p>
-          <p className="hud-label text-[0.6875rem]">Built by members · Palamu, Jharkhand</p>
+          <p className="hud-label flex flex-wrap items-center gap-x-2 text-[0.6875rem]">
+            <span>Built by members · Palamu, Jharkhand</span>
+            <span aria-hidden="true">·</span>
+            <Credit />
+          </p>
         </div>
       </div>
     </footer>
