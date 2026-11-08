@@ -135,7 +135,7 @@ export async function SiteFooter() {
         <div className="mx-auto flex w-full max-w-content flex-col gap-2 px-4 py-5 text-[0.8125rem] text-subtle sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <p>© {new Date().getFullYear()} Science &amp; Innovation Club, GEC Palamu</p>
           <p className="hud-label flex flex-wrap items-center gap-x-2 text-[0.6875rem]">
-            <span>Built by members · Palamu, Jharkhand</span>
+            <span>Palamu, Jharkhand</span>
             <span aria-hidden="true">·</span>
             <Credit />
           </p>

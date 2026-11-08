@@ -2,7 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 
-/** Who built the website: the name opens a small card with their profiles. */
+/**
+ * Site credit: "Developed by SIC", plus a "Contact developer" link that opens a small
+ * card with the developer's profiles, for anyone who wants to contribute.
+ */
 
 const LINKS = [
   {
@@ -45,7 +48,10 @@ export function Credit() {
 
   return (
     <span ref={wrap} className="relative inline-flex items-baseline gap-1.5">
-      <span>Website by</span>
+      <span>Developed by SIC</span>
+      <span aria-hidden="true" className="text-subtle">
+        ·
+      </span>
       <button
         type="button"
         aria-expanded={open}
@@ -53,12 +59,12 @@ export function Credit() {
         onClick={() => setOpen((v) => !v)}
         className="text-primary underline decoration-dotted underline-offset-4 hover:text-primary-hover"
       >
-        Rounak Kumar
+        Contact developer
       </button>
       {open && (
         <span
           role="dialog"
-          aria-label="Rounak Kumar's profiles"
+          aria-label="Contact the developer"
           className="absolute bottom-[calc(100%+0.75rem)] right-0 z-50 flex w-64 flex-col gap-2 border border-line bg-surface p-3 normal-case tracking-normal text-fg shadow-2xl sm:left-1/2 sm:right-auto sm:-translate-x-1/2"
         >
           <span className="flex items-center gap-3 border-b border-line pb-2.5">
@@ -67,7 +73,7 @@ export function Credit() {
             </span>
             <span className="flex flex-col">
               <span className="font-brand text-base font-black uppercase">Rounak Kumar</span>
-              <span className="text-xs text-muted">Designed &amp; built this website</span>
+              <span className="text-xs text-muted">Developer · want to contribute? Reach out</span>
             </span>
           </span>
           {LINKS.map((l) => (

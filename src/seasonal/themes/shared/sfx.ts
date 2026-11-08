@@ -84,7 +84,23 @@ function audio() {
   master = ctx.createGain();
   master.gain.value = MASTER_LEVEL;
   master.connect(ctx.destination);
+  watchFocus();
   return ctx;
+}
+
+/** Sound only plays while this tab is the one in front: visible and focused. */
+const pageActive = () => document.visibilityState === "visible" && document.hasFocus();
+
+/**
+ * Pauses all site audio (theme sounds and the intro) when the tab is hidden or the
+ * window loses focus, and resumes it on return. Set up once, with the audio context.
+ */
+function watchFocus() {
+  const sync = () => setSfxActive(pageActive());
+  document.addEventListener("visibilitychange", sync);
+  window.addEventListener("blur", sync);
+  window.addEventListener("focus", sync);
+  window.addEventListener("pagehide", sync);
 }
 
 function load(id: string) {
@@ -110,16 +126,16 @@ function load(id: string) {
 export async function prepareSfx() {
   const context = audio();
   if (!context) return;
-  if (context.state === "suspended") await context.resume().catch(() => {});
+  if (context.state === "suspended" && pageActive()) await context.resume().catch(() => {});
   const theme = activeTheme();
   const ids = new Set([...Object.values(THEME_SOUNDS[theme]), ...Object.values(DEFAULTS)].map((s) => s!.id));
   await Promise.all([...ids].map(load));
 }
 
-/** Pause audio while the tab is hidden, resume when it is back. */
+/** Pause audio while the tab is hidden or unfocused, resume when it is back. */
 export function setSfxActive(active: boolean) {
   if (!ctx) return;
-  if (active && ctx.state === "suspended") void ctx.resume().catch(() => {});
+  if (active && pageActive() && ctx.state === "suspended") void ctx.resume().catch(() => {});
   if (!active && ctx.state === "running") void ctx.suspend().catch(() => {});
 }
 
@@ -144,6 +160,8 @@ function playBuffer(id: string, gain: number, rate: number) {
 export async function unlockAudio(): Promise<boolean> {
   const context = audio();
   if (!context) return false;
+  // Opened in a background tab: stay quiet (the intro then asks for a tap).
+  if (!pageActive()) return false;
   if (context.state === "suspended") {
     await Promise.race([context.resume().catch(() => {}), new Promise((r) => setTimeout(r, 300))]);
   }

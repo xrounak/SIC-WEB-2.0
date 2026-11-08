@@ -55,7 +55,7 @@ export function SfxController() {
       }
     };
 
-    const onVisibility = () => setSfxActive(!document.hidden);
+    const onVisibility = () => setSfxActive(!document.hidden && document.hasFocus());
 
     window.addEventListener("pointerdown", onPointerDown, { capture: true, passive: true });
     window.addEventListener("keydown", onKeyDown, { capture: true, passive: true });
