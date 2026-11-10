@@ -81,3 +81,9 @@ export function storageUrl(path: string | null | undefined, bucket = "public-med
   const base = process.env.NEXT_PUBLIC_SUPABASE_URL;
   return base ? `${base}/storage/v1/object/public/${bucket}/${path}` : null;
 }
+
+/** "Phoenix" shows as "Team Phoenix"; a name that already starts with "Team" is left as typed. */
+export function teamTitle(name: string) {
+  const n = name.trim();
+  return /^team\b/i.test(n) ? n : `Team ${n}`;
+}

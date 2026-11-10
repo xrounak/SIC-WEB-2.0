@@ -42,6 +42,7 @@ export const RPC_ERROR_MESSAGES = {
   TEAM_NAME_TAKEN: "Another team in this event already has that name.",
   TEAM_FULL: "This team is full.",
   TEAM_WITHDRAWN: "This team has withdrawn.",
+  JOIN_LINK_INVALID: "This join link doesn't work any more. Ask the team leader for the current link.",
   TOO_MANY_INVITES: "That's more people than this event allows per team.",
   CANNOT_INVITE_SELF: "You're already on the team. Invite your teammates' emails.",
   INVITE_EMAIL_INVALID: "One of the email addresses isn't valid.",

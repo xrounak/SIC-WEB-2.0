@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { requireOnboarded } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { formatDate, formatDateTime } from "@/lib/format";
+import { formatDate, formatDateTime, teamTitle } from "@/lib/format";
 import { respondInvite } from "@/lib/actions/events";
 import { ActionForm, SubmitButton } from "@/components/ui/form";
 import { Avatar, Card, EmptyState, PageHeader, StatusBadge } from "@/components/ui/primitives";
@@ -59,7 +59,7 @@ export default async function InvitesPage() {
                     <p className="text-sm text-muted">
                       <span className="font-medium text-fg">{i.leader_name}</span> invited you to join
                     </p>
-                    <p className="text-lg font-semibold leading-tight">Team {i.team_name}</p>
+                    <p className="text-lg font-semibold leading-tight">{teamTitle(i.team_name)}</p>
                     <p className="text-sm text-muted">
                       {i.event_slug ? (
                         <Link href={`/events/${i.event_slug}`} className="text-primary hover:underline">
@@ -103,7 +103,7 @@ export default async function InvitesPage() {
             {past.map((i) => (
               <li key={i.id} className="flex flex-wrap items-center gap-3 p-3 text-sm">
                 <span className="min-w-0 flex-1 truncate">
-                  Team {i.team_name} · {i.event_title}
+                  {teamTitle(i.team_name)} · {i.event_title}
                 </span>
                 <StatusBadge status={i.status} />
               </li>

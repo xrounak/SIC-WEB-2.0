@@ -237,6 +237,34 @@ async function main() {
   await rejects(ids.external, `select public.add_team_invites($1, array['pres@gmail.com'])`, [teamId], /TOO_MANY_INVITES/, 'full team takes no more invites');
   ok('re-invite after a decline, accept joins the team');
 
+  // Join links: the leader shares one link; anyone signed in can join while there's room
+  await rejects(ids.member, 'select public.team_join_link($1)', [teamId], /NOT_ALLOWED/, 'only the leader gets the join link');
+  const [{ team_join_link: code }] = await q(ids.external, 'select public.team_join_link($1)', [teamId]);
+  assert.match(code, /^[A-Za-z0-9_-]{10,40}$/);
+  assert.equal((await q(ids.external, 'select public.team_join_link($1) as c', [teamId]))[0].c, code);
+  const [pv] = await q(null, 'select * from public.team_join_preview($1)', [code]);
+  assert.equal(pv.team_name, 'Bolts');
+  assert.equal(pv.members, 3);
+  await rejects(ids.external, 'select join_code from public.event_teams', [], /permission denied/, 'join codes are not readable from the table');
+  await rejects(ids.member, 'select public.join_team_by_code($1)', [code], /TEAM_FULL/, 'a full team takes nobody from the link');
+  const [{ id: studentReg }] = await q(ids.student, `select id from public.event_registrations where user_id = $1 and status <> 'cancelled'`, [ids.student]);
+  await q(ids.student, 'select public.withdraw_registration($1)', [studentReg]);
+  await q(ids.member, 'select public.join_team_by_code($1)', [code]);
+  assert.equal((await q(ids.external, `select * from public.event_registrations where event_team_id = $1 and status <> 'cancelled'`, [teamId])).length, 3);
+  assert.ok((await q(ids.external, `select * from public.notifications where kind = 'team_invite_accepted' and title like '%with your link'`)).length >= 1);
+  const [{ team_join_link: fresh }] = await q(ids.external, 'select public.team_join_link($1, true)', [teamId]);
+  assert.notEqual(fresh, code);
+  await rejects(ids.pres, 'select public.join_team_by_code($1)', [code], /JOIN_LINK_INVALID/, 'a replaced link stops working');
+  ok('join link: leader only, preview signed out, full team refused, join works, new link kills the old one');
+
+  // "Team Phoenix" is saved as "Phoenix" (the site adds "Team" itself)
+  const tp = await db.query(`insert into public.event_teams (event_id, name, leader_id) values ($1, 'Team Phoenix', $2) returning name, id`, [eventId, ids.pres]);
+  assert.equal(tp.rows[0].name, 'Phoenix');
+  const tq = await db.query(`insert into public.event_teams (event_id, name, leader_id) values ($1, 'Team X', $2) returning name, id`, [eventId, ids.pres]);
+  assert.equal(tq.rows[0].name, 'Team X');
+  await db.query('delete from public.event_teams where id = any($1)', [[tp.rows[0].id, tq.rows[0].id]]);
+  ok('a leading "Team" is dropped from team names');
+
   // Leader withdraws: whole team goes
   const [{ id: leaderReg }] = await q(ids.external, `select id from public.event_registrations where user_id = $1`, [ids.external]);
   await q(ids.external, 'select public.withdraw_registration($1)', [leaderReg]);

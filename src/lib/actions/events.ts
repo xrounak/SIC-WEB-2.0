@@ -105,6 +105,28 @@ export async function respondInvite(_: ActionState, formData: FormData): Promise
   return { ok: true, message: "Invite declined. The team leader has been told." };
 }
 
+/** Join a team from the link its leader shared. */
+export async function joinTeamByLink(_: ActionState, formData: FormData): Promise<ActionState> {
+  await requireOnboarded();
+  const code = formData.get("code")?.toString() ?? "";
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("join_team_by_code", { p_code: code });
+  if (error) return fromRpcError(error);
+  revalidatePath("/portal", "layout");
+  redirect("/portal/registrations?notice=joined");
+}
+
+/** Leader: make a fresh join link (the old one stops working). */
+export async function changeJoinLink(_: ActionState, formData: FormData): Promise<ActionState> {
+  await requireOnboarded();
+  const teamId = id.parse(formData.get("team_id"));
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("team_join_link", { p_team_id: teamId, p_new: true });
+  if (error) return fromRpcError(error);
+  revalidatePath("/portal/registrations", "layout");
+  return { ok: true, message: "New link made. The old one no longer works." };
+}
+
 export type Invitee = { id: string; full_name: string; avatar_url: string | null; email_hint: string; college: string | null };
 
 /** People the leader can still invite to this team (name search, or an exact email). */

@@ -2,7 +2,7 @@ import { Notice } from "@/components/ui/primitives";
 
 const MESSAGES: Record<string, { tone: "success" | "warning" | "accent"; text: string }> = {
   registered: { tone: "success", text: "You're registered. A confirmation email is on its way." },
-  "team-created": { tone: "success", text: "Team created. Invites are on their way to your teammates." },
+  "team-created": { tone: "success", text: "Team created. Open it below to invite teammates or share a join link on WhatsApp." },
   joined: { tone: "success", text: "You've joined the team." },
   withdrawn: { tone: "accent", text: "Registration withdrawn." },
   submitted: { tone: "success", text: "Submitted for review. You'll be notified of the decision." },

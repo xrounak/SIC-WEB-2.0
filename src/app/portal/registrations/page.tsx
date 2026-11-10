@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { requireOnboarded } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { formatDateTime, isPast } from "@/lib/format";
+import { formatDateTime, isPast, teamTitle } from "@/lib/format";
 import { ButtonLink } from "@/components/ui/button";
 import { EmptyState, PageHeader, StatusBadge } from "@/components/ui/primitives";
 import { DateTile } from "@/components/cards";
@@ -59,7 +59,7 @@ export default async function RegistrationsPage({ searchParams }: PageProps<"/po
                         </span>
                         {r.event_teams && (
                           <span className="text-[0.8125rem] text-muted">
-                            Team {r.event_teams.name} · {r.team_role}
+                            {teamTitle(r.event_teams.name)} · {r.team_role}
                           </span>
                         )}
                       </span>

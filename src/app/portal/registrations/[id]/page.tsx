@@ -3,8 +3,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireOnboarded } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { formatDate, formatDateTime, isPast } from "@/lib/format";
-import { addTeamInvites, manageInvite, withdrawRegistration } from "@/lib/actions/events";
+import { formatDate, formatDateTime, isPast, teamTitle } from "@/lib/format";
+import { addTeamInvites, changeJoinLink, manageInvite, withdrawRegistration } from "@/lib/actions/events";
+import { ShareJoinLink } from "@/components/forms/share-join-link";
+import { SITE_URL } from "@/lib/site";
 import { ActionForm, SubmitButton, TextField } from "@/components/ui/form";
 import { InvitePicker } from "@/components/forms/invite-picker";
 import { Avatar, Card, Meta, PageHeader, StatusBadge } from "@/components/ui/primitives";
@@ -45,6 +47,13 @@ export default async function RegistrationPage({ params }: PageProps<"/portal/re
   const started = isPast(event.starts_at);
   const canInvite = isLeader && active && team?.status !== "withdrawn" && members.length + invites.filter((i) => i.status === "pending").length < (event.team_max ?? 0);
 
+  const roomLeft = team ? (event.team_max ?? 0) - members.length : 0;
+  let joinCode: string | null = null;
+  if (team && isLeader && active && team.status !== "withdrawn" && roomLeft > 0) {
+    const { data } = await supabase.rpc("team_join_link", { p_team_id: team.id });
+    joinCode = (data as string | null) ?? null;
+  }
+
   return (
     <div className="flex flex-col gap-8">
       <Link href="/portal/registrations" className="text-sm text-muted hover:text-fg">
@@ -69,7 +78,7 @@ export default async function RegistrationPage({ params }: PageProps<"/portal/re
       {team && (
         <section className="flex flex-col gap-4">
           <div className="flex flex-wrap items-center gap-3">
-            <h2 className="text-xl font-semibold">Team {team.name}</h2>
+            <h2 className="text-xl font-semibold">{teamTitle(team.name)}</h2>
             <StatusBadge status={team.status} />
           </div>
           {team.status === "forming" && (
@@ -122,6 +131,27 @@ export default async function RegistrationPage({ params }: PageProps<"/portal/re
                 </li>
               ))}
           </ul>
+          {joinCode && team && (
+            <Card className="flex flex-col gap-3 p-5">
+              <div className="flex flex-col gap-1">
+                <h3 className="font-semibold">Invite with a link</h3>
+                <p className="text-sm text-muted">
+                  Send this link on WhatsApp or anywhere. Whoever opens it signs in and joins straight away, while the team has room ({roomLeft} more{" "}
+                  {roomLeft === 1 ? "person" : "people"}).
+                </p>
+              </div>
+              <ShareJoinLink url={`${SITE_URL}/t/${joinCode}`} teamName={teamTitle(team.name)} eventTitle={event.title} />
+              <div className="flex flex-wrap gap-1 text-sm">
+                <ActionForm action={changeJoinLink} className="gap-0">
+                  <input type="hidden" name="team_id" value={team.id} />
+                  <SubmitButton size="sm" variant="ghost" name="intent" value="new" pendingLabel="…">
+                    Make a new link
+                  </SubmitButton>
+                </ActionForm>
+                <span className="self-center text-[0.8125rem] text-subtle">If the link reaches the wrong people, make a new one: the old link stops working.</span>
+              </div>
+            </Card>
+          )}
           {canInvite && (
             <Card className="flex flex-col gap-4 p-5">
               <InvitePicker teamId={team.id} slotsLeft={(event.team_max ?? 0) - members.length - invites.filter((i) => i.status === "pending").length} />
