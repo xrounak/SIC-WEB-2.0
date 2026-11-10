@@ -19,7 +19,8 @@ import { playSfx } from "./themes/shared/sfx";
  */
 const MIN_COVER_MS = 650;
 const REVEAL_MS = 650;
-const MAX_COVER_MS = 8000;
+// Only a safety net: lifting the cover early shows the old page and looks like the click failed.
+const MAX_COVER_MS = 15000;
 
 const CRAFT = [
   { theme: "diwali", src: rocket },

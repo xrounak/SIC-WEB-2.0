@@ -289,6 +289,18 @@ async function main() {
     ],
   );
   ok('chronos runs post and rank, names tidied');
+  // Sorted by nitro cans: most cans first (Rover Ace has 12), time breaks ties
+  const byNitro = await q(null, `select * from public.chronos_leaderboard_by('nitro', 10)`);
+  assert.deepEqual(
+    byNitro.map((r) => [Number(r.place), r.name, r.gears]),
+    [
+      [1, 'Rover Ace', 12],
+      [2, 'Speedy', 3],
+    ],
+  );
+  const byTime = await q(null, `select * from public.chronos_leaderboard_by('time', 10)`);
+  assert.deepEqual(byTime.map((r) => r.name), ['Speedy', 'Rover Ace']);
+  ok('chronos board sorts by time or by nitro cans');
   await rejects(null, 'select public.submit_chronos_run($1, $2, $3)', ['x', 90, 0], /NAME_LENGTH/, 'chronos name too short');
   await rejects(null, 'select public.submit_chronos_run($1, $2, $3)', ['Cheater', 3, 0], /TIME_OUT_OF_RANGE/, 'chronos impossible time');
   await rejects(null, 'select * from public.chronos_runs', [], /permission denied/, 'chronos table closed to clients');
@@ -302,6 +314,38 @@ async function main() {
   assert.equal(demo[0].festival, 'chronos');
   await db.exec(`delete from public.events where slug = 'demo-event'`);
   ok('demo_event.sql adds one public demo event');
+  await db.exec(readFileSync(join(root, 'dummy_event.sql'), 'utf8'));
+  await db.exec(readFileSync(join(root, 'dummy_event.sql'), 'utf8'));
+  assert.equal((await q(null, `select count(*)::int as n from public.events where slug = 'dont-register'`))[0].n, 1);
+  await db.exec(`delete from public.events where slug = 'dont-register'`);
+  ok('dummy_event.sql adds the dummy event');
+
+  // An admin holds every role, counts as a member, and leads every team
+  {
+    const powers = `select public.has_role('president') as pres, public.has_role('vice_president') as vp,
+      public.has_role('faculty_coordinator') as fac, public.is_exec() as exec, public.is_member() as member,
+      public.is_any_lead() as anylead, public.leads_team((select id from public.teams limit 1)) as leads,
+      public.in_team((select id from public.teams limit 1)) as inteam`;
+    const [a] = await q(ids.admin, powers);
+    assert.ok(Object.values(a).every((v) => v === true), JSON.stringify(a));
+    const [m] = await q(ids.member, powers);
+    assert.equal(m.pres || m.vp || m.fac || m.exec, false);
+    ok('admin has every power; a plain member does not');
+  }
+
+  // The Chronos events script swaps the demo event for the eight real ones (safe to run twice).
+  await db.exec(readFileSync(join(root, 'demo_event.sql'), 'utf8'));
+  await db.exec(readFileSync(join(root, 'chronos_events.sql'), 'utf8'));
+  await db.exec(readFileSync(join(root, 'chronos_events.sql'), 'utf8'));
+  const fest = await q(null, `select slug, status from public.events where festival = 'chronos' order by starts_at`);
+  assert.equal(fest.length, 8);
+  assert.ok(fest.every((r) => r.status === 'published'));
+  assert.ok(!fest.some((r) => r.slug === 'demo-event'));
+  await db.exec(readFileSync(join(root, 'chronos_event_names.sql'), 'utf8'));
+  const named = await q(null, `select title from public.events where slug in ('robo-war', 'rc-car-hurdle-race') order by slug`);
+  assert.deepEqual(named.map((r) => r.title), ["Pillager's Parkour", 'Nether Clash']);
+  await db.exec(`delete from public.events where festival = 'chronos'`);
+  ok('chronos_events.sql replaces the demo event with the eight festival events');
 
   // The demo data loads on top of the four-domain seed, and its cleanup undoes it.
   await db.exec(readFileSync(join(root, 'demo_seed.sql'), 'utf8'));

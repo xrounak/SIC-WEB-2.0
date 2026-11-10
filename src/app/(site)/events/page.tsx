@@ -6,6 +6,7 @@ import { EventCard } from "@/components/cards";
 import { EVENT_TYPE_LABEL } from "@/lib/format";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
+import { LinkPending } from "@/components/ui/link-pending";
 
 export const metadata: Metadata = pageMetadata({ title: "Events", description: "Workshops, hackathons, competitions and talks by the Science & Innovation Club at GEC Palamu. See what is coming up and register.", path: "/events" });
 
@@ -38,6 +39,7 @@ export default async function EventsPage({ searchParams }: PageProps<"/events">)
               )}
             >
               {f.label}
+              <LinkPending />
             </Link>
           ),
         )}

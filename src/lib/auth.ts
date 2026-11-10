@@ -43,10 +43,17 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
   ]);
   if (!profile) return null;
 
-  const roles = (roleRows ?? []).map((r) => r.role as AppRole);
-  const leadTeamIds = (leadRows ?? []).map((r) => r.team_id as string);
+  const isAdmin = (roleRows ?? []).some((r) => r.role === "admin");
+  // An admin holds every role and leads every team (the database treats them the same way)
+  const roles: AppRole[] = isAdmin
+    ? ["admin", "president", "vice_president", "faculty_coordinator"]
+    : (roleRows ?? []).map((r) => r.role as AppRole);
+  let leadTeamIds = (leadRows ?? []).map((r) => r.team_id as string);
+  if (isAdmin) {
+    const { data: allTeams } = await supabase.from("teams").select("id");
+    leadTeamIds = (allTeams ?? []).map((t) => t.id as string);
+  }
   const isExec = roles.includes("president") || roles.includes("vice_president");
-  const isAdmin = roles.includes("admin");
   const isStaff = roles.length > 0;
   const isLead = leadTeamIds.length > 0;
 
@@ -55,7 +62,7 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
     profile: profile as Profile,
     roles,
     leadTeamIds,
-    isMember: profile.member_status === "member",
+    isMember: isAdmin || profile.member_status === "member",
     isExec,
     isAdmin,
     isStaff,

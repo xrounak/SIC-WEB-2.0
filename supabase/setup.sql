@@ -3792,6 +3792,138 @@ grant execute on function public.find_invitees(uuid, text) to authenticated;
 grant execute on function public.invite_to_team(uuid, uuid[]) to authenticated;
 
 
+-- ===== 20261109000100_chronos_leaderboard_sort.sql =====
+
+-- Chronos leaderboard, sortable: by time (fastest first) or by nitro cans collected (most
+-- first, then fastest). Same closed table and the same rules as before; this only adds a
+-- second way to read it.
+
+create index if not exists chronos_runs_nitro_idx on public.chronos_runs (gears desc, seconds, created_at);
+
+create or replace function public.chronos_leaderboard_by(p_sort text default 'time', p_limit integer default 10)
+returns table (place bigint, name text, seconds numeric, gears smallint, created_at timestamptz)
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select
+    row_number() over (
+      order by
+        case when p_sort = 'nitro' then -r.gears else 0 end,
+        r.seconds,
+        r.created_at
+    ),
+    r.name,
+    r.seconds,
+    r.gears,
+    r.created_at
+  from public.chronos_runs r
+  order by
+    case when p_sort = 'nitro' then -r.gears else 0 end,
+    r.seconds,
+    r.created_at
+  limit least(greatest(coalesce(p_limit, 10), 1), 50);
+$$;
+
+revoke all on function public.chronos_leaderboard_by(text, integer) from public;
+grant execute on function public.chronos_leaderboard_by(text, integer) to anon, authenticated;
+
+
+-- ===== 20261110000100_admin_all_powers.sql =====
+
+-- Admin can do everything: an admin counts as President, Vice President and Faculty
+-- Coordinator, as a club member, and as the lead (and a member) of every team.
+-- Every policy and function checks permissions through these helpers, so changing them
+-- here gives admins every power without touching each rule.
+
+-- Any role check passes for an admin
+create or replace function public.has_role(check_role public.app_role)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select exists (
+    select 1 from public.user_roles
+    where user_id = (select auth.uid()) and (role = check_role or role = 'admin')
+  );
+$$;
+
+-- Vice President, President, or admin
+create or replace function public.is_exec()
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select exists (
+    select 1 from public.user_roles
+    where user_id = (select auth.uid()) and role in ('vice_president', 'president', 'admin')
+  );
+$$;
+
+-- Club members, and admins
+create or replace function public.is_member()
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select exists (
+    select 1 from public.profiles
+    where id = (select auth.uid()) and member_status = 'member'
+  ) or public.is_admin();
+$$;
+
+-- Lead of this team, or an admin (leads every team)
+create or replace function public.leads_team(check_team_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select exists (
+    select 1 from public.team_members
+    where team_id = check_team_id
+      and member_id = (select auth.uid())
+      and team_role = 'lead'
+      and status = 'active'
+  ) or public.is_admin();
+$$;
+
+create or replace function public.is_any_lead()
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select exists (
+    select 1 from public.team_members
+    where member_id = (select auth.uid()) and team_role = 'lead' and status = 'active'
+  ) or public.is_admin();
+$$;
+
+-- In this team, or an admin
+create or replace function public.in_team(check_team_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select exists (
+    select 1 from public.team_members
+    where team_id = check_team_id and member_id = (select auth.uid()) and status = 'active'
+  ) or public.is_admin();
+$$;
+
+
 -- ===== seed.sql =====
 
 -- Reference data: the club's four domains and its teams.
@@ -3841,7 +3973,9 @@ insert into supabase_migrations.schema_migrations (version, name) values
   ('20261105000300', 'four_domains'),
   ('20261106000100', 'event_festival'),
   ('20261107000100', 'chronos_leaderboard'),
-  ('20261108000100', 'team_invites_in_app')
+  ('20261108000100', 'team_invites_in_app'),
+  ('20261109000100', 'chronos_leaderboard_sort'),
+  ('20261110000100', 'admin_all_powers')
 on conflict (version) do nothing;
 
 commit;
