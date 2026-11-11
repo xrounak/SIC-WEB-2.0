@@ -15,6 +15,30 @@ import type { EventReview, SicEvent } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Proposal" };
 
+/** Where this proposal stands, in plain words. */
+function where(e: SicEvent) {
+  switch (e.status) {
+    case "draft":
+      return "Not sent yet. Send it for review when it's ready.";
+    case "pending_review":
+      return e.is_major
+        ? "Waiting for the organising team's lead. Because it's a major event, the President or Vice President approves it after that."
+        : "Waiting for the lead of the organising team (or the President or Vice President) to review it.";
+    case "changes_requested":
+      return "A reviewer asked for changes. Edit it and send it again.";
+    case "lead_approved":
+      return e.is_major ? "The lead approved it. Now waiting for the President or Vice President." : "Approved. It can be published now.";
+    case "final_approved":
+      return "Approved. It can be published now.";
+    case "published":
+      return "Live on the website.";
+    case "rejected":
+      return "Not approved.";
+    default:
+      return "";
+  }
+}
+
 export default async function ProposalPage({ params, searchParams }: PageProps<"/portal/proposals/[id]">) {
   const { id } = await params;
   const viewer = await requireMember();
@@ -39,8 +63,17 @@ export default async function ProposalPage({ params, searchParams }: PageProps<"
       <PageHeader
         title={event.title}
         actions={<StatusBadge status={event.status} />}
-        description={event.is_major ? "Major event: needs lead approval, then VP or President approval." : "Needs approval from the organising team's lead."}
+        description={where(event)}
       />
+
+      {viewer.isAdmin && ["pending_review", "lead_approved"].includes(event.status) && (
+        <Notice tone="accent" title="You're an admin, so you can approve this yourself.">
+          <Link href={`/manage/events/${event.id}`} className="text-primary underline">
+            Open it in Manage
+          </Link>{" "}
+          to review it and publish.
+        </Notice>
+      )}
 
       {event.status === "changes_requested" && latestNotes && (
         <Notice tone="warning" title="Changes requested">

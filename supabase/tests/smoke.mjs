@@ -163,6 +163,21 @@ async function main() {
   await rejects(ids.pres, `select public.assign_role($1, 'vice_president')`, [ids.lead], /NOT_ALLOWED/, 'only admin assigns roles');
   await rejects(ids.admin, `select public.revoke_role($1, 'admin')`, [ids.admin], /LAST_ADMIN/, 'last admin cannot be removed');
 
+  // An admin may approve their own proposal; everyone else may not
+  {
+    const [{ id: ownId }] = await q(ids.admin, `
+      insert into public.events (title, summary, description, event_type, venue, starts_at, reg_closes_at,
+                                 participation, owner_team_id, created_by)
+      values ('Admin Workshop', 'A workshop', 'Learn things.', 'workshop', 'Lab',
+              now() + interval '20 days', now() + interval '10 days', 'individual', $1, $2)
+      returning id`, [robotics, ids.admin]);
+    await q(ids.admin, 'select public.submit_event($1)', [ownId]);
+    await q(ids.admin, `select public.review_event($1, 'approved')`, [ownId]);
+    assert.equal((await db.query('select status from public.events where id = $1', [ownId])).rows[0].status, 'lead_approved');
+    await q(ids.admin, 'select public.publish_event($1)', [ownId]);
+    ok('an admin approves and publishes their own proposal');
+  }
+
   // Event proposal: major event needs two stages
   const [{ id: eventId }] = await q(ids.member, `
     insert into public.events (title, summary, description, event_type, venue, starts_at, reg_closes_at,
