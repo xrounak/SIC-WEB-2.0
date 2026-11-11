@@ -22,12 +22,12 @@ function where(e: SicEvent) {
       return "Not sent yet. Send it for review when it's ready.";
     case "pending_review":
       return e.is_major
-        ? "Waiting for the organising team's lead. Because it's a major event, the President or Vice President approves it after that."
-        : "Waiting for the lead of the organising team (or the President or Vice President) to review it.";
+        ? "Waiting for the organising team's lead. Because it's a major event, an admin approves it after that."
+        : "Waiting for the lead of the organising team (or an admin) to review it.";
     case "changes_requested":
       return "A reviewer asked for changes. Edit it and send it again.";
     case "lead_approved":
-      return e.is_major ? "The lead approved it. Now waiting for the President or Vice President." : "Approved. It can be published now.";
+      return e.is_major ? "The lead approved it. Now waiting for an admin." : "Approved. It can be published now.";
     case "final_approved":
       return "Approved. It can be published now.";
     case "published":

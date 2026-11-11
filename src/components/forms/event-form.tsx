@@ -31,7 +31,7 @@ export function EventForm({ event, teams, domains }: { event?: SicEvent; teams: 
             label="Type"
             defaultValue={event?.event_type ?? "workshop"}
             options={Object.entries(EVENT_TYPE_LABEL).map(([value, label]) => ({ value, label }))}
-            hint="Hackathons, competitions and external events also need VP or President approval."
+            hint="Hackathons, competitions and external events also need an admin's final approval."
           />
           <SelectField
             name="visibility"

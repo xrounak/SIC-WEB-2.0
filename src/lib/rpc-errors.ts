@@ -16,6 +16,7 @@ export const RPC_ERROR_MESSAGES = {
   CANNOT_VERIFY_SELF: "Someone else has to verify your student status.",
   ROLL_NUMBER_TAKEN: "Another verified account already uses this registration number.",
   USER_NOT_FOUND: "That person doesn't have an account.",
+  ROLE_NOT_SUPPORTED: "There is only one role you can give: admin.",
   LAST_ADMIN: "Assign another admin before removing the last one.",
   TEAM_NOT_FOUND: "That team doesn't exist.",
   INVALID_TEAM_ROLE: "Choose member, deputy or lead.",

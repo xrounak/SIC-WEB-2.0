@@ -102,7 +102,7 @@ export async function removeContributor(_: ActionState, formData: FormData): Pro
 
 /** Member search for the contributor picker. Called from a client component. */
 export async function searchMembers(query: string) {
-  // Members and staff (who may not be members, e.g. faculty). The RPC enforces this.
+  // Members and admins (who may not be members). The RPC enforces this.
   await requireOnboarded();
   const supabase = await createClient();
   const { data } = await supabase.rpc("search_members", { p_query: query });

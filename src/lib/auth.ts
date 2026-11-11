@@ -11,7 +11,6 @@ export type Viewer = {
   roles: AppRole[];
   leadTeamIds: string[];
   isMember: boolean;
-  isExec: boolean;
   isAdmin: boolean;
   isStaff: boolean;
   isLead: boolean;
@@ -44,16 +43,13 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
   if (!profile) return null;
 
   const isAdmin = (roleRows ?? []).some((r) => r.role === "admin");
-  // An admin holds every role and leads every team (the database treats them the same way)
-  const roles: AppRole[] = isAdmin
-    ? ["admin", "president", "vice_president", "faculty_coordinator"]
-    : (roleRows ?? []).map((r) => r.role as AppRole);
+  // Three kinds of account: user, member, admin. An admin leads every team (the database does the same).
+  const roles: AppRole[] = isAdmin ? ["admin"] : [];
   let leadTeamIds = (leadRows ?? []).map((r) => r.team_id as string);
   if (isAdmin) {
     const { data: allTeams } = await supabase.from("teams").select("id");
     leadTeamIds = (allTeams ?? []).map((t) => t.id as string);
   }
-  const isExec = roles.includes("president") || roles.includes("vice_president");
   const isStaff = roles.length > 0;
   const isLead = leadTeamIds.length > 0;
 
@@ -63,7 +59,6 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
     roles,
     leadTeamIds,
     isMember: isAdmin || profile.member_status === "member",
-    isExec,
     isAdmin,
     isStaff,
     isLead,

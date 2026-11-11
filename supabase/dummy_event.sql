@@ -33,7 +33,7 @@ $md$,
   ),
   coalesce(
     (select id from public.profiles where email = 'rounakkumar13005@gmail.com'),
-    (select user_id from public.user_roles where role in ('admin', 'president') order by role limit 1),
+    (select user_id from public.user_roles where role = 'admin' limit 1),
     (select id from public.profiles order by created_at limit 1)
   ),
   now()

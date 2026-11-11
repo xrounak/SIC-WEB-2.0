@@ -18,9 +18,9 @@ export default async function AnnouncementsPage() {
     getTeams(),
   ]);
   const items = (data ?? []) as Announcement[];
-  const myTeams = viewer.isExec ? teams : teams.filter((t) => viewer.leadTeamIds.includes(t.id));
+  const myTeams = viewer.isAdmin ? teams : teams.filter((t) => viewer.leadTeamIds.includes(t.id));
   const audiences = [
-    ...(viewer.isExec
+    ...(viewer.isAdmin
       ? [
           { value: "public", label: "Public (website)" },
           { value: "members", label: "All members" },
@@ -78,7 +78,7 @@ export default async function AnnouncementsPage() {
               </div>
               <p className="font-medium">{a.title}</p>
               <p className="line-clamp-3 text-sm text-muted">{a.body}</p>
-              {a.created_by === viewer.id || viewer.isExec ? (
+              {a.created_by === viewer.id || viewer.isAdmin ? (
                 <div className="flex gap-2">
                   {a.status === "draft" && (
                     <>

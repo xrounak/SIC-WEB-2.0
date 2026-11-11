@@ -37,7 +37,7 @@ export async function saveTeam(_: ActionState, formData: FormData): Promise<Acti
   const supabase = await createClient();
   const teamId = formData.get("team_id")?.toString();
   const { error } = teamId ? await supabase.from("teams").update(row).eq("id", teamId) : await supabase.from("teams").insert(row);
-  if (error) return { error: error.code === "23505" ? "That slug is taken." : "Couldn't save. Only the VP, President or admin can edit teams." };
+  if (error) return { error: error.code === "23505" ? "That slug is taken." : "Couldn't save. Only an admin can edit teams." };
   revalidatePath("/manage/teams");
   revalidatePath("/domains", "layout");
   return { ok: true, message: "Team saved." };
@@ -111,7 +111,7 @@ export async function saveAnnouncement(_: ActionState, formData: FormData): Prom
   const supabase = await createClient();
   const { data, error } = await supabase.from("announcements").insert({ ...row, created_by: viewer.id }).select("id").single();
   if (error || !data) {
-    return { error: "You can't post to that audience. Leads post to their own team; the VP and President post to everyone." };
+    return { error: "You can't post to that audience. Leads post to their own team; admins post to everyone." };
   }
   if (formData.get("intent") === "publish") {
     const { error: pubError } = await supabase.rpc("publish_announcement", { p_announcement_id: data.id });

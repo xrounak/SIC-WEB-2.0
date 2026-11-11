@@ -12,7 +12,7 @@ export const metadata: Metadata = { title: "Teams & domains · Manage" };
 
 export default async function TeamsPage() {
   const viewer = await requireManager();
-  if (!viewer.isExec && !viewer.isAdmin) redirect("/manage");
+  if (!viewer.isAdmin) redirect("/manage");
   const supabase = await createClient();
   const [{ data: teamRows }, { data: domainRows }, { data: seats }] = await Promise.all([
     supabase.from("teams").select("*").order("name"),

@@ -158,13 +158,9 @@ export async function getPublicAnnouncements(limit = 3): Promise<Announcement[]>
 
 export async function getLeadership() {
   const supabase = await db();
-  if (!supabase) return { officers: [], leads: [] };
-  const [{ data: officers }, { data: leads }] = await Promise.all([
-    supabase.from("public_leadership").select("*"),
-    supabase.from("public_team_members").select("team_id, member_id, full_name, avatar_url").eq("team_role", "lead"),
-  ]);
+  if (!supabase) return { leads: [] };
+  const { data: leads } = await supabase.from("public_team_members").select("team_id, member_id, full_name, avatar_url").eq("team_role", "lead");
   return {
-    officers: (officers ?? []) as Array<{ role: string; member_id: string; full_name: string; avatar_url: string | null; bio: string | null; branch: string | null }>,
     leads: (leads ?? []) as Array<{ team_id: string; member_id: string; full_name: string; avatar_url: string | null }>,
   };
 }

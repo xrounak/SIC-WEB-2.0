@@ -1,7 +1,7 @@
 // Row shapes used by the UI. Replace with generated types (npm run db:types) once a
 // Supabase project is linked; these mirror supabase/migrations.
 
-export type AppRole = "vice_president" | "president" | "faculty_coordinator" | "admin";
+export type AppRole = "admin";
 export type StudentStatus = "unverified" | "pending" | "verified" | "rejected" | "external";
 export type MemberStatus = "none" | "applicant" | "member" | "alumni" | "suspended";
 export type EventStatus =

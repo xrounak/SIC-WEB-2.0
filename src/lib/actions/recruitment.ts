@@ -166,7 +166,7 @@ export async function saveCycle(_: ActionState, formData: FormData): Promise<Act
   const { error } = cycleId
     ? await supabase.from("recruitment_cycles").update(row).eq("id", cycleId)
     : await supabase.from("recruitment_cycles").insert(row);
-  if (error) return { error: "Couldn't save the cycle. Only the VP or President can manage cycles, and it must close after it opens." };
+  if (error) return { error: "Couldn't save the cycle. Only an admin can manage cycles, and it must close after it opens." };
   revalidatePath("/manage/recruitment", "layout");
   revalidatePath("/join");
   return { ok: true, message: "Cycle saved." };
@@ -183,7 +183,7 @@ export async function setCycleReviewer(_: ActionState, formData: FormData): Prom
     formData.get("intent") === "remove"
       ? await supabase.from("recruitment_reviewers").delete().eq("cycle_id", cycleId).eq("user_id", userId)
       : await supabase.from("recruitment_reviewers").insert({ cycle_id: cycleId, user_id: userId, assigned_by: viewer.id });
-  if (error) return { error: "Couldn't update reviewers. Only the VP or President can assign them." };
+  if (error) return { error: "Couldn't update reviewers. Only an admin can assign them." };
   revalidatePath("/manage/recruitment", "layout");
   return { ok: true, message: "Reviewers updated." };
 }

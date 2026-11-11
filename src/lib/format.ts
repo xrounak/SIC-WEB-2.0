@@ -68,9 +68,6 @@ export const EVENT_TYPE_LABEL: Record<string, string> = {
 };
 
 export const ROLE_LABEL: Record<string, string> = {
-  vice_president: "Vice President",
-  president: "President",
-  faculty_coordinator: "Faculty Coordinator",
   admin: "Admin",
 };
 

@@ -61,11 +61,9 @@ from (values
 ) as v (id, phone, branch, yr, roll, college, bio, student, member, public)
 where p.id = v.id::uuid;
 
--- Office bearers
+-- One demo admin (the roles are user, member and admin)
 insert into public.user_roles (user_id, role) values
-  ('d0000000-0000-4000-8000-000000000001', 'president'),
-  ('d0000000-0000-4000-8000-000000000002', 'vice_president'),
-  ('d0000000-0000-4000-8000-000000000003', 'faculty_coordinator')
+  ('d0000000-0000-4000-8000-000000000001', 'admin')
 on conflict do nothing;
 
 -- Team seats
@@ -193,7 +191,7 @@ insert into public.event_reviews (event_id, stage, reviewer_id, decision, notes,
   ('e0000000-0000-4000-8000-000000000005', 'final', 'd0000000-0000-4000-8000-000000000001', 'approved', 'Book the auditorium AV team.', now() - interval '10 days'),
   ('e0000000-0000-4000-8000-000000000006', 'lead',  'd0000000-0000-4000-8000-000000000001', 'approved', null, now() - interval '4 days'),
   ('e0000000-0000-4000-8000-000000000006', 'final', 'd0000000-0000-4000-8000-000000000002', 'approved', null, now() - interval '3 days'),
-  ('e0000000-0000-4000-8000-000000000010', 'lead',  'd0000000-0000-4000-8000-000000000004', 'approved', 'Ready for VP / President sign-off.', now() - interval '1 day'),
+  ('e0000000-0000-4000-8000-000000000010', 'lead',  'd0000000-0000-4000-8000-000000000004', 'approved', 'Ready for admin sign-off.', now() - interval '1 day'),
   ('e0000000-0000-4000-8000-000000000012', 'lead',  'd0000000-0000-4000-8000-000000000001', 'changes_requested',
    'Please add a software-licence plan (student licences or the free tier) and cap it at 30 so everyone gets a lab PC.', now() - interval '2 days');
 
@@ -394,7 +392,7 @@ commit;
 -- update public.profiles set member_status = 'member', student_status = 'verified', onboarded_at = coalesce(onboarded_at, now())
 --   where email = 'you@gmail.com';
 -- insert into public.user_roles (user_id, role)
---   select id, r::public.app_role from public.profiles, unnest(array['admin', 'president']) r where email = 'you@gmail.com'
+--   select id, r::public.app_role from public.profiles, unnest(array['admin']) r where email = 'you@gmail.com'
 --   on conflict do nothing;
 -- insert into public.team_members (team_id, member_id, team_role)
 --   select t.id, p.id, 'lead' from public.teams t, public.profiles p where t.slug = 'iot-robotics' and p.email = 'you@gmail.com'

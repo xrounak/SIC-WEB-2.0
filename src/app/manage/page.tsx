@@ -40,9 +40,9 @@ export default async function ManageInbox({ searchParams }: PageProps<"/manage">
   const leads = new Set(viewer.leadTeamIds);
   const eventItems: Item[] = (events.data ?? [])
     .filter((e) => {
-      if (e.status === "pending_review") return viewer.isExec || leads.has(e.owner_team_id);
-      if (e.status === "lead_approved") return e.is_major ? viewer.isExec : viewer.isExec || leads.has(e.owner_team_id);
-      return viewer.isExec || leads.has(e.owner_team_id);
+      if (e.status === "pending_review") return viewer.isAdmin || leads.has(e.owner_team_id);
+      if (e.status === "lead_approved") return e.is_major ? viewer.isAdmin : viewer.isAdmin || leads.has(e.owner_team_id);
+      return viewer.isAdmin || leads.has(e.owner_team_id);
     })
     .map((e) => ({
       href: `/manage/events/${e.id}`,
@@ -52,7 +52,7 @@ export default async function ManageInbox({ searchParams }: PageProps<"/manage">
       kind: e.status === "pending_review" ? "Review event" : e.status === "lead_approved" && e.is_major ? "Final approval" : "Ready to publish",
     }));
   const projectItems: Item[] = (projects.data ?? [])
-    .filter((p) => viewer.isExec || viewer.isAdmin || leads.has(p.owner_team_id))
+    .filter((p) => viewer.isAdmin || leads.has(p.owner_team_id))
     .map((p) => ({ href: `/manage/projects/${p.id}`, title: p.title, status: p.status, when: p.updated_at, kind: "Review project" }));
   const appItems: Item[] = (apps.data ?? []).map((a) => ({
     href: `/manage/recruitment/${a.id}`,

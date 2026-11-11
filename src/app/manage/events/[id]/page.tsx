@@ -47,11 +47,11 @@ export default async function ManageEventPage({ params }: PageProps<"/manage/eve
 
   const leadsThis = viewer.leadTeamIds.includes(event.owner_team_id);
   const own = event.created_by === viewer.id;
-  const canLeadReview = event.status === "pending_review" && (leadsThis || viewer.isExec) && !own;
-  const canFinalReview = event.status === "lead_approved" && event.is_major && viewer.isExec && !own;
+  const canLeadReview = event.status === "pending_review" && (leadsThis || viewer.isAdmin) && !own;
+  const canFinalReview = event.status === "lead_approved" && event.is_major && viewer.isAdmin && !own;
   const canPublish =
-    ((event.status === "lead_approved" && !event.is_major) || event.status === "final_approved") && (leadsThis || viewer.isExec || viewer.isAdmin);
-  const canCancel = event.status === "published" && (leadsThis || viewer.isExec || viewer.isAdmin);
+    ((event.status === "lead_approved" && !event.is_major) || event.status === "final_approved") && (leadsThis || viewer.isAdmin);
+  const canCancel = event.status === "published" && (leadsThis || viewer.isAdmin);
 
   return (
     <div className="flex flex-col gap-8">
@@ -145,13 +145,13 @@ export default async function ManageEventPage({ params }: PageProps<"/manage/eve
             <Card className="p-5">
               <h2 className="mb-1 text-lg font-semibold">{canFinalReview ? "Final approval" : "Lead review"}</h2>
               <p className="mb-4 text-[0.8125rem] text-muted">
-                {canFinalReview ? "Approved by the team lead. As VP or President, you make the final call." : "Your decision is sent to the proposer."}
+                {canFinalReview ? "Approved by the team lead. As an admin, you make the final call." : "Your decision is sent to the proposer."}
               </p>
               <ActionForm action={reviewEvent}>
                 <input type="hidden" name="event_id" value={id} />
                 <TextAreaField name="notes" label="Notes for the proposer" required={false} rows={3} hint="Required when requesting changes or rejecting." />
                 {canLeadReview && !event.is_major && (
-                  <CheckboxField name="mark_major" label="Needs VP / President approval" hint="Flag this as a major event." />
+                  <CheckboxField name="mark_major" label="Needs an admin's final approval" hint="Flag this as a major event." />
                 )}
                 <div className="flex flex-wrap gap-2">
                   <SubmitButton name="decision" value="approved" pendingLabel="…">
@@ -170,8 +170,8 @@ export default async function ManageEventPage({ params }: PageProps<"/manage/eve
           {own && ["pending_review", "lead_approved"].includes(event.status) && (
             <Notice tone="neutral">You proposed this event, so someone else reviews it.</Notice>
           )}
-          {event.status === "lead_approved" && event.is_major && !viewer.isExec && (
-            <Notice tone="accent" title="Waiting for VP or President">The lead has approved; final approval is pending.</Notice>
+          {event.status === "lead_approved" && event.is_major && !viewer.isAdmin && (
+            <Notice tone="accent" title="Waiting for an admin">The lead has approved; final approval is pending.</Notice>
           )}
           {canPublish && (
             <Card className="flex flex-col gap-3 p-5">

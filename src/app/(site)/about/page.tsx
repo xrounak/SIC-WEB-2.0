@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/site";
 import { getLeadership, getTeams } from "@/lib/data";
-import { ROLE_LABEL } from "@/lib/format";
-import { Avatar, Container, Eyebrow, PageHeader, SectionTitle } from "@/components/ui/primitives";
+import { Avatar, Container, PageHeader, SectionTitle } from "@/components/ui/primitives";
 
 export const metadata: Metadata = pageMetadata({ title: "About", description: "About the Science & Innovation Club of GEC Palamu: who we are, what we build and how students from every branch work together.", path: "/about" });
 
@@ -22,10 +21,8 @@ const PRINCIPLES = [
 ];
 
 export default async function AboutPage() {
-  const [{ officers, leads }, teams] = await Promise.all([getLeadership(), getTeams()]);
+  const [{ leads }, teams] = await Promise.all([getLeadership(), getTeams()]);
   const teamName = (id: string) => teams.find((t) => t.id === id)?.name ?? "Team";
-  const order = ["president", "vice_president", "faculty_coordinator"];
-  const sortedOfficers = [...officers].sort((a, b) => order.indexOf(a.role) - order.indexOf(b.role));
 
   return (
     <Container className="flex flex-col gap-16 py-12">
@@ -49,7 +46,7 @@ export default async function AboutPage() {
         <ol className="grid gap-3 md:grid-cols-3">
           {[
             ["Propose", "Any member can propose an event or submit a project from the portal."],
-            ["Review", "The lead of the owning team reviews it. Major events also need the VP or President."],
+            ["Review", "The lead of the owning team reviews it. Major events also need an admin's final approval."],
             ["Publish", "Approved events open for registration; approved projects appear in the gallery."],
           ].map(([title, body], i) => (
             <li key={title} className="flex gap-4 rounded-xl border border-line bg-surface p-5">
@@ -64,18 +61,9 @@ export default async function AboutPage() {
       </section>
 
       <section className="flex flex-col gap-6">
-        <SectionTitle title="Leadership" description="Office bearers and team leads who chose to appear here." />
-        {sortedOfficers.length + leads.length > 0 ? (
+        <SectionTitle title="Leadership" description="Team leads who chose to appear here." />
+        {leads.length > 0 ? (
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {sortedOfficers.map((o) => (
-              <div key={`${o.role}-${o.member_id}`} className="flex items-center gap-4 rounded-xl border border-line bg-surface p-4">
-                <Avatar name={o.full_name} src={o.avatar_url} size={48} />
-                <div className="flex min-w-0 flex-col">
-                  <span className="truncate font-medium">{o.full_name}</span>
-                  <Eyebrow className="normal-case tracking-normal">{ROLE_LABEL[o.role] ?? o.role}</Eyebrow>
-                </div>
-              </div>
-            ))}
             {leads.map((l) => (
               <div key={`${l.team_id}-${l.member_id}`} className="flex items-center gap-4 rounded-xl border border-line bg-surface p-4">
                 <Avatar name={l.full_name} src={l.avatar_url} size={48} />
@@ -87,7 +75,7 @@ export default async function AboutPage() {
             ))}
           </div>
         ) : (
-          <p className="text-sm text-muted">Leadership profiles appear here once office bearers make their profiles public.</p>
+          <p className="text-sm text-muted">Team leads appear here once they make their profiles public.</p>
         )}
       </section>
     </Container>

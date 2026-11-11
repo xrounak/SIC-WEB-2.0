@@ -48,22 +48,22 @@ export default async function RecruitmentPage({ searchParams }: PageProps<"/mana
     }
   }
   let reviewers: Array<{ user_id: string; name: string }> = [];
-  if (cycle && (viewer.isExec || viewer.isAdmin)) {
+  if (cycle && (viewer.isAdmin)) {
     const { data: rv } = await supabase.from("recruitment_reviewers").select("user_id").eq("cycle_id", cycle.id);
     const rIds = (rv ?? []).map((r) => r.user_id as string);
     const { data: rNames } = rIds.length ? await supabase.from("profiles").select("id, full_name").in("id", rIds) : { data: [] };
     reviewers = rIds.map((uid) => ({ user_id: uid, name: (rNames ?? []).find((n) => n.id === uid)?.full_name ?? "Member" }));
   }
   const editing = edit === "new" ? undefined : cycles.find((c) => c.id === edit);
-  const showForm = (viewer.isExec || viewer.isAdmin) && (edit === "new" || editing);
+  const showForm = (viewer.isAdmin) && (edit === "new" || editing);
 
   return (
     <div className="flex flex-col gap-8">
       <PageHeader
         eyebrow="Manage"
         title="Recruitment"
-        description="Reviewers move applications through screening and interviews. The VP, President or an admin makes final decisions."
-        actions={(viewer.isExec || viewer.isAdmin) && <Link href="/manage/recruitment?edit=new" className="text-sm text-primary">+ New cycle</Link>}
+        description="Reviewers move applications through screening and interviews. An admin makes the final decisions."
+        actions={(viewer.isAdmin) && <Link href="/manage/recruitment?edit=new" className="text-sm text-primary">+ New cycle</Link>}
       />
 
       {showForm && (
@@ -84,7 +84,7 @@ export default async function RecruitmentPage({ searchParams }: PageProps<"/mana
       )}
 
       {cycles.length === 0 ? (
-        <EmptyState title="No recruitment cycles yet" description={viewer.isExec || viewer.isAdmin ? "Create one to start accepting applications." : "The VP, President or an admin creates cycles."} />
+        <EmptyState title="No recruitment cycles yet" description={viewer.isAdmin ? "Create one to start accepting applications." : "An admin creates cycles."} />
       ) : (
         <>
           <nav aria-label="Cycles" className="flex flex-wrap items-center gap-2">
@@ -105,7 +105,7 @@ export default async function RecruitmentPage({ searchParams }: PageProps<"/mana
           {cycle && (
             <p className="text-sm text-muted">
               {formatDate(cycle.opens_at)} – {formatDate(cycle.closes_at)} · {apps.length} application{apps.length === 1 ? "" : "s"}
-              {(viewer.isExec || viewer.isAdmin) && (
+              {(viewer.isAdmin) && (
                 <>
                   {" · "}
                   <Link href={`/manage/recruitment?cycle=${cycle.id}&edit=${cycle.id}`} className="text-primary">
@@ -116,10 +116,10 @@ export default async function RecruitmentPage({ searchParams }: PageProps<"/mana
             </p>
           )}
 
-          {cycle && (viewer.isExec || viewer.isAdmin) && (
+          {cycle && (viewer.isAdmin) && (
             <Card className="flex flex-col gap-3 p-5">
               <h2 className="text-lg font-semibold">Reviewers for {cycle.name}</h2>
-              <p className="text-[0.8125rem] text-muted">Reviewers can screen, interview and evaluate. The VP and President always can.</p>
+              <p className="text-[0.8125rem] text-muted">Reviewers can screen, interview and evaluate. Admins always can.</p>
               <ul className="flex flex-wrap gap-2">
                 {reviewers.length === 0 && <li className="text-sm text-muted">None assigned.</li>}
                 {reviewers.map((r) => (

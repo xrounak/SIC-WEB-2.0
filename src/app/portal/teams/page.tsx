@@ -45,7 +45,7 @@ export default async function MyTeamsPage() {
         ))}
       </div>
       {myTeams.length === 0 ? (
-        <EmptyState title="You're not on a team yet" description="The VP or President assigns team seats after recruitment." />
+        <EmptyState title="You're not on a team yet" description="An admin assigns team seats after recruitment." />
       ) : (
         myTeams.map((t) => {
           const members = people.filter((p) => p.team_id === t.team_id);

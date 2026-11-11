@@ -94,7 +94,7 @@ async function main() {
   ok('auth trigger creates lowercase profiles');
 
   // Bootstrap roles the way the README describes (SQL editor, as postgres).
-  await db.query(`insert into public.user_roles (user_id, role) values ($1, 'admin'), ($2, 'president')`, [ids.admin, ids.pres]);
+  await db.query(`insert into public.user_roles (user_id, role) values ($1, 'admin'), ($2, 'admin')`, [ids.admin, ids.pres]);
 
   const team = async (slug) => (await db.query('select id from public.teams where slug = $1', [slug])).rows[0].id;
   const domain = async (slug) => (await db.query('select id from public.domains where slug = $1', [slug])).rows[0].id;
@@ -160,8 +160,14 @@ async function main() {
 
   await rejects(ids.pres, `select public.set_team_member($1, $2, 'lead')`, [robotics, ids.student], /NOT_A_MEMBER/, 'non-members cannot hold team seats');
   await q(ids.pres, `select public.set_team_member($1, $2, 'lead')`, [robotics, ids.lead]);
-  await rejects(ids.pres, `select public.assign_role($1, 'vice_president')`, [ids.lead], /NOT_ALLOWED/, 'only admin assigns roles');
+  // Roles: user, member, admin. Only 'admin' exists as a role; only an admin gives or takes it.
+  await rejects(ids.lead, `select public.assign_role($1, 'admin')`, [ids.member], /NOT_ALLOWED/, 'only admin assigns roles');
+  await rejects(ids.admin, `select public.assign_role($1, 'president')`, [ids.lead], /ROLE_NOT_SUPPORTED/, 'the old exec roles cannot be given');
+  await assert.rejects(db.query(`insert into public.user_roles (user_id, role) values ($1, 'vice_president')`, [ids.lead]), /user_roles_admin_only/);
+  await q(ids.admin, `select public.revoke_role($1, 'admin')`, [ids.pres]);
   await rejects(ids.admin, `select public.revoke_role($1, 'admin')`, [ids.admin], /LAST_ADMIN/, 'last admin cannot be removed');
+  await q(ids.admin, `select public.assign_role($1, 'admin')`, [ids.pres]);
+  ok('only the admin role exists; the last admin cannot be removed')
 
   // An admin may approve their own proposal; everyone else may not
   {

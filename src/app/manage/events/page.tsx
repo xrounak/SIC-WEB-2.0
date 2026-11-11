@@ -31,7 +31,7 @@ export default async function ManageEventsPage({ searchParams }: PageProps<"/man
 
   return (
     <div className="flex flex-col gap-6">
-      <PageHeader eyebrow="Manage" title="Events" description="Events in your scope. Leads see their teams' events; the VP and President see all." />
+      <PageHeader eyebrow="Manage" title="Events" description="Events in your scope. Leads see their teams' events; admins see all." />
       <nav aria-label="Filter" className="flex flex-wrap gap-2">
         {FILTERS.map((x) => (
           <Link

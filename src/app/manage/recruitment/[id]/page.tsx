@@ -46,7 +46,7 @@ export default async function ApplicationPage({ params }: PageProps<"/manage/rec
     : { data: [] };
   const evaluatorName = new Map((evaluatorNames ?? []).map((n) => [n.id as string, n.full_name as string]));
   const own = app.user_id === viewer.id;
-  const canDecide = (viewer.isExec || viewer.isAdmin) && !own && ["shortlisted", "interview", "waitlisted"].includes(app.status);
+  const canDecide = (viewer.isAdmin) && !own && ["shortlisted", "interview", "waitlisted"].includes(app.status);
   const stage = app.status === "interview" ? "interview" : "screening";
   const name = (ids: string[], list: Array<{ id: string; name: string }>) => ids.map((i) => list.find((x) => x.id === i)?.name).filter(Boolean).join(", ");
 

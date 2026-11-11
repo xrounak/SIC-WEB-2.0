@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "Audit log · Manage" };
 
 export default async function AuditPage() {
   const viewer = await requireManager();
-  if (!viewer.isAdmin && !viewer.roles.includes("president")) redirect("/manage");
+  if (!viewer.isAdmin) redirect("/manage");
   const supabase = await createClient();
   const { data: logs } = await supabase.from("audit_logs").select("*").order("created_at", { ascending: false }).limit(200);
   const ids = [...new Set((logs ?? []).map((l) => l.actor_id).filter(Boolean))] as string[];

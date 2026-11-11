@@ -21,7 +21,7 @@ export default async function ProposalsPage({ searchParams }: PageProps<"/portal
       <QueryNotice searchParams={searchParams} />
       <PageHeader
         title="Event proposals"
-        description="Events you've proposed. The organising team's lead reviews each one; major events also need the VP or President."
+        description="Events you've proposed. The organising team's lead reviews each one; major events also need an admin's final approval."
         actions={<ButtonLink href="/portal/proposals/new">Propose an event</ButtonLink>}
       />
       {events.length === 0 ? (
