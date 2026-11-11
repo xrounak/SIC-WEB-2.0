@@ -23,9 +23,9 @@ export default async function ProfilePage() {
           <Meta
             items={[
               { label: "Email", value: p.email },
-              { label: "Student status", value: <StatusBadge status={p.student_status} /> },
+              { label: "Student status", value: p.student_status === "pending" && p.member_status !== "applicant" ? "Student of our college" : <StatusBadge status={p.student_status} /> },
               { label: "Membership", value: <StatusBadge status={p.member_status} /> },
-              { label: "Roles", value: viewer.roles.length ? viewer.roles.map((r) => ROLE_LABEL[r]).join(", ") : "None" },
+              { label: "Roles", value: viewer.isAdmin ? "Admin (can do everything)" : viewer.roles.length ? viewer.roles.map((r) => ROLE_LABEL[r]).join(", ") : "None" },
               ...(p.roll_number ? [{ label: "Registration number", value: <span className="font-mono">{p.roll_number}</span> }] : []),
               ...(p.college_name ? [{ label: "College", value: p.college_name }] : []),
             ]}

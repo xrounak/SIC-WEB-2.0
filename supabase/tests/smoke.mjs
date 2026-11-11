@@ -108,8 +108,16 @@ async function main() {
       `Test ${name}`, `ROLL-${name}`,
     ]);
   }
-  await q(ids.external, `select public.complete_onboarding('Test external', '9876543210', false, 'Other College')`);
-  await q(ids.mate, `select public.complete_onboarding('Test mate', '9876543210', false, 'Other College')`);
+  await q(ids.external, `select public.complete_onboarding('Test external', '9876543210', false, 'Other College', 'CSE', '2024-28')`);
+  await q(ids.mate, `select public.complete_onboarding('Test mate', '9876543210', false, 'Other College', 'CSE', '2024-28')`);
+  // Every onboarding field is needed, and a roll number with letters is accepted
+  await rejects(ids.external, `select public.complete_onboarding('Test external', '9876543210', false, 'Other College')`, [], /BRANCH_SESSION_REQUIRED/, 'other-college students must give branch and session');
+  await rejects(ids.external, `select public.complete_onboarding('Test external', '9876543210', false, '', 'CSE', '2024-28')`, [], /COLLEGE_REQUIRED/, 'college is required');
+  await rejects(ids.student, `select public.complete_onboarding('Test student', '9876543210', true, null, 'Mechanical', '2024-28', 'ab')`, [], /STUDENT_DETAILS_REQUIRED/, 'a too-short number is refused');
+  await rejects(ids.student, `select public.complete_onboarding('Test student', '9876543210', true, null, '', '2024-28', 'ME/21/045')`, [], /STUDENT_DETAILS_REQUIRED/, 'branch is required for our students');
+  await q(ids.student, `select public.complete_onboarding('Test student', '9876543210', true, null, 'Mechanical', '2024-28', 'me/21/045-b')`);
+  assert.equal((await db.query('select roll_number from public.profiles where id = $1', [ids.student])).rows[0].roll_number, 'ME/21/045-B');
+  ok('onboarding needs every field; roll numbers with letters are saved');
   const studentStatus = await db.query('select student_status from public.profiles where id = $1', [ids.student]);
   assert.equal(studentStatus.rows[0].student_status, 'pending');
   ok('onboarding sets pending student status');
@@ -372,6 +380,13 @@ async function main() {
   await db.exec(readFileSync(join(root, 'chronos_event_names.sql'), 'utf8'));
   const named = await q(null, `select title from public.events where slug in ('robo-war', 'rc-car-hurdle-race') order by slug`);
   assert.deepEqual(named.map((r) => r.title), ["Pillager's Parkour", 'Nether Clash']);
+  await db.exec(readFileSync(join(root, 'chronos_reel_event.sql'), 'utf8'));
+  await db.exec(readFileSync(join(root, 'chronos_reel_event.sql'), 'utf8'));
+  const reel = await q(null, `select participation, team_min, festival, status from public.events where slug = 'spectator-mode'`);
+  assert.equal(reel.length, 1);
+  assert.equal(reel[0].participation, 'individual');
+  assert.equal(reel[0].festival, 'chronos');
+  ok('chronos_reel_event.sql adds the solo reel contest once');
   await db.exec(`delete from public.events where festival = 'chronos'`);
   ok('chronos_events.sql replaces the demo event with the eight festival events');
 

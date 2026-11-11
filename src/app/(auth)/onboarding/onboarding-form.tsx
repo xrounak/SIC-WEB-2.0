@@ -61,15 +61,19 @@ export function OnboardingForm({ profile, next }: { profile: Profile; next: stri
             className="sm:col-span-2"
             defaultValue={profile.roll_number}
             disabled={verified}
-            hint={verified ? "Verified. Contact the club to change it." : "Needed to verify you for membership. Never public."}
+            placeholder="Reg. no., or roll no. if you have none"
+            maxLength={40}
+            autoCapitalize="characters"
+            autoComplete="off"
+            hint={verified ? "Verified. Contact the club to change it." : "Roll numbers can have letters. Used to verify you. Never public."}
           />
           {verified && <input type="hidden" name="roll_number" value={profile.roll_number ?? ""} />}
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           <TextField name="college_name" label="College" defaultValue={profile.college_name} className="sm:col-span-2" />
-          <SelectField name="branch" label="Branch" required={false} options={branchOptionsWith(profile.branch)} placeholder="Choose" defaultValue={profile.branch} />
-          <SelectField name="academic_session" label="Session" required={false} options={sessionOptionsWith(profile.academic_session)} placeholder="Choose" defaultValue={profile.academic_session} />
+          <SelectField name="branch" label="Branch" options={branchOptionsWith(profile.branch)} placeholder="Choose" defaultValue={profile.branch} />
+          <SelectField name="academic_session" label="Session" options={sessionOptionsWith(profile.academic_session)} placeholder="Choose" defaultValue={profile.academic_session} />
         </div>
       )}
 

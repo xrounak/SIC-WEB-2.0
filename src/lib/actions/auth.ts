@@ -51,16 +51,23 @@ const onboardingSchema = z
     college_name: z.string().trim().max(200).optional(),
     branch: z.string().trim().max(100).optional(),
     academic_session: z.string().trim().regex(/^[0-9]{4}-[0-9]{2}$/, "Choose your session.").optional(),
+    // a registration number, or a roll number if there is none: letters, numbers and / - . _ ( ) are fine
     roll_number: z.string().trim().max(40).optional(),
   })
   .superRefine((v, ctx) => {
     if (v.is_our_student === "yes") {
       if (!v.branch) ctx.addIssue({ code: "custom", path: ["branch"], message: "Choose your branch." });
       if (!v.academic_session) ctx.addIssue({ code: "custom", path: ["academic_session"], message: "Choose your session." });
-      if (!v.roll_number || v.roll_number.length < 3)
-        ctx.addIssue({ code: "custom", path: ["roll_number"], message: "Enter your registration number." });
-    } else if (!v.college_name || v.college_name.length < 2) {
-      ctx.addIssue({ code: "custom", path: ["college_name"], message: "Enter your college name." });
+      if (!v.roll_number || !/^[A-Za-z0-9][A-Za-z0-9 /._()-]{2,39}$/.test(v.roll_number))
+        ctx.addIssue({
+          code: "custom",
+          path: ["roll_number"],
+          message: "Enter your registration number, or roll number (3 to 40 letters or numbers).",
+        });
+    } else {
+      if (!v.college_name || v.college_name.length < 2) ctx.addIssue({ code: "custom", path: ["college_name"], message: "Enter your college name." });
+      if (!v.branch) ctx.addIssue({ code: "custom", path: ["branch"], message: "Choose your branch." });
+      if (!v.academic_session) ctx.addIssue({ code: "custom", path: ["academic_session"], message: "Choose your session." });
     }
   });
 

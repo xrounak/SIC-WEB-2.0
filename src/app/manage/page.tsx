@@ -34,7 +34,7 @@ export default async function ManageInbox({ searchParams }: PageProps<"/manage">
       .in("status", ["submitted", "screening", "shortlisted", "interview"])
       .neq("user_id", viewer.id)
       .order("updated_at"),
-    supabase.from("profiles").select("id, full_name, updated_at").eq("student_status", "pending").neq("id", viewer.id).limit(50),
+    supabase.from("profiles").select("id, full_name, updated_at").eq("student_status", "pending").eq("member_status", "applicant").neq("id", viewer.id).limit(50),
   ]);
 
   const leads = new Set(viewer.leadTeamIds);

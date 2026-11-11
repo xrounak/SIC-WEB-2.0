@@ -21,7 +21,7 @@ export default async function MembersPage({ searchParams }: PageProps<"/manage/m
 
   let rows: Profile[] = [];
   if (active === "verify") {
-    const { data } = await supabase.from("profiles").select("*").eq("student_status", "pending").neq("id", viewer.id).order("updated_at").limit(100);
+    const { data } = await supabase.from("profiles").select("*").eq("student_status", "pending").eq("member_status", "applicant").neq("id", viewer.id).order("updated_at").limit(100);
     rows = (data ?? []) as Profile[];
   } else {
     let req = supabase.from("profiles").select("*").in("member_status", ["member", "applicant", "alumni", "suspended"]).order("full_name").limit(200);
@@ -35,7 +35,7 @@ export default async function MembersPage({ searchParams }: PageProps<"/manage/m
       <PageHeader
         eyebrow="Manage"
         title="Members"
-        description={viewer.isStaff ? "Everyone in the club." : "Members of the teams you lead, and students waiting for verification."}
+        description={viewer.isStaff ? "Everyone in the club." : "Members of the teams you lead, and applicants waiting for their registration number to be checked."}
       />
       <nav aria-label="View" className="flex flex-wrap gap-2">
         {[
@@ -70,7 +70,7 @@ export default async function MembersPage({ searchParams }: PageProps<"/manage/m
       )}
 
       {rows.length === 0 ? (
-        <EmptyState title={active === "verify" ? "No students waiting for verification" : "No members found"} />
+        <EmptyState title={active === "verify" ? "No applicants waiting for a check" : "No members found"} />
       ) : active === "verify" ? (
         <Table head={["Student", "Registration number", "Branch / session", "Since", ""]}>
           {rows.map((p) => (

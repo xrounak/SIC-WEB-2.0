@@ -60,9 +60,9 @@ export default async function PortalHome({ searchParams }: PageProps<"/portal">)
           to accept or decline.
         </Notice>
       )}
-      {p.student_status === "pending" && (
-        <Notice tone="warning" title="Student status: waiting for verification">
-          A club lead will confirm your registration number. You can still register for events.
+      {p.student_status === "pending" && p.member_status === "applicant" && (
+        <Notice tone="warning" title="Waiting for a club lead to check your registration number">
+          This is part of your membership application. You can still register for events.
         </Notice>
       )}
       {!viewer.isMember && cycle && !app && p.student_status !== "external" && (
@@ -108,14 +108,15 @@ export default async function PortalHome({ searchParams }: PageProps<"/portal">)
           <p className="font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-subtle">Membership</p>
           <div className="flex items-center gap-2">
             <StatusBadge status={p.member_status} />
-            <StatusBadge status={p.student_status} />
+            {/* a plain student is not "waiting" for anything until they apply to join */}
+            {(p.student_status !== "pending" || p.member_status === "applicant") && <StatusBadge status={p.student_status} />}
           </div>
           {app ? (
             <Link href="/portal/applications" className="text-sm text-muted hover:text-fg">
               Latest application: <StatusBadge status={app.status} />
             </Link>
           ) : (
-            <p className="text-sm text-muted">{viewer.isMember ? "You're a member of SIC." : "You haven't applied yet."}</p>
+            <p className="text-sm text-muted">{p.member_status === "member" ? "You're a member of SIC." : viewer.isAdmin ? "You're an admin of the site. Membership is separate: apply to join the club if you want to be a member." : "You haven't applied yet."}</p>
           )}
         </Card>
         <Card className="flex flex-col gap-3 p-5">
