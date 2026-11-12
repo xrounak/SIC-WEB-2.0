@@ -28,10 +28,6 @@ with
   e (slug, title, summary, event_type, venue, starts_at, ends_at, participation, team_min, team_max) as (
     values
       -- Day 1 · Friday 11 Dec
-      ('expert-talks-inauguration', 'Expert Talks + Inauguration',
-       'The opening of Chronos 2026, with talks from invited experts.',
-       'seminar', 'Auditorium, GEC Palamu',
-       timestamptz '2026-12-11 10:00+05:30', timestamptz '2026-12-11 12:30+05:30', 'individual', null::smallint, null::smallint),
       ('working-model-exhibition', 'Working Model Exhibition',
        'Working prototypes, project demos and research applications on show.',
        'competition', 'Parking Lot, GEC Palamu',

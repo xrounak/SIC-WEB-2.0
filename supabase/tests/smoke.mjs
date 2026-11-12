@@ -395,7 +395,7 @@ async function main() {
   await db.exec(readFileSync(join(root, 'chronos_events.sql'), 'utf8'));
   await db.exec(readFileSync(join(root, 'chronos_events.sql'), 'utf8'));
   const fest = await q(null, `select slug, status from public.events where festival = 'chronos' order by starts_at`);
-  assert.equal(fest.length, 8);
+  assert.equal(fest.length, 7);
   assert.ok(fest.every((r) => r.status === 'published'));
   assert.ok(!fest.some((r) => r.slug === 'demo-event'));
   await db.exec(readFileSync(join(root, 'chronos_event_names.sql'), 'utf8'));
@@ -412,6 +412,12 @@ async function main() {
   assert.deepEqual(times.map((r) => r.s), ['13 15:00', '12 17:00', '11 16:00', '13 17:00']);
   assert.ok(times.every((r) => r.ok));
   ok('chronos_timings.sql moves four start times and keeps each day');
+  await db.exec(readFileSync(join(root, 'chronos_trial_chambers.sql'), 'utf8'));
+  await db.exec(readFileSync(join(root, 'chronos_trial_chambers.sql'), 'utf8'));
+  const tc = await q(null, `select to_char(starts_at at time zone 'Asia/Kolkata', 'HH24:MI') as s, to_char(ends_at at time zone 'Asia/Kolkata', 'HH24:MI') as e, team_max, description from public.events where slug = '12-hour-hackathon'`);
+  assert.equal(tc[0].s, '08:00'); assert.equal(tc[0].e, '18:00'); assert.equal(tc[0].team_max, 4);
+  assert.ok(tc[0].description.includes('## Rules')); assert.ok(tc[0].description.includes('at least one girl') && !tc[0].description.includes('| 9:00 am |')); assert.ok(tc[0].description.includes('Live code check') && !tc[0].description.includes('no-code'));
+  ok('chronos_trial_chambers.sql sets the hackathon hours and rule book');
   const named = await q(null, `select title from public.events where slug in ('robo-war', 'rc-car-hurdle-race') order by slug`);
   assert.deepEqual(named.map((r) => r.title), ["Pillager's Parkour", 'Nether Clash']);
   await db.exec(readFileSync(join(root, 'chronos_reel_event.sql'), 'utf8'));
@@ -420,9 +426,11 @@ async function main() {
   assert.equal(reel.length, 1);
   assert.equal(reel[0].participation, 'individual');
   assert.equal(reel[0].festival, 'chronos');
+  assert.ok((await q(null, `select description from public.events where slug = 'spectator-mode'`))[0].description.includes('2:00 pm on Monday, 14 December'));
   ok('chronos_reel_event.sql adds the solo reel contest once');
   await db.exec(`delete from public.events where festival = 'chronos'`);
-  ok('chronos_events.sql replaces the demo event with the eight festival events');
+  await db.exec(readFileSync(join(root, 'chronos_remove_talks.sql'), 'utf8'));
+  ok('chronos_events.sql replaces the demo event with the festival events (no talks event)');
 
   // The demo data loads on top of the four-domain seed, and its cleanup undoes it.
   await db.exec(readFileSync(join(root, 'demo_seed.sql'), 'utf8'));
