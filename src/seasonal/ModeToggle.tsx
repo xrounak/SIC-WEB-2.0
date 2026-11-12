@@ -66,7 +66,7 @@ export function ModeToggle() {
       className={buttonClass("ghost", "sm", "gap-2 px-2.5")}
     >
       {ICONS[mode]}
-      <span className="hidden md:inline">{short[mode]}</span>
+      <span className="hidden 2xl:inline">{short[mode]}</span>
       <span className="hidden gap-0.5 sm:flex" aria-hidden="true">
         {MODES.map((m) => (
           <i key={m} className={`h-1.5 w-1.5 rounded-full ${m === mode ? "bg-primary" : "bg-line-strong"}`} />

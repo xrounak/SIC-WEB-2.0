@@ -399,6 +399,19 @@ async function main() {
   assert.ok(fest.every((r) => r.status === 'published'));
   assert.ok(!fest.some((r) => r.slug === 'demo-event'));
   await db.exec(readFileSync(join(root, 'chronos_event_names.sql'), 'utf8'));
+  await db.exec(readFileSync(join(root, 'chronos_rule_books.sql'), 'utf8'));
+  await db.exec(readFileSync(join(root, 'chronos_rule_books.sql'), 'utf8'));
+  const books = await q(null, `select slug, team_min, team_max, description from public.events where slug in ('robo-war','robo-soccer','rc-car-hurdle-race','boat-race') order by slug`);
+  assert.equal(books.length, 4);
+  assert.ok(books.every((b) => b.description.includes('## ')));
+  assert.deepEqual(books.map((b) => b.team_max), [4, 5, 4, 5]); // boat, hurdle, soccer, war
+  ok('chronos_rule_books.sql writes four rule books and team sizes');
+  await db.exec(readFileSync(join(root, 'chronos_timings.sql'), 'utf8'));
+  await db.exec(readFileSync(join(root, 'chronos_timings.sql'), 'utf8'));
+  const times = await q(null, `select slug, to_char(starts_at at time zone 'Asia/Kolkata', 'DD HH24:MI') as s, ends_at > starts_at as ok from public.events where slug in ('robo-soccer','rc-car-hurdle-race','boat-race','robo-war') order by slug`);
+  assert.deepEqual(times.map((r) => r.s), ['13 15:00', '12 17:00', '11 16:00', '13 17:00']);
+  assert.ok(times.every((r) => r.ok));
+  ok('chronos_timings.sql moves four start times and keeps each day');
   const named = await q(null, `select title from public.events where slug in ('robo-war', 'rc-car-hurdle-race') order by slug`);
   assert.deepEqual(named.map((r) => r.title), ["Pillager's Parkour", 'Nether Clash']);
   await db.exec(readFileSync(join(root, 'chronos_reel_event.sql'), 'utf8'));

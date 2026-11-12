@@ -25,7 +25,7 @@ export async function SiteHeader() {
     <details className="group relative">
       <summary className="flex cursor-pointer list-none items-center gap-2 rounded-full p-0.5 pr-2.5 ring-1 ring-line-strong transition-colors hover:ring-primary [&::-webkit-details-marker]:hidden sm:pr-3">
         <Avatar name={viewer.profile.full_name || viewer.profile.email} src={viewer.profile.avatar_url} size={30} />
-        <span className="hidden max-w-32 truncate text-sm sm:block">{viewer.profile.full_name || "Account"}</span>
+        <span className="hidden max-w-32 truncate text-sm sm:block lg:hidden xl:block">{viewer.profile.full_name || "Account"}</span>
       </summary>
       <div className="hdr-menu absolute right-0 top-12 z-50 w-56 p-1.5">
         <p className="truncate px-3 py-2 text-[0.8125rem] text-subtle">{viewer.profile.email}</p>
@@ -64,14 +64,15 @@ export async function SiteHeader() {
       <span className="hdr-tick is-notch-r" aria-hidden="true" />
       <span className="hdr-bracket is-l" aria-hidden="true" />
       <span className="hdr-bracket is-r" aria-hidden="true" />
-      <div className="relative mx-auto flex h-full w-full max-w-content items-center justify-between gap-3 px-4 pb-[3px] sm:px-6">
+      {/* Three columns: logo | nav | actions. The nav sits in the flow, so it can never slide under the buttons. */}
+      <div className="relative mx-auto grid h-full w-full max-w-content grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 pb-[3px] sm:px-6">
         <div className="header-enter" style={{ ["--i" as string]: 0 }}>
           <Logo />
         </div>
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[55%]">
+        <div className="flex min-w-0 justify-center -translate-y-[5%]">
           <DesktopNav items={PUBLIC_NAV} />
         </div>
-        <div className="header-enter flex items-center gap-1.5" style={{ ["--i" as string]: 2 }}>
+        <div className="header-enter flex items-center justify-end gap-1.5" style={{ ["--i" as string]: 2 }}>
           <ModeToggle />
           {account}
           <MobileNav items={PUBLIC_NAV} />
