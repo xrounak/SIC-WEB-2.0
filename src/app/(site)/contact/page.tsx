@@ -5,10 +5,13 @@ import { Card, Container, PageHeader } from "@/components/ui/primitives";
 export const metadata: Metadata = pageMetadata({ title: "Contact", description: "Contact the Science & Innovation Club at Government Engineering College, Palamu: questions, collaborations and event queries.", path: "/contact" });
 
 // Replace with the club's real handles and address before launch.
+// wa.me needs the country code (91 for India) in front of the number.
+const WHATSAPP = `https://wa.me/916207163458?text=${encodeURIComponent("Hi SIC! I have a question about ")}`;
+
 const CHANNELS = [
-  { label: "Email", value: "sic.club@gmail.com", href: null },
-  { label: "Instagram", value: "@sic.club", href: "https://instagram.com/" },
-  { label: "GitHub", value: "github.com/sic-club", href: "https://github.com/" },
+  { label: "WhatsApp", value: "Chat with us: +91 62071 63458", href: WHATSAPP },
+  { label: "Email", value: "sic.gecpalamu@gmail.com", href: null },
+  { label: "Instagram", value: "@sic_club", href: "https://instagram.com/sic_gecp/" },
   { label: "LinkedIn", value: "Science & Innovation Club", href: "https://linkedin.com/" },
 ];
 

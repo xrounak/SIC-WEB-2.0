@@ -32,6 +32,23 @@ export default async function AboutPage() {
         description="The Science & Innovation Club is run by students. Members propose events, build projects in teams, and learn from each other across disciplines."
       />
 
+      <section className="flex flex-col gap-5 rounded-xl border border-line bg-surface p-6 sm:p-8">
+        <SectionTitle title="Who we are" />
+        <p className="max-w-3xl text-base leading-relaxed text-muted sm:text-lg">
+          The Science &amp; Innovation Club (SIC), Government Engineering College Palamu, is a student-driven community
+          dedicated to fostering innovation, creativity, technical excellence, and practical learning. The club provides a
+          platform for students from different engineering disciplines to explore ideas, develop projects, enhance technical
+          skills, and transform their concepts into real-world solutions.
+        </p>
+        <p className="max-w-3xl text-base leading-relaxed text-muted sm:text-lg">
+          Through technical workshops, hackathons, robotics competitions, exhibitions, and inter-college events, SIC
+          encourages students to learn beyond classrooms, collaborate across disciplines, and challenge their potential. Our
+          aim is to build a culture of innovation, teamwork, and problem-solving while preparing students to become future
+          innovators and technology leaders.
+        </p>
+        <p className="hud-label text-[0.8125rem] tracking-[0.2em] text-primary">Learn • Build • Innovate • Grow 🚀</p>
+      </section>
+
       <section className="grid gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-3">
         {PRINCIPLES.map((p) => (
           <div key={p.title} className="flex flex-col gap-2 bg-surface p-6">
