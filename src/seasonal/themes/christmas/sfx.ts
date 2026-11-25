@@ -1,11 +1,14 @@
 import type { ThemeSounds } from "../shared/sfx";
 
-/** Sleigh bells and sparkle. */
+/**
+ * Sleigh bells and glockenspiel. The xmas-* files are original sounds synthesised by
+ * scripts/synth-christmas-sfx.mjs (CC0); the rest are from SFX Kit (CC0).
+ */
 export const sounds: ThemeSounds = {
-  click: { id: "shimmer-short-sparkle", gain: 0.45, rate: [0.92, 1.12] },
+  click: { id: "xmas-jingle-click", gain: 0.4, rate: [0.9, 1.12] },
   key: { id: "keyboard-letter-soft", gain: 0.55, rate: [0.94, 1.08] },
-  scroll: { id: "whoosh-fast-soft", gain: 0.3 },
-  flyby: { id: "props-shop-bell", gain: 0.5 },
+  scroll: { id: "xmas-jingle-shimmer", gain: 0.22, rate: [0.95, 1.05] },
+  flyby: { id: "xmas-sleigh-bells", gain: 0.5, rate: [0.97, 1.03] },
   page: { id: "whoosh-medium-soft", gain: 0.7 },
-  pageReveal: { id: "shimmer-medium-soft", gain: 0.55 },
+  pageReveal: { id: "xmas-chime-reveal", gain: 0.5 },
 };

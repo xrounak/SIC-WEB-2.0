@@ -122,7 +122,7 @@ The header has one switch with three states (`sic-mode` in `localStorage`):
 | Theme | the theme set by the developer | none |
 | Theme + sound | the same theme | its sound effects |
 
-The developer's theme is `product.themeSwitching.defaultTheme` in `settings.json`
+The developer's theme (currently `christmas`) is `product.themeSwitching.defaultTheme` in `settings.json`
 (or `NEXT_PUBLIC_DEFAULT_THEME`). First-time visitors get "Theme" with no sound.
 
 Sounds come from [SFX Kit by Wyzowl](https://github.com/wyzowl/sfx-kit) (CC0), trimmed
@@ -139,6 +139,12 @@ to MP3 in `public/sfx/`. Each theme's `sfx.ts` maps events to files:
 
 To change a sound, edit that theme's `sfx.ts`. To use another file from the kit,
 convert it: `ffmpeg -i in.wav -ac 1 -ar 44100 -codec:a libmp3lame -q:a 4 public/sfx/<id>.mp3`.
+
+The Christmas bells (`xmas-jingle-click`, `xmas-jingle-shimmer`, `xmas-sleigh-bells`,
+`xmas-chime-reveal`) are not from the kit: they are original sounds synthesised by
+`scripts/synth-christmas-sfx.mjs` (no samples; released as CC0 with the rest). To
+regenerate: `node scripts/synth-christmas-sfx.mjs <tmpDir>`, then run the ffmpeg line
+above on each WAV.
 
 ## Intro loader and logo
 

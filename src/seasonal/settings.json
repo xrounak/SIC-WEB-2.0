@@ -5,7 +5,7 @@
     "fullName": "Science and Innovation Club",
     "designPrinciple": "A permanent, minimal, accessible base UI with interchangeable seasonal visual themes.",
     "themeSwitching": {
-      "defaultTheme": "diwali",
+      "defaultTheme": "christmas",
       "oneClickSwitching": true,
       "settingKey": "activeTheme",
       "supportedThemes": [
